@@ -73,7 +73,16 @@ export function apiStream(path: string, body: unknown, onToken: (t: string) => v
           if (line.startsWith("data: ")) {
             const data = line.slice(6);
             if (data === "[DONE]") { onDone(); return; }
-            onToken(data);
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed && typeof parsed.token === "string") {
+                onToken(parsed.token);
+              } else {
+                onToken(data);
+              }
+            } catch {
+              onToken(data);
+            }
           }
         }
       }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Clock, TrendingUp, TrendingDown, RefreshCw, Sparkles, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
 import type { WaitTimeLocation, WaitTimeResponse } from "@/services/waitTimes";
@@ -135,7 +136,37 @@ export function WaitTimeWidget() {
 
         {/* Dynamic Predictions Output */}
         <div className="space-y-2">
-          {data ? (
+          {loading || !data ? (
+            <div className="space-y-2 animate-pulse">
+              <div className="rounded-lg border border-white/[0.04] bg-indigo-500/5 p-2.5 flex gap-2">
+                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
+                <Skeleton className="h-4 w-5/6 rounded" />
+              </div>
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex flex-col gap-2 rounded-r-lg border-l-2 border-l-white/20 bg-white/[0.02] p-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 flex-1">
+                        <Skeleton className="h-4 w-4 rounded-full shrink-0" />
+                        <Skeleton className="h-4 w-1/3 rounded" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-16 rounded-full" />
+                        <Skeleton className="h-4 w-6 rounded" />
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <div className="flex gap-2">
+                        <Skeleton className="h-3 w-14 rounded" />
+                        <Skeleton className="h-3 w-16 rounded" />
+                      </div>
+                      <Skeleton className="h-3 w-12 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
             <>
               {data.summary && (
                 <div className="rounded-lg border border-white/[0.04] bg-indigo-500/5 p-2.5 flex gap-2">
@@ -185,11 +216,6 @@ export function WaitTimeWidget() {
                 })}
               </div>
             </>
-          ) : (
-            <div className="py-12 flex flex-col items-center justify-center text-center">
-              <Clock size={20} className="text-text-muted animate-pulse mb-2" />
-              <span className="text-xs text-text-muted font-ui">Simulating telemetry forecast...</span>
-            </div>
           )}
         </div>
       </div>

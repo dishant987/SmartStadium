@@ -32,8 +32,7 @@ function AppRoutes() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
-        <Route path="/chat/:sessionId" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+        <Route path="/chat/:sessionId?" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
         <Route path="/evacuation" element={<ProtectedRoute><SuspenseWrapper><EvacuationPage /></SuspenseWrapper></ProtectedRoute>} />
         <Route path="/wayfinding" element={<ProtectedRoute><WayfindingPage /></ProtectedRoute>} />
         <Route path="/pa" element={<ProtectedRoute><PAPage /></ProtectedRoute>} />

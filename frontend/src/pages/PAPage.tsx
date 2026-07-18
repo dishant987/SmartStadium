@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Radio, Send, AlertTriangle, Info, AlertCircle, Volume2, RefreshCw, Play, Pause } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { apiClient } from "@/services/apiClient";
 import { Navbar } from "@/components/navigation/Navbar";
 import type { PAAnnouncementResponse, PALogResponse } from "@/services/pa";
@@ -97,6 +98,10 @@ export function PAPage() {
     } catch {}
     setLogLoading(false);
   };
+
+  useEffect(() => {
+    loadLog();
+  }, []);
 
   return (
     <div className="min-h-screen bg-pitch-night text-text-primary font-ui relative overflow-x-hidden">
@@ -231,39 +236,64 @@ export function PAPage() {
               </Button>
             </div>
 
-            {log && log.announcements.length === 0 && (
-              <div className="glass-card p-8 text-center rounded-fan border border-white/[0.08]">
-                <Radio size={36} className="mx-auto mb-3 text-text-muted/30" />
-                <p className="text-body text-text-muted">No historical broadcasts found</p>
-              </div>
-            )}
-
-            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
-              {log && log.announcements.map((a) => (
-                <div key={a.id} className="glass-card p-4 rounded-fan border border-white/[0.06] shadow-data space-y-3 hover:border-white/15 transition-all">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant={a.severity === "critical" ? "error" : a.severity === "high" ? "warning" : "default"}>
-                        {a.type.replace("_", " ")}
-                      </Badge>
-                      <span className="text-data font-semibold text-text-secondary uppercase tracking-wider">{a.gate}</span>
+            {logLoading ? (
+              <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="glass-card p-4 rounded-fan border border-white/[0.06] shadow-data space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Skeleton className="h-5 w-20 rounded" />
+                        <Skeleton className="h-4 w-12 rounded" />
+                      </div>
+                      <Skeleton className="h-4 w-10 rounded" />
                     </div>
-                    <span className="text-data text-text-muted">{new Date(a.timestamp).toLocaleTimeString()}</span>
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-full rounded" />
+                      <Skeleton className="h-4 w-5/6 rounded" />
+                    </div>
+                    <div className="flex items-center justify-between border-t border-white/[0.03] pt-2">
+                      <Skeleton className="h-3 w-20 rounded" />
+                      <Skeleton className="h-4 w-16 rounded" />
+                    </div>
                   </div>
-                  <p className="text-body text-text-primary leading-relaxed">{a.message}</p>
-                  <div className="flex items-center justify-between text-data text-text-muted border-t border-white/[0.03] pt-2">
-                    <span>Langs: {a.languages.map((l) => l.toUpperCase()).join(", ")}</span>
-                    {a.broadcast && <Badge variant="error" className="bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold px-2 py-0.5">BROADCASTED</Badge>}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {!log && (
-              <div className="glass-card p-8 text-center rounded-fan border border-white/[0.08]">
-                <Spinner size="lg" className="mx-auto mb-3 text-rose-400" />
-                <p className="text-body text-text-muted">Refresh log feed using button above</p>
+                ))}
               </div>
+            ) : (
+              <>
+                {log && log.announcements.length === 0 && (
+                  <div className="glass-card p-8 text-center rounded-fan border border-white/[0.08]">
+                    <Radio size={36} className="mx-auto mb-3 text-text-muted/30" />
+                    <p className="text-body text-text-muted">No historical broadcasts found</p>
+                  </div>
+                )}
+
+                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+                  {log && log.announcements.map((a) => (
+                    <div key={a.id} className="glass-card p-4 rounded-fan border border-white/[0.06] shadow-data space-y-3 hover:border-white/15 transition-all">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant={a.severity === "critical" ? "error" : a.severity === "high" ? "warning" : "default"}>
+                            {a.type.replace("_", " ")}
+                          </Badge>
+                          <span className="text-data font-semibold text-text-secondary uppercase tracking-wider">{a.gate}</span>
+                        </div>
+                        <span className="text-data text-text-muted">{new Date(a.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                      <p className="text-body text-text-primary leading-relaxed">{a.message}</p>
+                      <div className="flex items-center justify-between text-data text-text-muted border-t border-white/[0.03] pt-2">
+                        <span>Langs: {a.languages.map((l) => l.toUpperCase()).join(", ")}</span>
+                        {a.broadcast && <Badge variant="error" className="bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold px-2 py-0.5">BROADCASTED</Badge>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {!log && (
+                  <div className="glass-card p-8 text-center rounded-fan border border-white/[0.08]">
+                    <p className="text-body text-text-muted">Refresh log feed using button above</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

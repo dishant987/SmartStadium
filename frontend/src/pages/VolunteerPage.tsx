@@ -5,6 +5,7 @@ import { Footer } from "@/components/navigation/Footer";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Users, ClipboardList, MapPin, Phone, Globe,
   Clock, CheckCircle, AlertTriangle, ArrowRight,
@@ -85,7 +86,16 @@ export function VolunteerPage() {
         </div>
 
         {/* Stats */}
-        {dashboard && (
+        {loading ? (
+          <div className="grid gap-4 mb-8 grid-cols-2 md:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="text-center p-5 space-y-2">
+                <Skeleton className="h-8 w-16 mx-auto rounded" />
+                <Skeleton className="h-3.5 w-24 mx-auto rounded" />
+              </Card>
+            ))}
+          </div>
+        ) : dashboard ? (
           <div className="grid gap-4 mb-8 grid-cols-2 md:grid-cols-4">
             <Card className="text-center p-5">
               <div className="font-display text-2xl font-bold text-text-primary">{dashboard.total}</div>
@@ -104,7 +114,7 @@ export function VolunteerPage() {
               <div className="text-data text-text-muted mt-1">Active Tasks</div>
             </Card>
           </div>
-        )}
+        ) : null}
 
         {/* Tabs */}
         <div className="flex gap-1 mb-6 p-1 rounded-fan bg-white/[0.03] border border-white/[0.06] w-fit">
@@ -119,9 +129,45 @@ export function VolunteerPage() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-text-muted" />
-          </div>
+          activeTab === "volunteers" ? (
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Card key={i} className="p-5 space-y-4 animate-pulse">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1.5 flex-1">
+                      <Skeleton className="h-5 w-2/3 rounded" />
+                      <Skeleton className="h-3 w-1/3 rounded" />
+                    </div>
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <Skeleton className="h-3.5 w-1/2 rounded" />
+                    <Skeleton className="h-3.5 w-1/3 rounded" />
+                  </div>
+                  <div className="flex gap-2 pt-3 border-t border-white/[0.05]">
+                    <Skeleton className="h-7 w-20 rounded" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i} className="p-4 flex flex-wrap items-start gap-4 animate-pulse">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                      <Skeleton className="h-4 w-20 rounded" />
+                      <Skeleton className="h-4 w-14 rounded" />
+                    </div>
+                    <Skeleton className="h-4 w-3/4 rounded" />
+                    <Skeleton className="h-3 w-24 rounded" />
+                  </div>
+                  <Skeleton className="h-8 w-20 rounded shrink-0" />
+                </Card>
+              ))}
+            </div>
+          )
         ) : !dashboard ? (
           <div className="text-center py-20 text-text-muted">Failed to load data</div>
         ) : activeTab === "volunteers" ? (

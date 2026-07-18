@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import json
 
 from app.db.session import get_db
 from app.schemas.chat_schema import ChatRequest, RenameRequest
@@ -28,7 +29,8 @@ async def chat_stream(
 ):
     async def event_stream():
         async for token in ChatService(db).stream(user.id, body):
-            yield f"data: {token}\n\n"
+            data_str = json.dumps({"token": token})
+            yield f"data: {data_str}\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")

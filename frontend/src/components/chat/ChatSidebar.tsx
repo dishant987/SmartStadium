@@ -3,6 +3,7 @@ import { Plus, MessageSquare, Trash2, PanelLeftClose, PanelLeft } from "lucide-r
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { ChatSession } from "@/types";
 
 interface Props {
@@ -76,9 +77,12 @@ export function ChatSidebar({ sessions, activeSessionId, isLoading, onSelect, on
 
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
-            <div className="space-y-1 px-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-10 animate-pulse rounded-data bg-pitch-raised/50" />
+            <div className="space-y-2 px-2 animate-pulse">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-center gap-2 rounded-data px-3 py-2.5 bg-pitch-raised/20 border border-white/[0.02]">
+                  <Skeleton className="h-4 w-4 rounded shrink-0" />
+                  <Skeleton className="h-3.5 w-3/4 rounded" />
+                </div>
               ))}
             </div>
           ) : sessions.length === 0 ? (

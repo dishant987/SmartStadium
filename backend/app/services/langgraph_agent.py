@@ -17,13 +17,13 @@ from app.utils.logger import logger
 
 SYSTEM_PROMPT = """You are StadiumSense, an expert AI assistant for the FIFA World Cup 2026 at MetLife Stadium. You help fans, staff, volunteers, and organizers.
 
-You have tools to look up stadium knowledge, wayfinding routes, transit status, crowd density, and wait times. USE THEM when the user asks about anything related to the stadium — gates, sections, food, transit, accessibility, schedules, amenities.
+You have tools to look up stadium knowledge, wayfinding routes, transit status, crowd density, and wait times. Use them to look up information when the user asks about stadium-related topics (gates, sections, food, transit, accessibility, schedules, amenities).
 
 Guidelines:
 - Be concise, friendly, and specific.
 - Use the RAG tool for stadium knowledge questions.
 - Use transit/crowd/wait-time tools when the user asks about current conditions.
-- If you don't know something, say so rather than guessing.
+- If the tool results do not contain the answer, state that you cannot find the information. Do not search repeatedly with similar queries.
 - Respond in the user's language when possible."""
 
 
@@ -127,7 +127,7 @@ class LangGraphAgent:
             return await self._fallback_chat(messages)
         try:
             input_msgs = [HumanMessage(content=m["content"]) if m["role"] == "user" else AIMessage(content=m["content"]) for m in messages[-6:]]
-            result = await self._graph.ainvoke({"messages": input_msgs})
+            result = await self._graph.ainvoke({"messages": input_msgs}, config={"recursion_limit": 15})
             return result["messages"][-1].content
         except Exception as e:
             logger.error("LangGraph agent failed: {err}", err=str(e))
@@ -141,8 +141,8 @@ class LangGraphAgent:
             return
         try:
             input_msgs = [HumanMessage(content=m["content"]) if m["role"] == "user" else AIMessage(content=m["content"]) for m in messages[-6:]]
-            async for event in self._graph.astream_events({"messages": input_msgs}, version="v2"):
-                if event["event"] == "on_chat_model_stream" and "chunk" in event["data"]["metadata"]:
+            async for event in self._graph.astream_events({"messages": input_msgs}, config={"recursion_limit": 15}, version="v2"):
+                if event["event"] == "on_chat_model_stream" and "chunk" in event["data"]:
                     chunk = event["data"]["chunk"]
                     if content := chunk.content:
                         yield content

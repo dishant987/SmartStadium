@@ -23,7 +23,7 @@ def _build_providers() -> list[BaseChatModel]:
     if settings.gemini_api_key:
         try:
             from langchain_google_genai import ChatGoogleGenerativeAI
-            providers.append(ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=settings.gemini_api_key, temperature=0.3))
+            providers.append(ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=settings.gemini_api_key, temperature=0.3))
         except ImportError:
             logger.warning("langchain-google-genai not installed, skipping")
     if settings.mistral_api_key:

@@ -3,8 +3,8 @@
 from typing import Any, AsyncIterator, Iterator, List
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
-from langchain_core.outputs import ChatGeneration, ChatResult
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, AIMessageChunk
+from langchain_core.outputs import ChatGeneration, ChatResult, ChatGenerationChunk
 
 
 class MockChatModel(BaseChatModel):
@@ -20,14 +20,14 @@ class MockChatModel(BaseChatModel):
     ) -> ChatResult:
         return self._generate(messages, stop, run_manager, **kwargs)
 
-    def _stream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> Iterator[ChatGeneration]:
+    def _stream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> Iterator[ChatGenerationChunk]:
         for token in self._mock_stream():
-            yield ChatGeneration(message=AIMessage(content=token))
+            yield ChatGenerationChunk(message=AIMessageChunk(content=token))
 
-    async def _astream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> AsyncIterator[ChatGeneration]:
+    async def _astream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> AsyncIterator[ChatGenerationChunk]:
         import asyncio
         for token in self._mock_stream():
-            yield ChatGeneration(message=AIMessage(content=token))
+            yield ChatGenerationChunk(message=AIMessageChunk(content=token))
             await asyncio.sleep(0.03)
 
     @property

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import Markdown from "react-markdown";
 import { Copy, Check, RotateCcw, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { ChatMessage } from "@/types";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
   isStreaming: boolean;
   error: string | null;
   onRegenerate?: () => void;
+  isLoading?: boolean;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -78,7 +80,7 @@ const mdComponents = {
   td: ({ children }: MdProps) => <td className="border border-border px-3 py-2 text-text-secondary">{children}</td>,
 };
 
-export function ChatMessages({ messages, streamingText, isStreaming, error, onRegenerate }: Props) {
+export function ChatMessages({ messages, streamingText, isStreaming, error, onRegenerate, isLoading }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const liveRef = useRef<HTMLDivElement>(null);
 
@@ -86,59 +88,88 @@ export function ChatMessages({ messages, streamingText, isStreaming, error, onRe
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingText]);
 
-  const noMessages = messages.length === 0 && !isStreaming && !error;
+  const noMessages = messages.length === 0 && !isStreaming && !error && !isLoading;
 
   return (
     <div className="flex-1 overflow-y-auto" role="log" aria-live="polite" aria-label="Chat messages" ref={liveRef}>
       {noMessages ? null : (
         <div className="mx-auto max-w-3xl px-4 py-6 space-y-6">
-          {messages.map((m) => (
-            <div key={m.id} className={`group flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className="max-w-[85%]">
-                {m.role === "user" ? (
-                  <div className="rounded-fan bg-floodlight-300 px-4 py-3 text-[15px] text-pitch-night leading-[1.6] whitespace-pre-wrap font-ui">
-                    {m.content}
+          {isLoading ? (
+            <div className="space-y-6">
+              {/* User message skeleton */}
+              <div className="flex justify-end">
+                <div className="max-w-[70%] w-64 rounded-fan bg-pitch-surface border border-white/[0.04] p-3.5 flex flex-col gap-2">
+                  <Skeleton className="h-4 w-5/6 rounded" />
+                  <Skeleton className="h-4 w-1/2 rounded" />
+                </div>
+              </div>
+              {/* Assistant message skeleton */}
+              <div className="flex justify-start">
+                <div className="max-w-[80%] w-96 p-3 flex flex-col gap-2.5">
+                  <Skeleton className="h-5 w-1/3 rounded bg-pitch-surface" />
+                  <Skeleton className="h-4 w-full rounded" />
+                  <Skeleton className="h-4 w-4/5 rounded" />
+                  <Skeleton className="h-4 w-2/3 rounded" />
+                </div>
+              </div>
+              {/* User message skeleton */}
+              <div className="flex justify-end">
+                <div className="max-w-[70%] w-48 rounded-fan bg-pitch-surface border border-white/[0.04] p-3.5 flex flex-col gap-2">
+                  <Skeleton className="h-4 w-3/4 rounded" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {messages.map((m) => (
+                <div key={m.id} className={`group flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className="max-w-[85%]">
+                    {m.role === "user" ? (
+                      <div className="rounded-fan bg-floodlight-300 px-4 py-3 text-[15px] text-pitch-night leading-[1.6] whitespace-pre-wrap font-ui">
+                        {m.content}
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-[15px] text-text-primary font-ui">
+                          <Markdown components={mdComponents}>{m.content}</Markdown>
+                        </div>
+                        <MessageActions content={m.content} isAssistant={true} onRegenerate={onRegenerate} />
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div>
-                    <div className="text-[15px] text-text-primary font-ui">
-                      <Markdown components={mdComponents}>{m.content}</Markdown>
+                </div>
+              ))}
+
+              {isStreaming && streamingText && (
+                <div className="flex justify-start">
+                  <div className="max-w-[85%]">
+                    <div className="text-[15px] text-text-primary font-ui" aria-label="Assistant is typing a response">
+                      <Markdown components={mdComponents}>{streamingText}</Markdown>
+                      <span className="ml-0.5 inline-block h-5 w-0.5 animate-pulse bg-floodlight-300 align-middle" />
                     </div>
-                    <MessageActions content={m.content} isAssistant={true} onRegenerate={onRegenerate} />
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {isStreaming && streamingText && (
-            <div className="flex justify-start">
-              <div className="max-w-[85%]">
-                <div className="text-[15px] text-text-primary font-ui" aria-label="Assistant is typing a response">
-                  <Markdown components={mdComponents}>{streamingText}</Markdown>
-                  <span className="ml-0.5 inline-block h-5 w-0.5 animate-pulse bg-floodlight-300 align-middle" />
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {isStreaming && !streamingText && (
-            <div className="flex justify-start" role="status" aria-label="Assistant is thinking">
-              <div className="flex items-center gap-3 rounded-fan bg-pitch-surface px-4 py-3 border border-border">
-                <span className="text-sm text-text-muted font-ui">Thinking</span>
-                <div className="flex gap-1">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-floodlight-300" style={{ animationDelay: "0ms" }} />
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-floodlight-300" style={{ animationDelay: "150ms" }} />
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-floodlight-300" style={{ animationDelay: "300ms" }} />
+              {isStreaming && !streamingText && (
+                <div className="flex justify-start" role="status" aria-label="Assistant is thinking">
+                  <div className="flex items-center gap-3 rounded-fan bg-pitch-surface px-4 py-3 border border-border">
+                    <span className="text-sm text-text-muted font-ui">Thinking</span>
+                    <div className="flex gap-1">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-floodlight-300" style={{ animationDelay: "0ms" }} />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-floodlight-300" style={{ animationDelay: "150ms" }} />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-floodlight-300" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {error && (
-            <div className="rounded-fan border border-alert-red/30 bg-alert-red/10 px-4 py-3 text-sm text-alert-red font-ui" role="alert">
-              {error}
-            </div>
+              {error && (
+                <div className="rounded-fan border border-alert-red/30 bg-alert-red/10 px-4 py-3 text-sm text-alert-red font-ui" role="alert">
+                  {error}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Leaf, Recycle, Trash2, Droplet, Sparkles, Cpu, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
@@ -77,10 +78,17 @@ export function SustainabilityWidget() {
         {/* AI-Generated Tip */}
         <div className="mb-3 rounded-lg border border-emerald-500/15 bg-emerald-500/[0.04] p-2.5 flex gap-2">
           <Cpu size={14} className="text-emerald-400 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="font-ui text-[11px] text-text-secondary leading-relaxed">
-              {loading ? "Generating tip..." : aiTip || "Taking the Meadowlands Rail reduces matchday carbon emissions by 60% compared to driving."}
-            </p>
+          <div className="flex-1 space-y-1.5">
+            {loading ? (
+              <div className="space-y-1.5 animate-pulse">
+                <Skeleton className="h-3.5 w-full rounded bg-emerald-500/10" />
+                <Skeleton className="h-3.5 w-2/3 rounded bg-emerald-500/10" />
+              </div>
+            ) : (
+              <p className="font-ui text-[11px] text-text-secondary leading-relaxed">
+                {aiTip || "Taking the Meadowlands Rail reduces matchday carbon emissions by 60% compared to driving."}
+              </p>
+            )}
             <button onClick={loadAiTip} className="mt-1 text-[9px] text-emerald-500/70 hover:text-emerald-400 flex items-center gap-1 transition-colors">
               <RefreshCw size={10} /> New tip
             </button>

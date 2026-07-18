@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { apiClient } from "@/services/apiClient";
 import { Navbar } from "@/components/navigation/Navbar";
 import type { WayfindingRoute } from "@/services/wayfinding";
@@ -128,7 +129,17 @@ export function WayfindingPage() {
               </div>
             </div>
 
-            {route && (
+            {loading ? (
+              <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data space-y-4 animate-pulse">
+                <Skeleton className="h-5 w-1/3 rounded" />
+                <div className="space-y-3.5 pt-2">
+                  <div className="flex justify-between"><Skeleton className="h-4 w-1/3 rounded" /><Skeleton className="h-4 w-1/4 rounded" /></div>
+                  <div className="flex justify-between"><Skeleton className="h-4 w-1/3 rounded" /><Skeleton className="h-4 w-1/4 rounded" /></div>
+                  <div className="flex justify-between"><Skeleton className="h-4 w-1/3 rounded" /><Skeleton className="h-4 w-1/4 rounded" /></div>
+                  <div className="flex justify-between border-t border-white/[0.04] pt-2.5 mt-2"><Skeleton className="h-4 w-1/3 rounded" /><Skeleton className="h-5 w-16 rounded-full" /></div>
+                </div>
+              </div>
+            ) : route ? (
               <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data space-y-4">
                 <h3 className="font-display text-body-lg font-semibold text-text-primary border-b border-white/[0.05] pb-2">
                   Route Summary
@@ -154,7 +165,7 @@ export function WayfindingPage() {
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Right: Step directions list */}
@@ -176,9 +187,28 @@ export function WayfindingPage() {
             )}
 
             {loading && (
-              <div className="glass-card p-10 rounded-fan border border-white/[0.08] text-center shadow-data">
-                <Spinner size="lg" className="mx-auto text-blue-400" />
-                <p className="mt-3 text-body text-text-secondary">Mapping optimal routes...</p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 rounded-fan bg-white/[0.02] border border-white/[0.05] p-3 animate-pulse">
+                  <Skeleton className="h-5 w-24 rounded" />
+                  <ChevronRight size={14} className="text-text-muted animate-pulse" />
+                  <Skeleton className="h-5 w-28 rounded" />
+                </div>
+
+                <div className="space-y-3 animate-pulse">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="glass-card p-4 rounded-fan border border-white/[0.06] shadow-data flex gap-4">
+                      <Skeleton className="h-7 w-7 rounded-full shrink-0" />
+                      <div className="flex-1 space-y-2.5">
+                        <Skeleton className="h-4 w-full rounded" />
+                        <Skeleton className="h-4 w-3/4 rounded" />
+                        <div className="flex gap-2 pt-1">
+                          <Skeleton className="h-4 w-12 rounded" />
+                          <Skeleton className="h-4 w-16 rounded" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

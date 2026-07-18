@@ -22,8 +22,8 @@ export function ChatPage() {
   const { sessionId: urlSessionId } = useParams<{ sessionId: string }>();
   const { user } = useAuth();
   const activeSessionId = urlSessionId || null;
-  const { data: sessions } = useChatSessions();
-  const { data: dbMessages } = useSessionMessages(activeSessionId);
+  const { data: sessions, isLoading: sessionsLoading } = useChatSessions();
+  const { data: dbMessages, isLoading: messagesLoading } = useSessionMessages(activeSessionId);
   const { mutateAsync: createSession } = useCreateSession();
   const { mutate: deleteSession } = useDeleteSession();
   const qc = useQueryClient();
@@ -82,10 +82,16 @@ export function ChatPage() {
       "/chat/stream",
       { session_id: sessionId, message },
       (token) => setStreamingText((prev) => prev + token),
-      () => {
+      async () => {
+        if (sessionId) {
+          try {
+            await qc.invalidateQueries({ queryKey: ["chat-messages", sessionId] });
+          } catch (e) {
+            console.error("Failed to invalidate queries:", e);
+          }
+        }
         setIsStreaming(false);
         setStreamingText("");
-        if (sessionId) qc.invalidateQueries({ queryKey: ["chat-messages", sessionId] });
       },
       (e) => { setError(e.message); setIsStreaming(false); setStreamingText(""); },
     );
@@ -111,7 +117,7 @@ export function ChatPage() {
         <ChatSidebar
           sessions={sessions || []}
           activeSessionId={activeSessionId}
-          isLoading={false}
+          isLoading={sessionsLoading}
           onSelect={(id) => navigate(`/chat/${id}`)}
           onNew={() => navigate("/chat")}
           onDelete={(id) => {
@@ -157,6 +163,7 @@ export function ChatPage() {
               isStreaming={isStreaming}
               error={error}
               onRegenerate={handleRegenerate}
+              isLoading={messagesLoading}
             />
           )}
 

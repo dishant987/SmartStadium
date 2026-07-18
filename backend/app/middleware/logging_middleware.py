@@ -1,25 +1,38 @@
 import time
 import uuid
-
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-
 from app.utils.logger import logger
 
+class LoggingMiddleware:
+    def __init__(self, app):
+        self.app = app
 
-class LoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
         request_id = str(uuid.uuid4())
-        request.state.request_id = request_id
+        if "state" not in scope:
+            scope["state"] = {}
+        scope["state"]["request_id"] = request_id
+
         start = time.time()
-        response = await call_next(request)
-        elapsed = time.time() - start
-        logger.info(
-            "{method} {path} {status} {elapsed:.3f}s",
-            method=request.method,
-            path=request.url.path,
-            status=response.status_code,
-            elapsed=elapsed,
-            request_id=request_id,
-        )
-        return response
+        path = scope.get("path", "")
+        method = scope.get("method", "")
+
+        async def send_wrapper(message):
+            if message["type"] == "http.response.start":
+                status = message["status"]
+                elapsed = time.time() - start
+                logger.info(
+                    "{method} {path} {status} {elapsed:.3f}s",
+                    method=method,
+                    path=path,
+                    status=status,
+                    elapsed=elapsed,
+                    request_id=request_id,
+                )
+            await send(message)
+
+        await self.app(scope, receive, send_wrapper)
+
