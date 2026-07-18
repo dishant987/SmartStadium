@@ -40,7 +40,7 @@ export function Landing() {
   const toggleLargeText = useCallback(() => setLargeText((p) => !p), []);
 
   return (
-    <div className="min-h-screen bg-pitch-night text-text-primary font-ui relative">
+    <div className={`min-h-screen bg-pitch-night text-text-primary font-ui relative ${largeText ? "accessibility-large-text" : ""}`}>
       {/* ─── GLOBAL NAVBAR ─── */}
       <Navbar />
 

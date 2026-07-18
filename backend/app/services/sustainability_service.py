@@ -62,10 +62,34 @@ class SustainabilityService:
         try:
             response = await self.llm.complete(prompt)
             import json
-            tips_data = json.loads(response)
+            start = response.find("[")
+            end = response.rfind("]") + 1
+            if start != -1 and end != 0:
+                tips_data = json.loads(response[start:end])
+            else:
+                tips_data = json.loads(response)
             if isinstance(tips_data, list):
                 now = datetime.now(timezone.utc)
-                return [PersonalizedTipResponse(**t, generated_at=now) for t in tips_data[:3]]
+                res_tips = []
+                for t in tips_data:
+                    if not isinstance(t, dict):
+                        continue
+                    tip_val = t.get("tip") or t.get("tip_text") or t.get("text") or ""
+                    context_val = t.get("context") or t.get("why_it_matters") or t.get("reason") or ""
+                    impact_val = t.get("impact") or t.get("co2_saved") or t.get("carbon_saved") or ""
+                    category_val = t.get("category") or t.get("type") or "waste"
+                    if tip_val:
+                        res_tips.append(
+                            PersonalizedTipResponse(
+                                tip=str(tip_val),
+                                context=str(context_val),
+                                impact=str(impact_val),
+                                category=str(category_val),
+                                generated_at=now
+                            )
+                        )
+                if res_tips:
+                    return res_tips[:3]
         except Exception as e:
             logger.warning("Personalized tips failed: {err}", err=str(e))
         now = datetime.now(timezone.utc)

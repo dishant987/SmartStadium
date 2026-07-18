@@ -194,6 +194,8 @@ class PAService:
             "message": req.message, "gate": req.gate, "timestamp": now,
             "broadcast": req.broadcast, "languages": req.languages,
         })
+        if len(self.announcements) > 500:
+            self.announcements.pop(0)
 
         return PAAnnouncementResponse(announcement=announcement, tts_urls=tts_urls)
 

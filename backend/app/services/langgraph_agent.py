@@ -45,12 +45,19 @@ async def stadium_knowledge(query: str) -> str:
 async def get_wayfinding(from_zone: str, to_zone: str, accessible: bool = False) -> str:
     """Get walking directions between stadium zones. Zones: z1(Main Stand), z2(East Stand), z3(West Stand), z4(South Plaza), z5(Fan Zone). Set accessible=True for wheelchair routes."""
     from app.services.nav_service import NavService
+    from app.schemas.wayfinding_schema import WayfindingRequest
     nav = NavService()
     try:
-        result = nav.get_route(from_zone, to_zone, accessible)
-        steps = result.get("steps", [])
+        req = WayfindingRequest(from_zone=from_zone, to_zone=to_zone, accessible=accessible, wheelchair=accessible)
+        result = await nav.get_wayfinding_route(req)
+        steps = result.steps
         if steps:
-            return " → ".join(s["instruction"] for s in steps)
+            steps_desc = [f"{s.step_number}. {s.instruction}" + (f" (Landmark: {s.landmark})" if s.landmark else "") for s in steps]
+            summary = "\n".join(steps_desc)
+            summary += f"\nTotal Distance: {result.total_distance_m}m, Estimated Time: {result.estimated_time_min} mins."
+            if result.accessibility_summary:
+                summary += f"\nAccessibility: {result.accessibility_summary}"
+            return summary
         return "No route found between those zones."
     except Exception as e:
         return f"Route lookup failed: {e}"

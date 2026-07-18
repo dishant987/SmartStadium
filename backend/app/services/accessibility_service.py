@@ -9,7 +9,7 @@ from app.schemas.accessibility_schema import (
     AccessibilityStatus, AccessibilityRouteRequest, AccessibilityRouteStep,
     AccessibilityRouteResponse,
 )
-from app.schemas.nav_schema import RouteRequest
+from app.schemas.wayfinding_schema import WayfindingRequest
 from app.services.nav_service import NavService, ZONE_GRAPH, ZONES, WAYFINDING_DETAILS
 from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
@@ -78,8 +78,8 @@ class AccessibilityService:
 
     async def get_ai_route(self, req: AccessibilityRouteRequest) -> AccessibilityRouteResponse:
         _simulate_conditions()
-        route_req = RouteRequest(from_zone=req.from_zone, to_zone=req.to_zone, accessible=True)
-        base_route = await self.nav.get_route(route_req)
+        route_req = WayfindingRequest(from_zone=req.from_zone, to_zone=req.to_zone, accessible=True, wheelchair=req.wheelchair)
+        base_route = await self.nav.get_wayfinding_route(route_req)
 
         from_info = WAYFINDING_DETAILS.get(req.from_zone, {})
         to_info = WAYFINDING_DETAILS.get(req.to_zone, {})
@@ -94,7 +94,7 @@ class AccessibilityService:
             note = ""
             warning = ""
             if "elevator" in s.instruction.lower():
-                matched = [e for e in ELEVATORS if e["name"].split("(")[0].strip() in s.instruction]
+                matched = [e for e in ELEVATORS if e["name"].split("(")[0].strip().lower() in s.instruction.lower()]
                 if matched and matched[0]["status"] == "out_of_service":
                     note = f"{matched[0]['name']} is out of service"
                     alt = RAMP_ACCESS.get(req.from_zone, {}).get("ramp", "use alternative route")

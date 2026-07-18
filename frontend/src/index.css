@@ -196,4 +196,28 @@
   .animate-football-bounce-spin {
     animation: footballBounceSpin 5s ease-in-out infinite;
   }
+
+  /* Accessibility Large Text Utility */
+  .accessibility-large-text {
+    font-size: 1.125rem;
+  }
+  .accessibility-large-text p {
+    font-size: 1.125rem !important;
+    line-height: 1.75 !important;
+  }
+  .accessibility-large-text h1 {
+    font-size: 4.5rem !important;
+  }
+  .accessibility-large-text h2 {
+    font-size: 2.75rem !important;
+  }
+  .accessibility-large-text h3 {
+    font-size: 1.75rem !important;
+  }
+  .accessibility-large-text button {
+    font-size: 1.1rem !important;
+  }
+  .accessibility-large-text span {
+    font-size: 1rem !important;
+  }
 }
