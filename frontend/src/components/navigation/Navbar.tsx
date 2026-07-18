@@ -14,6 +14,7 @@ import {
   Volume2,
   BarChart3,
   LayoutDashboard,
+  Users,
   Home
 } from "lucide-react";
 import { pitchMark } from "@/theme/tokens";
@@ -142,6 +143,14 @@ export function Navbar() {
       path: "/analytics",
       icon: BarChart3,
       color: "text-purple-400 bg-purple-500/10",
+      requiresAuth: true
+    },
+    {
+      name: "Volunteer Ops",
+      desc: "Manage volunteer shifts & tasks",
+      path: "/volunteer",
+      icon: Users,
+      color: "text-teal-400 bg-teal-500/10",
       requiresAuth: true
     }
   ];

@@ -8,7 +8,7 @@ from app.schemas.ops_schema import (
     TransportLineResponse,
     RecommendationResponse,
 )
-from app.services.llm_router_service import LLMRouterService
+from app.services.llm_provider import LLMProvider
 
 
 class OpsService:
@@ -16,7 +16,7 @@ class OpsService:
     _incidents: list = []
 
     def __init__(self):
-        self.llm = LLMRouterService()
+        self.llm = LLMProvider()
 
     @property
     def incidents(self) -> list:

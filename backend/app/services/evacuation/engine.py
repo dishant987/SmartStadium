@@ -10,7 +10,7 @@ from app.services.evacuation.pathfinding import (
 )
 from app.services.evacuation.agent import CrowdAgent
 from app.services.evacuation.responder import ResponderAgent
-from app.services.llm_router_service import LLMRouterService
+from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
 
 
@@ -30,10 +30,9 @@ class SimulationEngine:
     running: bool = False
     evacuated_count: int = 0
     fire_spread_chance: float = 0.03
-    llm: LLMRouterService = field(default=None, init=False)
+    llm: LLMProvider = field(default_factory=LLMProvider)
 
     def __post_init__(self):
-        self.llm = LLMRouterService()
         self._init_sim()
 
     def _init_sim(self):

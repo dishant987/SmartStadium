@@ -12,28 +12,13 @@ from app.schemas.chat_schema import (
     SessionResponse,
     MessageResponse,
 )
-from app.services.llm_router_service import LLMRouterService
-from app.services.rag_service import RAGService
-
-SYSTEM_PROMPT = """You are StadiumSense, an expert AI assistant for the FIFA World Cup 2026.
-You help fans, staff, and organizers with:
-- Stadium navigation (gates, sections, levels, elevators, ramps)
-- Transit info (Meadowlands Rail, shuttle schedules, parking lots)
-- Accessibility (wheelchair access, accessible restrooms, assistive services)
-- Matchday info (schedules, ticketing, food vendors, security)
-- Sustainability (recycling, low-carbon transport, water stations)
-- Multilingual support (respond in the user's language)
-
-Be concise, helpful, and specific. Use markdown formatting when it helps.
-If you have stadium knowledge context below, use it to give accurate answers.
-If you don't know something specific, say so honestly rather than guessing."""
+from app.services.langgraph_agent import LangGraphAgent
 
 
 class ChatService:
     def __init__(self, db: Session):
         self.db = db
-        self.llm = LLMRouterService()
-        self.rag = RAGService()
+        self.agent = LangGraphAgent()
 
     def _user_sessions_q(self, user_id: str):
         return (
@@ -43,18 +28,6 @@ class ChatService:
             )
             .order_by(ChatSession.updated_at.desc())
         )
-
-    async def _build_prompt(self, message: str, history_text: str) -> str:
-        rag_docs = await self.rag.retrieve(message)
-        rag_context = "\n\n".join(rag_docs) if rag_docs else ""
-
-        parts = [SYSTEM_PROMPT]
-        if rag_context:
-            parts.append(f"\nRelevant stadium knowledge:\n{rag_context}")
-        if history_text:
-            parts.append(f"\nConversation history:\n{history_text}")
-        parts.append(f"\nUser: {message}")
-        return "\n".join(parts)
 
     async def respond(self, user_id: str, req: ChatRequest) -> ChatResponse:
         session = self.db.get(ChatSession, req.session_id)
@@ -70,12 +43,10 @@ class ChatService:
             .scalars()
             .all()
         )
-        history_text = "\n".join(
-            [f"{m.role.value}: {m.content}" for m in db_messages[-10:]]
-        )
+        history = [{"role": m.role.value, "content": m.content} for m in db_messages[-10:]]
+        history.append({"role": "user", "content": req.message})
 
-        prompt = await self._build_prompt(req.message, history_text)
-        reply = await self.llm.complete(prompt)
+        reply = await self.agent.respond(history)
 
         user_msg = ChatMessage(
             id=str(uuid.uuid4()),
@@ -120,11 +91,8 @@ class ChatService:
             .scalars()
             .all()
         )
-        history_text = "\n".join(
-            [f"{m.role.value}: {m.content}" for m in db_messages[-10:]]
-        )
-
-        prompt = await self._build_prompt(req.message, history_text)
+        history = [{"role": m.role.value, "content": m.content} for m in db_messages[-10:]]
+        history.append({"role": "user", "content": req.message})
 
         user_msg = ChatMessage(
             id=str(uuid.uuid4()),
@@ -142,7 +110,7 @@ class ChatService:
         self.db.commit()
 
         full_reply = ""
-        async for token in self.llm.complete_stream(prompt):
+        async for token in self.agent.respond_stream(history):
             full_reply += token
             yield token
 

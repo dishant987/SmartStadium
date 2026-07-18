@@ -15,11 +15,14 @@ from app.controllers.evacuation_controller import router as evacuation_router
 from app.controllers.wait_time_controller import router as wait_time_router
 from app.controllers.pa_controller import router as pa_router
 from app.controllers.analytics_controller import router as analytics_router
+from app.controllers.realtime_controller import router as realtime_router
+from app.controllers.volunteer_controller import router as volunteer_router
+from app.controllers.accessibility_controller import router as accessibility_router
 from app.middleware.error_handler import register_error_handlers
 from app.middleware.logging_middleware import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
 
-app = FastAPI(title="FIFA Fan Companion API", version="0.1.0")
+app = FastAPI(title="StadiumSense — FIFA World Cup 2026", version="1.0.0")
 
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(
@@ -53,3 +56,6 @@ app.include_router(evacuation_router, tags=["evacuation"])
 app.include_router(wait_time_router, prefix="/api/ops", tags=["wait-times"])
 app.include_router(pa_router, prefix="/api/pa", tags=["pa"])
 app.include_router(analytics_router, prefix="/api/analytics", tags=["analytics"])
+app.include_router(realtime_router, tags=["realtime"])
+app.include_router(volunteer_router, prefix="/api/volunteer", tags=["volunteer"])
+app.include_router(accessibility_router, prefix="/api/accessibility", tags=["accessibility"])

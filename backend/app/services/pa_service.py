@@ -1,16 +1,21 @@
+"""PA broadcast service with working TTS generation.
+
+Generates actual audio files via gTTS for each translation language.
+Serves audio through the /api/pa/tts/{ann_id}/{lang} endpoint."""
 import uuid
+import os
+from pathlib import Path
 from datetime import datetime, timezone
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from app.schemas.pa_schema import (
-    PAAnnouncementRequest,
-    PAAnnouncementResponse,
-    PAAnnouncement,
-    PALogResponse,
-    PALogEntry,
+    PAAnnouncementRequest, PAAnnouncementResponse, PAAnnouncement,
+    PALogResponse, PALogEntry,
 )
-from app.services.llm_router_service import LLMRouterService
+from app.services.llm_provider import LLMProvider
+from app.utils.logger import logger
 
+TTS_DIR = Path(__file__).resolve().parent.parent.parent / "tts_output"
 
 TRANSLATION_TEMPLATES = {
     "en": {
@@ -75,69 +80,85 @@ GATE_EXTRAS = {
     "delay": "Wait times may be longer than usual.",
 }
 
+LANG_TTS_CODES = {"en": "en", "es": "es", "fr": "fr", "de": "de", "ar": "ar", "zh": "zh-CN"}
+
 
 @dataclass
 class PAService:
-    def __init__(self):
-        self.llm = LLMRouterService()
-        self.announcements: list[dict] = []
+    llm: LLMProvider = field(default_factory=LLMProvider)
+    announcements: list = field(default_factory=list)
 
-    async def create_announcement(
-        self, req: PAAnnouncementRequest
-    ) -> PAAnnouncementResponse:
+    async def _generate_tts(self, text: str, lang: str, filename: str) -> bool:
+        try:
+            from gtts import gTTS
+            os.makedirs(TTS_DIR, exist_ok=True)
+            lang_code = LANG_TTS_CODES.get(lang, "en")
+            tts = gTTS(text=text, lang=lang_code, slow=False)
+            filepath = TTS_DIR / filename
+            tts.save(str(filepath))
+            logger.info("TTS saved: {f}", f=filepath)
+            return True
+        except Exception as e:
+            logger.warning("TTS failed for {lang}: {err}", lang=lang, err=str(e))
+            return False
+
+    async def create_announcement(self, req: PAAnnouncementRequest) -> PAAnnouncementResponse:
         now = datetime.now(timezone.utc).isoformat()
         ann_id = str(uuid.uuid4())[:8]
 
         translations = {}
+        tts_urls = {}
         for lang in req.languages:
             templates = TRANSLATION_TEMPLATES.get(lang, TRANSLATION_TEMPLATES["en"])
             template = templates.get(req.type, templates["general"])
             gate_label = req.gate or "the stadium"
             extra = GATE_EXTRAS.get(req.type, "")
-            translations[lang] = template.format(
-                gate=gate_label, message=req.message, extra=extra
-            )
+            translated = template.format(gate=gate_label, message=req.message, extra=extra)
+            translations[lang] = translated
+
+            # Generate TTS audio file
+            filename = f"{ann_id}_{lang}.mp3"
+            success = await self._generate_tts(translated, lang, filename)
+            tts_urls[lang] = f"/api/pa/tts/{ann_id}/{lang}" if success else ""
 
         announcement = PAAnnouncement(
-            id=ann_id,
-            type=req.type,
-            severity=req.severity,
-            original_message=req.message,
-            translations=translations,
-            gate=req.gate,
-            timestamp=now,
-            broadcast=req.broadcast,
+            id=ann_id, type=req.type, severity=req.severity,
+            original_message=req.message, translations=translations,
+            gate=req.gate, timestamp=now, broadcast=req.broadcast,
             status="broadcast" if req.broadcast else "draft",
         )
 
-        self.announcements.append(
-            {
-                "id": ann_id,
-                "type": req.type,
-                "severity": req.severity,
-                "message": req.message,
-                "gate": req.gate,
-                "timestamp": now,
-                "broadcast": req.broadcast,
-                "languages": req.languages,
-            }
-        )
-
-        tts_urls = {lang: f"/api/pa/tts/{ann_id}/{lang}" for lang in req.languages}
+        self.announcements.append({
+            "id": ann_id, "type": req.type, "severity": req.severity,
+            "message": req.message, "gate": req.gate, "timestamp": now,
+            "broadcast": req.broadcast, "languages": req.languages,
+        })
 
         return PAAnnouncementResponse(announcement=announcement, tts_urls=tts_urls)
+
+    async def get_tts_audio(self, ann_id: str, lang: str):
+        """Serve the TTS audio file for an announcement in a given language."""
+        filepath = TTS_DIR / f"{ann_id}_{lang}.mp3"
+        if filepath.exists():
+            return filepath
+        # Fallback: generate on the fly
+        entry = next((a for a in self.announcements if a["id"] == ann_id), None)
+        if entry:
+            templates = TRANSLATION_TEMPLATES.get(lang, TRANSLATION_TEMPLATES["en"])
+            template = templates.get(entry["type"], templates["general"])
+            extra = GATE_EXTRAS.get(entry["type"], "")
+            text = template.format(gate=entry["gate"] or "the stadium", message=entry["message"], extra=extra)
+            success = await self._generate_tts(text, lang, f"{ann_id}_{lang}.mp3")
+            if success:
+                return filepath
+        return None
 
     async def get_log(self) -> PALogResponse:
         entries = [
             PALogEntry(
-                id=a["id"],
-                type=a["type"],
-                severity=a["severity"],
-                message=a["message"],
-                gate=a["gate"],
-                timestamp=a["timestamp"],
-                broadcast=a["broadcast"],
-                languages=a["languages"],
+                id=a["id"], type=a["type"], severity=a["severity"],
+                message=a["message"], gate=a["gate"], timestamp=a["timestamp"],
+                broadcast=a["broadcast"], languages=a["languages"],
             )
             for a in reversed(self.announcements[-50:])
         ]

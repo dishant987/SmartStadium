@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Radio, Send, AlertTriangle, Info, AlertCircle, Volume2, RefreshCw } from "lucide-react";
+import { useState, useRef } from "react";
+import { Radio, Send, AlertTriangle, Info, AlertCircle, Volume2, RefreshCw, Play, Pause } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -28,6 +28,36 @@ const LANGUAGES = [
 ];
 
 const GATES = ["Gate A", "Gate B", "Gate C", "Gate D", "Gate E", "South Plaza", "Fan Zone"];
+
+const BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+
+function TTSPlayer({ annId, lang, label }: { annId: string; lang: string; label: string }) {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const togglePlay = () => {
+    if (playing && audioRef.current) {
+      audioRef.current.pause();
+      setPlaying(false);
+      return;
+    }
+    const url = `${BASE}/pa/tts/${annId}/${lang}`;
+    if (audioRef.current) {
+      audioRef.current.src = url;
+    } else {
+      audioRef.current = new Audio(url);
+    }
+    audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
+    audioRef.current.onended = () => setPlaying(false);
+  };
+
+  return (
+    <button onClick={togglePlay} className="flex items-center gap-1.5 text-data text-pitch-green-400 hover:text-pitch-green-300 transition-colors">
+      {playing ? <Pause size={12} /> : <Play size={12} />}
+      {label}
+    </button>
+  );
+}
 
 export function PAPage() {
   const [type, setType] = useState("gate_closed");
@@ -70,17 +100,11 @@ export function PAPage() {
 
   return (
     <div className="min-h-screen bg-pitch-night text-text-primary font-ui relative overflow-x-hidden">
-      {/* Global Navbar */}
       <Navbar />
-
-      {/* Grid overlay */}
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-10" />
-
-      {/* Ambient glows */}
       <div className="pointer-events-none absolute top-1/4 left-1/4 h-[300px] w-[300px] rounded-full bg-rose-500/[0.03] blur-[80px]" />
 
       <div className="mx-auto max-w-5xl px-6 pt-24 pb-16 relative z-10">
-        {/* Page Header */}
         <div className="mb-8 flex items-center justify-between border-b border-white/[0.05] pb-4">
           <div>
             <h1 className="font-display text-2xl font-bold text-text-primary flex items-center gap-2.5">
@@ -89,13 +113,12 @@ export function PAPage() {
               </span>
               Emergency PA System
             </h1>
-            <p className="text-body text-text-secondary mt-1">AI translation pipeline for instant multilingual broadcasts</p>
+            <p className="text-body text-text-secondary mt-1">AI translation + TTS pipeline for instant multilingual broadcasts</p>
           </div>
           <Badge variant="warning" className="bg-amber-500/15 border-amber-500/30 text-amber-300">Command Center</Badge>
         </div>
 
         <div className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
-          {/* Left Compose Section */}
           <div className="space-y-4">
             <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data">
               <h3 className="mb-4 font-display text-body-lg font-semibold text-text-primary flex items-center gap-2">
@@ -108,17 +131,14 @@ export function PAPage() {
                   <label className="mb-1.5 block text-data font-semibold text-text-muted uppercase tracking-wider">Announcement Category</label>
                   <div className="grid grid-cols-2 gap-2">
                     {ANNOUNCEMENT_TYPES.map((t) => (
-                      <button 
-                        key={t.id} 
+                      <button key={t.id}
                         onClick={() => { setType(t.id); setSeverity(t.severity); }}
                         className={`flex items-center gap-2 rounded-data px-3 py-2 text-data-md font-semibold text-left transition-all ${
-                          type === t.id 
-                            ? "bg-rose-500/15 text-rose-400 border border-rose-500/30" 
+                          type === t.id
+                            ? "bg-rose-500/15 text-rose-400 border border-rose-500/30"
                             : "bg-white/[0.03] text-text-secondary border border-transparent hover:bg-white/[0.05]"
                         }`}
-                      >
-                        <t.icon size={12} className="shrink-0" /> {t.label}
-                      </button>
+                      ><t.icon size={12} className="shrink-0" /> {t.label}</button>
                     ))}
                   </div>
                 </div>
@@ -126,20 +146,15 @@ export function PAPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Target Gate</label>
-                    <select 
-                      value={gate} 
-                      onChange={(e) => setGate(e.target.value)} 
-                      className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2 text-body text-text-primary outline-none focus:border-rose-500/50 transition-colors"
-                    >
+                    <select value={gate} onChange={(e) => setGate(e.target.value)}
+                      className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2 text-body text-text-primary outline-none focus:border-rose-500/50 transition-colors">
                       {GATES.map((g) => <option key={g} value={g}>{g}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Severity</label>
                     <div className="flex h-9 items-center px-3 rounded-data bg-white/[0.03] border border-white/[0.08] text-body capitalize font-semibold">
-                      <span className={`h-2 w-2 rounded-full mr-2 ${
-                        severity === "critical" ? "bg-rose-500 animate-ping" : severity === "high" ? "bg-orange-500" : "bg-blue-400"
-                      }`} />
+                      <span className={`h-2 w-2 rounded-full mr-2 ${severity === "critical" ? "bg-rose-500 animate-ping" : severity === "high" ? "bg-orange-500" : "bg-blue-400"}`} />
                       {severity}
                     </div>
                   </div>
@@ -147,42 +162,29 @@ export function PAPage() {
 
                 <div>
                   <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Message Content</label>
-                  <textarea 
-                    value={message} 
-                    onChange={(e) => setMessage(e.target.value)} 
-                    rows={3} 
-                    placeholder="Enter broadcast message details in English…"
-                    className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2.5 text-body text-text-primary outline-none focus:border-rose-500/50 resize-none transition-colors placeholder:text-text-muted" 
-                  />
+                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
+                    placeholder="Enter broadcast message details in English..."
+                    className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2.5 text-body text-text-primary outline-none focus:border-rose-500/50 resize-none transition-colors placeholder:text-text-muted" />
                 </div>
 
                 <div>
                   <label className="mb-1.5 block text-data font-semibold text-text-muted uppercase tracking-wider">Target Languages ({languages.length})</label>
                   <div className="flex flex-wrap gap-1.5">
                     {LANGUAGES.map((l) => (
-                      <button 
-                        key={l.id} 
-                        onClick={() => toggleLang(l.id)}
+                      <button key={l.id} onClick={() => toggleLang(l.id)}
                         className={`rounded-pill px-3 py-1 text-data font-semibold border transition-all ${
-                          languages.includes(l.id) 
-                            ? "bg-pitch-green-500/10 text-pitch-green-400 border-pitch-green-500/30" 
+                          languages.includes(l.id)
+                            ? "bg-pitch-green-500/10 text-pitch-green-400 border-pitch-green-500/30"
                             : "bg-transparent text-text-muted border-white/[0.08] hover:bg-white/[0.03]"
-                        }`}
-                      >
-                        {l.label}
-                      </button>
+                        }`}>{l.label}</button>
                     ))}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 border-t border-white/[0.05] pt-4">
                   <label className="flex items-center gap-2 text-data-md font-semibold text-text-secondary cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={broadcast} 
-                      onChange={(e) => setBroadcast(e.target.checked)}
-                      className="accent-rose-500 h-4 w-4 rounded border-white/[0.08] bg-pitch-night" 
-                    />
+                    <input type="checkbox" checked={broadcast} onChange={(e) => setBroadcast(e.target.checked)}
+                      className="accent-rose-500 h-4 w-4 rounded border-white/[0.08] bg-pitch-night" />
                     Live Transmission Broadcast
                   </label>
                   <Badge variant={broadcast ? "error" : "default"} className={broadcast ? "bg-rose-500/10 text-rose-400 border border-rose-500/30" : ""}>
@@ -205,20 +207,22 @@ export function PAPage() {
                 <div className="space-y-3">
                   {Object.entries(result.announcement.translations).map(([lang, text]) => (
                     <div key={lang} className="rounded-data bg-white/[0.02] border border-white/[0.05] p-3">
-                      <Badge className="mb-2 font-display uppercase font-semibold">{lang}</Badge>
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge className="font-display uppercase font-semibold">{lang}</Badge>
+                        <TTSPlayer annId={result.announcement.id} lang={lang} label={`Play ${lang.toUpperCase()}`} />
+                      </div>
                       <p className="text-body text-text-primary leading-relaxed">{text}</p>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 text-data-md font-semibold text-text-secondary flex items-center gap-2 border-t border-white/[0.05] pt-3">
-                  <span>Broadcast status:</span> 
+                  <span>Broadcast status:</span>
                   <Badge variant={result.announcement.broadcast ? "error" : "default"}>{result.announcement.status}</Badge>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Right Log Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-white/[0.05] pb-3">
               <h3 className="font-display text-body-lg font-bold text-text-primary">Logs Feed</h3>
@@ -247,7 +251,7 @@ export function PAPage() {
                     <span className="text-data text-text-muted">{new Date(a.timestamp).toLocaleTimeString()}</span>
                   </div>
                   <p className="text-body text-text-primary leading-relaxed">{a.message}</p>
-                  <div className="mt-2 flex items-center justify-between text-data text-text-muted border-t border-white/[0.03] pt-2">
+                  <div className="flex items-center justify-between text-data text-text-muted border-t border-white/[0.03] pt-2">
                     <span>Langs: {a.languages.map((l) => l.toUpperCase()).join(", ")}</span>
                     {a.broadcast && <Badge variant="error" className="bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold px-2 py-0.5">BROADCASTED</Badge>}
                   </div>

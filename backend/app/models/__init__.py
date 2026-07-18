@@ -5,5 +5,6 @@ from app.models.event import Event
 from app.models.incident import Incident
 from app.models.chat_session import ChatSession
 from app.models.chat_message import ChatMessage
+from app.models.volunteer import Volunteer, VolunteerTask
 
-__all__ = ["Base", "User", "Venue", "Event", "Incident", "ChatSession", "ChatMessage"]
+__all__ = ["Base", "User", "Venue", "Event", "Incident", "ChatSession", "ChatMessage", "Volunteer", "VolunteerTask"]

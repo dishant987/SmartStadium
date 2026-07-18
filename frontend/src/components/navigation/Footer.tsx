@@ -71,6 +71,11 @@ export function Footer() {
                   <span className="h-1 w-1 rounded-full bg-purple-400" /> Post-Match Analytics
                 </Link>
               </li>
+              <li>
+                <Link to="/volunteer" className="hover:text-pitch-green-400 transition-colors flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-teal-400" /> Volunteer Operations
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -1,7 +1,7 @@
 import json
 import asyncio
 from dataclasses import dataclass
-from app.services.llm_router_service import LLMRouterService
+from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
 
 
@@ -9,7 +9,7 @@ from app.utils.logger import logger
 class ResponderAgent:
     id: int
     sector: tuple[int, int, int, int]  # row_start, row_end, col_start, col_end
-    llm: LLMRouterService
+    llm: LLMProvider
     last_tick: int = 0
     cooldown: int = 60  # 3 seconds at 20fps
 

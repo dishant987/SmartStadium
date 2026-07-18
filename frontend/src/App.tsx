@@ -8,6 +8,8 @@ import { ProfilePage } from "@/pages/ProfilePage";
 import { WayfindingPage } from "@/pages/WayfindingPage";
 import { PAPage } from "@/pages/PAPage";
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
+import { VolunteerPage } from "@/pages/VolunteerPage";
+import { VolunteerRegisterPage } from "@/pages/VolunteerRegisterPage";
 import { ToastContainer } from "@/components/ui/Toast";
 
 const EvacuationPage = lazy(async () => { const m = await import("@/pages/EvacuationPage"); return { default: m.EvacuationPage }; });
@@ -36,6 +38,8 @@ function AppRoutes() {
         <Route path="/wayfinding" element={<ProtectedRoute><WayfindingPage /></ProtectedRoute>} />
         <Route path="/pa" element={<ProtectedRoute><PAPage /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
+        <Route path="/volunteer" element={<ProtectedRoute><VolunteerPage /></ProtectedRoute>} />
+        <Route path="/volunteer/register" element={<ProtectedRoute><VolunteerRegisterPage /></ProtectedRoute>} />
       </Routes>
       <ToastContainer />
     </>
