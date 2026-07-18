@@ -208,7 +208,7 @@ def test_volunteer_service(db_session):
     svc = VolunteerService(db_session)
     
     # Create Volunteer
-    vol_req = VolunteerCreate(name="John Doe", role="usher", zone="z1", languages=["en", "es"], phone="555-0199")
+    vol_req = VolunteerCreate(name="John Doe", role="usher", zone="z1", languages="en,es", phone="555-0199")
     vol_res = svc.create_volunteer("user-1", vol_req)
     assert vol_res.id is not None
     assert vol_res.name == "John Doe"

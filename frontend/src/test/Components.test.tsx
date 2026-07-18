@@ -1,8 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import React from "react";
-
 // Mock the apiClient service
 vi.mock("@/services/apiClient", () => ({
   apiClient: vi.fn(),

@@ -1,18 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { ToastContainer } from "@/components/ui/Toast";
 import { ToastProvider, useToast } from "@/context/ToastContext";
 
-function ToastDisplay({ id, message, type }: { id: string; message: string; type: string }) {
-  const { removeToast } = useToast();
-  return (
-    <div>
-      <span>{message}</span>
-      <button onClick={() => removeToast(id)}>x</button>
-    </div>
-  );
-}
+
 
 function TestHarness() {
   const { addToast } = useToast();

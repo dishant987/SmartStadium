@@ -1,4 +1,4 @@
-import { Train, ShieldAlert, Bus, Route } from "lucide-react";
+import { Train, Bus, Route } from "lucide-react";
 import { useTransport } from "@/hooks/useTransport";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";

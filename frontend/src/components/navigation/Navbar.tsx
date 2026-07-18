@@ -13,11 +13,10 @@ import {
   ShieldAlert,
   Volume2,
   BarChart3,
-  LayoutDashboard,
-  Users,
-  Home
+  Users
 } from "lucide-react";
-import { pitchMark } from "@/theme/tokens";
+
+
 
 export function Navbar() {
   const navigate = useNavigate();

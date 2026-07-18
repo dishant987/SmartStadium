@@ -351,7 +351,8 @@ function Ball({
       v.fromBufferAttribute(posAttr, i);
       v.normalize();
 
-      const { isPentagon, diff } = classifyPoint(v.x, v.y, v.z, centers);
+      const { isPentagon: _isPentagon, diff } = classifyPoint(v.x, v.y, v.z, centers);
+      void _isPentagon;
 
       let radiusScale: number;
       if (diff < SEAM_LINE) {

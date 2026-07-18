@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.schemas.ops_schema import (
     IncidentReportRequest,
@@ -12,23 +12,17 @@ from app.services.llm_provider import LLMProvider
 
 
 class OpsService:
-    # Persist incidents across requests since Depends() instantiates the service per request
-    _incidents: list = []
-
     def __init__(self):
         self.llm = LLMProvider()
-
-    @property
-    def incidents(self) -> list:
-        return OpsService._incidents
+        self._incidents: list = []
 
     async def list_incidents(self) -> list[dict]:
-        return [i for i in self.incidents if i.get("status") != "resolved"]
+        return [i for i in self._incidents if i.get("status") != "resolved"]
 
     async def report_incident(
         self, req: IncidentReportRequest
     ) -> IncidentReportResponse:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         record = {
             "id": str(uuid.uuid4()),
             "severity": req.severity,
@@ -38,7 +32,7 @@ class OpsService:
             "status": "open",
             "created_at": now,
         }
-        self.incidents.append(record)
+        self._incidents.append(record)
         return IncidentReportResponse(id=record["id"], status="open", created_at=now)
 
     async def get_crowd_density(self) -> list[CrowdZoneResponse]:

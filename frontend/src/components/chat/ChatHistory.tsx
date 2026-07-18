@@ -27,6 +27,7 @@ const timeAgo = (date: string) => {
 export function ChatHistory({ sessions, activeSessionId, isLoading, onSelect, onNew, onDelete }: Props) {
   const [deleting, setDeleting] = useState<string | null>(null);
   const { addToast } = useToast();
+  void addToast;
 
   const handleDelete = (id: string) => {
     setDeleting(id);

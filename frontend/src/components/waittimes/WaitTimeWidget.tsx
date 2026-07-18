@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
-import type { WaitTimeLocation, WaitTimeResponse } from "@/services/waitTimes";
+import type { WaitTimeResponse } from "@/services/waitTimes";
 
 const ZONES = [
   { id: "all", name: "All Zones" },

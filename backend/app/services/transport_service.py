@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.schemas.transport_schema import TransitLine, TransportStatusResponse
 
@@ -58,5 +58,5 @@ class TransportService:
                     delay_minutes=0,
                 ),
             ],
-            last_updated=datetime.utcnow(),
+            last_updated=datetime.now(timezone.utc),
         )

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Accessibility, Eye, Type, AlertTriangle, Cpu, RefreshCw } from "lucide-react";
+import { Accessibility, Type, AlertTriangle, Cpu, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";

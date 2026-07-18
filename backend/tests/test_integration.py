@@ -121,7 +121,7 @@ def test_auth_and_volunteer_flow(client):
     # Join volunteer program
     vol_resp = client.post(
         "/api/volunteer/volunteers",
-        json={"name": "Volunteer User", "role": "usher", "zone": "z1", "languages": ["en"], "phone": "555-1234"},
+        json={"name": "Volunteer User", "role": "usher", "zone": "z1", "languages": "en", "phone": "555-1234"},
         headers=headers
     )
     assert vol_resp.status_code == 200

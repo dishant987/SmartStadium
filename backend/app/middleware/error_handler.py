@@ -61,7 +61,7 @@ def register_error_handlers(app: FastAPI):
     async def value_error_handler(request: Request, exc: ValueError):
         rid = _request_id(request)
         logger.warning("ValueError: {msg}", msg=str(exc), request_id=rid)
-        return _error_response(400, "bad_request", str(exc), rid)
+        return _error_response(400, "bad_request", "Invalid request.", rid)
 
     @app.exception_handler(AppException)
     async def app_exception_handler(request: Request, exc: AppException):

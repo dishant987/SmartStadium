@@ -2,7 +2,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Card } from "@/components/ui/Card";
 import { CrowdDensityWidget } from "@/components/dashboard/CrowdDensityWidget";
 import { IncidentFeed } from "@/components/dashboard/IncidentFeed";
 import { DecisionSupportPanel } from "@/components/dashboard/DecisionSupportPanel";
@@ -16,17 +15,11 @@ import { Footer } from "@/components/navigation/Footer";
 import { InteractiveFootball } from "@/components/interactive/InteractiveFootball";
 import { useState, useCallback } from "react";
 import {
-  MapPin,
   Clock,
-  ShieldAlert,
   Volume2,
   BarChart3,
-  ChevronRight,
   Users,
-  HelpCircle,
   ArrowRight,
-  TrendingUp,
-  Activity,
   Navigation
 } from "lucide-react";
 

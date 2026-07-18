@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BarChart3, TrendingUp, TrendingDown, Minus, Users, Clock, Zap, RefreshCw } from "lucide-react";
+import { BarChart3, TrendingUp, TrendingDown, Minus, Users, Zap, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";

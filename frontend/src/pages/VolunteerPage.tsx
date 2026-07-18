@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Users, ClipboardList, MapPin, Phone, Globe,
-  Clock, CheckCircle, AlertTriangle, ArrowRight,
+  CheckCircle,
   UserPlus, RefreshCw
 } from "lucide-react";
 import type { VolunteerDashboard, Volunteer, VolunteerTask } from "@/services/volunteer";

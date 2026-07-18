@@ -3,7 +3,6 @@ import { Leaf, Recycle, Trash2, Droplet, Sparkles, Cpu, RefreshCw } from "lucide
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
 import { useAuth } from "@/context/AuthContext";
 
