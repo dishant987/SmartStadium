@@ -6,7 +6,6 @@ import uuid
 import os
 from pathlib import Path
 from datetime import datetime, timezone
-from dataclasses import dataclass, field
 
 from app.schemas.pa_schema import (
     PAAnnouncementRequest, PAAnnouncementResponse, PAAnnouncement,
@@ -83,10 +82,15 @@ GATE_EXTRAS = {
 LANG_TTS_CODES = {"en": "en", "es": "es", "fr": "fr", "de": "de", "ar": "ar", "zh": "zh-CN"}
 
 
-@dataclass
 class PAService:
-    llm: LLMProvider = field(default_factory=LLMProvider)
-    announcements: list = field(default_factory=list)
+    _announcements: list = []
+
+    def __init__(self):
+        self.llm = LLMProvider()
+
+    @property
+    def announcements(self) -> list:
+        return PAService._announcements
 
     async def _generate_tts(self, text: str, lang: str, filename: str) -> bool:
         try:

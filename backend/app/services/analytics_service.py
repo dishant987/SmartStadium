@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 
 from app.schemas.analytics_schema import (
     PostMatchAnalyticsResponse,
@@ -10,9 +9,9 @@ from app.schemas.analytics_schema import (
 from app.services.llm_provider import LLMProvider
 
 
-@dataclass
 class AnalyticsService:
-    llm: LLMProvider = field(default_factory=LLMProvider)
+    def __init__(self):
+        self.llm = LLMProvider()
 
     async def get_post_match_analytics(self) -> PostMatchAnalyticsResponse:
         metrics = [

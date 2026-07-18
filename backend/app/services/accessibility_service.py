@@ -4,7 +4,6 @@ Monitors real-time accessibility conditions (elevator status, ramp availability,
 crowd density on accessible paths) and generates AI-optimized routes."""
 import random
 from datetime import datetime, timezone
-from dataclasses import dataclass, field
 
 from app.schemas.accessibility_schema import (
     AccessibilityStatus, AccessibilityRouteRequest, AccessibilityRouteStep,
@@ -64,10 +63,10 @@ def _simulate_conditions():
     ]
 
 
-@dataclass
 class AccessibilityService:
-    llm: LLMProvider = field(default_factory=LLMProvider)
-    nav: NavService = field(default_factory=NavService)
+    def __init__(self):
+        self.llm = LLMProvider()
+        self.nav = NavService()
 
     async def get_status(self) -> list[AccessibilityStatus]:
         _simulate_conditions()

@@ -4,7 +4,6 @@ Provides AI-generated personalized eco-tips, carbon impact analysis,
 and real-time sustainability recommendations using LangChain + LangGraph."""
 import random
 from datetime import datetime, timezone
-from dataclasses import dataclass, field
 
 from app.schemas.sustainability_schema import (
     SustainabilityTipResponse, RecyclingStation, StationResponse,
@@ -33,9 +32,9 @@ EQUIVALENTS = {
 }
 
 
-@dataclass
 class SustainabilityService:
-    llm: LLMProvider = field(default_factory=LLMProvider)
+    def __init__(self):
+        self.llm = LLMProvider()
 
     async def get_tip(self, context: str = "") -> SustainabilityTipResponse:
         if context and (self.llm._providers and any(p.__class__.__name__ != "MockChatModel" for p in self.llm._providers)):
