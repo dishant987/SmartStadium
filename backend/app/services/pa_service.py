@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from datetime import datetime, timezone
 
+from app.config import settings
 from app.schemas.pa_schema import (
     PAAnnouncementRequest, PAAnnouncementResponse, PAAnnouncement,
     PALogResponse, PALogEntry,
@@ -106,6 +107,54 @@ class PAService:
             logger.warning("TTS failed for {lang}: {err}", lang=lang, err=str(e))
             return False
 
+    async def _upload_to_cloudinary(self, filepath: Path, filename: str) -> str | None:
+        try:
+            import cloudinary
+            import cloudinary.uploader
+            
+            if not (settings.cloudinary_cloud_name and settings.cloudinary_api_key and settings.cloudinary_api_secret):
+                if settings.cloudinary_url:
+                    pass
+                else:
+                    logger.info("Cloudinary credentials not fully configured, using local file serving")
+                    return None
+            
+            if settings.cloudinary_cloud_name:
+                cloudinary.config(
+                    cloud_name=settings.cloudinary_cloud_name,
+                    api_key=settings.cloudinary_api_key,
+                    api_secret=settings.cloudinary_api_secret,
+                    secure=True
+                )
+            
+            public_id = Path(filename).stem
+            logger.info("Uploading {f} to Cloudinary...", f=filename)
+            
+            import asyncio
+            from concurrent.futures import ThreadPoolExecutor
+            
+            def do_upload():
+                return cloudinary.uploader.upload(
+                    str(filepath),
+                    public_id=public_id,
+                    resource_type="video",
+                    folder="stadiumsense_tts"
+                )
+            
+            loop = asyncio.get_event_loop()
+            with ThreadPoolExecutor() as pool:
+                res = await loop.run_in_executor(pool, do_upload)
+                
+            secure_url = res.get("secure_url")
+            logger.info("Cloudinary upload successful: {u}", u=secure_url)
+            return secure_url
+        except ImportError:
+            logger.warning("cloudinary package not installed, using local file serving")
+            return None
+        except Exception as e:
+            logger.warning("Cloudinary upload failed: {err}", err=str(e))
+            return None
+
     async def create_announcement(self, req: PAAnnouncementRequest) -> PAAnnouncementResponse:
         now = datetime.now(timezone.utc).isoformat()
         ann_id = str(uuid.uuid4())[:8]
@@ -123,7 +172,15 @@ class PAService:
             # Generate TTS audio file
             filename = f"{ann_id}_{lang}.mp3"
             success = await self._generate_tts(translated, lang, filename)
-            tts_urls[lang] = f"/api/pa/tts/{ann_id}/{lang}" if success else ""
+            
+            cloudinary_url = None
+            if success:
+                cloudinary_url = await self._upload_to_cloudinary(TTS_DIR / filename, filename)
+                
+            if cloudinary_url:
+                tts_urls[lang] = cloudinary_url
+            else:
+                tts_urls[lang] = f"/api/pa/tts/{ann_id}/{lang}" if success else ""
 
         announcement = PAAnnouncement(
             id=ann_id, type=req.type, severity=req.severity,
