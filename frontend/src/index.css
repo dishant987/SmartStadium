@@ -1,0 +1,199 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Inter Tight", system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-pitch-night text-text-primary antialiased overflow-x-hidden;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.02) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.02) 0%, transparent 40%);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #030712;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+}
+
+@layer utilities {
+
+  /* Premium Glassmorphism */
+  .glass-card {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card-hover:hover {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(16, 185, 129, 0.2);
+    box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Neon Text Gradients */
+  .text-glow-green {
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+
+  .text-glow-yellow {
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-text-primary via-pitch-green-400 to-floodlight-200;
+  }
+
+  /* Keyframe Animations */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+
+  @keyframes pulseGlow {
+
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.35;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes gridMove {
+    0% {
+      background-position: 0 0;
+    }
+
+    100% {
+      background-position: 40px 40px;
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 8s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+
+  /* Dropdown reveals that prevent translation conflicts */
+  @keyframes dropdownReveal {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .animate-dropdown-reveal {
+    animation: dropdownReveal 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes mobileReveal {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-mobile-reveal {
+    animation: mobileReveal 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Grid Background Overlay */
+  .grid-bg {
+    background-size: 40px 40px;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    animation: gridMove 20s linear infinite;
+  }
+
+  /* Realistic soccer ball bounce and rotation */
+  @keyframes footballBounceSpin {
+    0% {
+      transform: translateY(0) rotate(0deg) scale(1);
+    }
+
+    30% {
+      transform: translateY(-40px) rotate(120deg) scale(0.97);
+    }
+
+    50% {
+      transform: translateY(0) rotate(180deg) scale(1.05);
+    }
+
+    70% {
+      transform: translateY(-12px) rotate(240deg) scale(0.99);
+    }
+
+    100% {
+      transform: translateY(0) rotate(360deg) scale(1);
+    }
+  }
+
+  .animate-football-bounce-spin {
+    animation: footballBounceSpin 5s ease-in-out infinite;
+  }
+}

@@ -1,0 +1,55 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.config import settings
+from app.db.session import engine
+from app.models import Base
+from app.controllers.health_controller import router as health_router
+from app.controllers.auth_controller import router as auth_router
+from app.controllers.chat_controller import router as chat_router
+from app.controllers.ops_controller import router as ops_router
+from app.controllers.nav_controller import router as nav_router
+from app.controllers.transport_controller import router as transport_router
+from app.controllers.sustainability_controller import router as sustainability_router
+from app.controllers.evacuation_controller import router as evacuation_router
+from app.controllers.wait_time_controller import router as wait_time_router
+from app.controllers.pa_controller import router as pa_router
+from app.controllers.analytics_controller import router as analytics_router
+from app.middleware.error_handler import register_error_handlers
+from app.middleware.logging_middleware import LoggingMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
+
+app = FastAPI(title="FIFA Fan Companion API", version="0.1.0")
+
+origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(RateLimitMiddleware, max_requests=30, window_seconds=60)
+
+register_error_handlers(app)
+
+
+@app.on_event("startup")
+def create_tables():
+    Base.metadata.create_all(bind=engine)
+
+
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(health_router, prefix="/api/health", tags=["health"])
+app.include_router(chat_router, prefix="/api/chat", tags=["chat"])
+app.include_router(ops_router, prefix="/api/ops", tags=["ops"])
+app.include_router(nav_router, prefix="/api/nav", tags=["nav"])
+app.include_router(transport_router, prefix="/api/transport", tags=["transport"])
+app.include_router(
+    sustainability_router, prefix="/api/sustainability", tags=["sustainability"]
+)
+app.include_router(evacuation_router, tags=["evacuation"])
+app.include_router(wait_time_router, prefix="/api/ops", tags=["wait-times"])
+app.include_router(pa_router, prefix="/api/pa", tags=["pa"])
+app.include_router(analytics_router, prefix="/api/analytics", tags=["analytics"])
