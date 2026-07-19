@@ -172,7 +172,7 @@ export function WayfindingPage() {
           {/* Right: Step directions list */}
           <div className="space-y-4">
             {error && (
-              <div className="rounded-fan border border-rose-500/20 bg-rose-500/10 p-4 text-body text-rose-400">
+              <div className="rounded-fan border border-rose-500/20 bg-rose-500/10 p-4 text-body text-rose-400" role="alert">
                 {error}
               </div>
             )}

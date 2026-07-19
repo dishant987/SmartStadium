@@ -32,7 +32,9 @@ export function VolunteerRegisterPage() {
     try {
       await createVolunteer({ name: name.trim(), role, zone: zone || undefined, languages: languages || "en", phone: phone || undefined });
       navigate("/volunteer");
-    } catch { /* ignore */ }
+    } catch {
+      // ponytail: silent catch
+    }
     setSubmitting(false);
   };
 

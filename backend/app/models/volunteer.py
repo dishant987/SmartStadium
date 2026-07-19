@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, DateTime, Text
+from sqlalchemy import String, DateTime, Text
+from sqlalchemy.orm import Mapped, mapped_column
 from app.models.base import Base
 import enum
 
@@ -30,27 +31,27 @@ class VolunteerTaskStatus(str, enum.Enum):
 class Volunteer(Base):
     __tablename__ = "volunteers"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, nullable=False, index=True)
-    name = Column(String(200), nullable=False)
-    role = Column(String(50), nullable=False, default=VolunteerRole.concierge.value)
-    status = Column(String(20), nullable=False, default=VolunteerStatus.available.value)
-    zone = Column(String(10), nullable=True)
-    languages = Column(String(500), default="en")
-    phone = Column(String(20), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(String, index=True)
+    name: Mapped[str] = mapped_column(String(200))
+    role: Mapped[str] = mapped_column(String(50), default=VolunteerRole.concierge.value)
+    status: Mapped[str] = mapped_column(String(20), default=VolunteerStatus.available.value)
+    zone: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    languages: Mapped[str] = mapped_column(String(500), default="en")
+    phone: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class VolunteerTask(Base):
     __tablename__ = "volunteer_tasks"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    volunteer_id = Column(String, nullable=True, index=True)
-    task_type = Column(String(50), nullable=False)
-    description = Column(Text, nullable=False)
-    zone = Column(String(10), nullable=True)
-    priority = Column(String(10), default="medium")
-    status = Column(String(20), default=VolunteerTaskStatus.assigned.value)
-    assigned_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    completed_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    volunteer_id: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    task_type: Mapped[str] = mapped_column(String(50))
+    description: Mapped[str] = mapped_column(Text)
+    zone: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    priority: Mapped[str] = mapped_column(String(10), default="medium")
+    status: Mapped[str] = mapped_column(String(20), default=VolunteerTaskStatus.assigned.value)
+    assigned_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))

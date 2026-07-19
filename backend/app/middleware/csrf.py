@@ -3,6 +3,8 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
+SKIP_PATHS = ("/api/auth/", "/api/health", "/ws/")
+
 
 class CSRFProtectMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, cookie_name: str = "csrf_token", header_name: str = "X-CSRF-Token"):
@@ -11,7 +13,7 @@ class CSRFProtectMiddleware(BaseHTTPMiddleware):
         self.header_name = header_name
 
     async def dispatch(self, request: Request, call_next):
-        if request.url.path.startswith("/api/"):
+        if any(request.url.path.startswith(p) for p in SKIP_PATHS):
             return await call_next(request)
 
         if request.method in ("GET", "HEAD", "OPTIONS", "TRACE"):

@@ -45,7 +45,9 @@ export function AnalyticsPage() {
     try {
       const res = await apiClient<PostMatchAnalyticsResponse>("/analytics/post-match");
       setData(res);
-    } catch {}
+    } catch {
+      // ponytail: silent catch, data stays null → skeleton shown
+    }
     setLoading(false);
   };
 

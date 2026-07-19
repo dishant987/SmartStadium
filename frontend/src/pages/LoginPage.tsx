@@ -105,7 +105,7 @@ export function LoginPage() {
           </div>
 
           {error && (
-            <div className="rounded-data border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-data text-rose-400 flex items-center gap-1.5">
+            <div className="rounded-data border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-data text-rose-400 flex items-center gap-1.5" role="alert" aria-live="assertive">
               <AlertCircle size={12} className="shrink-0" />
               <span>{error}</span>
             </div>

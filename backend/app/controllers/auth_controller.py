@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Depends, Response, Request
+from fastapi import APIRouter, Depends, Response, Request, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -74,7 +74,6 @@ def login(body: LoginRequest, response: Response, db: Session = Depends(get_db))
 def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
     refresh_token = request.cookies.get(COOKIE_REFRESH)
     if not refresh_token:
-        from fastapi import HTTPException
         raise HTTPException(status_code=401, detail="No refresh token")
     result = AuthService(db).refresh_token(refresh_token)
     _set_auth_cookies(response, result.access_token, result.refresh_token)

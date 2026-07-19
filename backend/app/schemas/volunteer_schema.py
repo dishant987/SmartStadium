@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
 
 
 class VolunteerCreate(BaseModel):
     name: str
     role: str = "concierge"
-    zone: Optional[str] = None
+    zone: str | None = None
     languages: str = "en"
-    phone: Optional[str] = None
+    phone: str | None = None
 
 
 class VolunteerResponse(BaseModel):
@@ -17,41 +16,41 @@ class VolunteerResponse(BaseModel):
     name: str
     role: str
     status: str
-    zone: Optional[str] = None
+    zone: str | None = None
     languages: str
-    phone: Optional[str] = None
+    phone: str | None = None
     created_at: datetime
 
 
 class VolunteerUpdate(BaseModel):
-    status: Optional[str] = None
-    zone: Optional[str] = None
+    status: str | None = None
+    zone: str | None = None
 
 
 class VolunteerTaskCreate(BaseModel):
-    volunteer_id: Optional[str] = None
+    volunteer_id: str | None = None
     task_type: str
     description: str
-    zone: Optional[str] = None
+    zone: str | None = None
     priority: str = "medium"
 
 
 class VolunteerTaskResponse(BaseModel):
     id: str
-    volunteer_id: Optional[str] = None
+    volunteer_id: str | None = None
     task_type: str
     description: str
-    zone: Optional[str] = None
+    zone: str | None = None
     priority: str
     status: str
-    assigned_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
+    assigned_at: datetime | None = None
+    completed_at: datetime | None = None
     created_at: datetime
 
 
 class VolunteerTaskUpdate(BaseModel):
     status: str
-    volunteer_id: Optional[str] = None
+    volunteer_id: str | None = None
 
 
 class VolunteerDashboardResponse(BaseModel):

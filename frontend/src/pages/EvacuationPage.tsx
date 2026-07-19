@@ -62,7 +62,9 @@ export function EvacuationPage() {
             setAllDecisions((prev) => [...prev, ...data.decisions].slice(-50));
           }
         }
-      } catch { }
+      } catch {
+        // ponytail: silent catch on WS message parse
+      }
     };
 
     return () => { ws.close(); };

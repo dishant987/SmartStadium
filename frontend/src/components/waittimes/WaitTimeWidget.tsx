@@ -69,7 +69,9 @@ export function WaitTimeWidget() {
         body: JSON.stringify({ zone, match_minute: matchMinute, match_status: matchStatus }),
       });
       setData(result);
-    } catch {}
+    } catch {
+      // ponytail: silent catch, data stays null
+    }
     setLoading(false);
   };
 

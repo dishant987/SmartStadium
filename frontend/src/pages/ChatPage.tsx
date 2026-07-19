@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChatSessions, useSessionMessages, useCreateSession, useDeleteSession } from "@/hooks/useChatSessions";
@@ -43,10 +43,10 @@ export function ChatPage() {
     }
   }, [dbMessages, pendingUserMsg]);
 
-  const displayMessages: ChatMessage[] = [
+  const displayMessages: ChatMessage[] = useMemo(() => [
     ...(dbMessages || []),
     ...(pendingUserMsg && !dbMessages?.some((m) => m.content === pendingUserMsg.content && m.role === "user") ? [pendingUserMsg] : []),
-  ];
+  ], [dbMessages, pendingUserMsg]);
 
   const handleSend = useCallback(async (message: string) => {
     if (!message.trim()) return;

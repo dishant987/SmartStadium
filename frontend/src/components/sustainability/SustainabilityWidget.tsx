@@ -38,7 +38,9 @@ export function SustainabilityWidget() {
     try {
       const tip = await apiClient<{ tip: string; source: string }>("/sustainability/tip?context=fan+at+main+stand");
       setAiTip(tip.tip);
-    } catch { /* ignore */ }
+    } catch {
+      // ponytail: silent catch
+    }
     setLoading(false);
   };
 
@@ -46,7 +48,9 @@ export function SustainabilityWidget() {
     try {
       const tips = await apiClient<PersonalizedTip[]>("/sustainability/personalized-tips?zone=z1&match_status=in_progress");
       if (tips.length) setPersonalized(tips);
-    } catch { /* ignore */ }
+    } catch {
+      // ponytail: silent catch
+    }
   };
 
   useEffect(() => { loadAiTip(); if (user) loadPersonalized(); }, [user]);

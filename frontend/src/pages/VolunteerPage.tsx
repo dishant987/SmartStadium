@@ -42,7 +42,9 @@ export function VolunteerPage() {
     try {
       const data = await fetchVolunteerDashboard();
       setDashboard(data);
-    } catch { /* ignore */ }
+    } catch {
+      // ponytail: silent catch, dashboard stays null → error state shown
+    }
     setLoading(false);
   };
 
@@ -171,7 +173,7 @@ export function VolunteerPage() {
             </div>
           )
         ) : !dashboard ? (
-          <div className="text-center py-20 text-text-muted">Failed to load data</div>
+          <div className="text-center py-20 text-text-muted" role="alert">Failed to load data</div>
         ) : activeTab === "volunteers" ? (
           <VolunteerListView volunteers={dashboard.volunteers} onStatusChange={handleStatusChange} />
         ) : (

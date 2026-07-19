@@ -134,67 +134,6 @@ WAYFINDING_DETAILS = {
     },
 }
 
-TRANSLATIONS = {
-    "en": {
-        "exit_via": "Exit via the {corridor}",
-        "take_elevator": "Take {elevator} to {destination}",
-        "take_escalator": "Take {escalator} to {destination}",
-        "follow_signs": "Follow {color} signage to {destination}",
-        "proceed": "Proceed through {area}",
-        "you_will_see": "You will pass {landmark}",
-        "exit_gate": "Exit through {gate}",
-        "turn_left": "Turn left at {landmark}",
-        "turn_right": "Turn right at {landmark}",
-        "walk_straight": "Walk straight for {distance}m",
-        "arrived": "You have arrived at {destination}",
-        "wheelchair_note": "Wheelchair users: {instruction}",
-        "accessibility_route": "This route is fully accessible with step-free access.",
-        "estimated_time": "Estimated walking time: {minutes} minutes",
-    },
-    "es": {
-        "exit_via": "Salga por {corridor}",
-        "take_elevator": "Tome {elevator} hacia {destination}",
-        "take_escalator": "Tome {escalator} hacia {destination}",
-        "follow_signs": "Siga la señalización {color} hacia {destination}",
-        "proceed": "Continúe por {area}",
-        "you_will_see": "Pasará por {landmark}",
-        "exit_gate": "Salga por {gate}",
-        "turn_left": "Gire a la izquierda en {landmark}",
-        "turn_right": "Gire a la derecha en {landmark}",
-        "walk_straight": "Camine recto por {distance}m",
-        "arrived": "Ha llegado a {destination}",
-        "wheelchair_note": "Usuarios de silla de ruedas: {instruction}",
-        "accessibility_route": "Esta ruta es completamente accesible sin escalones.",
-        "estimated_time": "Tiempo estimado de caminata: {minutes} minutos",
-    },
-    "fr": {
-        "exit_via": "Sortez par {corridor}",
-        "take_elevator": "Prenez {elevator} vers {destination}",
-        "take_escalator": "Prenez {escalator} vers {destination}",
-        "follow_signs": "Suivez la signalisation {color} vers {destination}",
-        "proceed": "Continuez par {area}",
-        "you_will_see": "Vous passerez par {landmark}",
-        "exit_gate": "Sortez par {gate}",
-        "turn_left": "Tournez à gauche à {landmark}",
-        "turn_right": "Tournez à droite à {landmark}",
-        "walk_straight": "Marchez tout droit pendant {distance}m",
-        "arrived": "Vous êtes arrivé à {destination}",
-        "wheelchair_note": "Utilisateurs de fauteuil roulant : {instruction}",
-        "accessibility_route": "Cet itinéraire est entièrement accessible sans marches.",
-        "estimated_time": "Temps de marche estimé : {minutes} minutes",
-    },
-    "ar": {
-        "exit_via": "اخرج عبر {corridor}",
-        "take_elevator": "خذ {elevator} إلى {destination}",
-        "take_escalator": "خذ {escalator} إلى {destination}",
-        "follow_signs": "اتبع اللافتات {color} إلى {destination}",
-        "proceed": "تابع عبر {area}",
-        "exit_gate": "اخرج عبر {gate}",
-        "arrived": "وصلت إلى {destination}",
-        "accessibility_route": "هذه المسار متاح بالكامل بدون درج.",
-        "estimated_time": "وقت المشي المقدر: {minutes} دقيقة",
-    },
-}
 
 
 def resolve_zone_id(zone_or_item_id: str) -> str:
@@ -264,44 +203,20 @@ class NavService:
     async def get_route(self, req: RouteRequest) -> RouteResponse:
         start = resolve_zone_id(req.from_zone)
         end = resolve_zone_id(req.to_zone)
-        if start not in ZONE_GRAPH or end not in ZONE_GRAPH:
+        path = _bfs(start, end)
+        if not path:
             return RouteResponse(
-                steps=[RouteStep(instruction="Unknown zone", distance_m=0)],
+                steps=[RouteStep(instruction="Unknown zone or no route found", distance_m=0)],
                 total_distance_m=0,
                 accessible=req.accessible,
             )
-        visited, queue, parent = {start}, deque([start]), {start: None}
-        while queue:
-            current = queue.popleft()
-            if current == end:
-                path, steps = [], []
-                while current:
-                    path.append(current)
-                    current = parent[current]
-                path.reverse()
-                total = 0
-                for i in range(len(path) - 1):
-                    d = ZONE_GRAPH[path[i]][path[i + 1]]
-                    total += d
-                    zone_name = next(
-                        (z.name for z in ZONES if z.id == path[i + 1]), path[i + 1]
-                    )
-                    steps.append(
-                        RouteStep(instruction=f"Proceed to {zone_name}", distance_m=d)
-                    )
-                return RouteResponse(
-                    steps=steps, total_distance_m=total, accessible=req.accessible
-                )
-            for neighbor, distance in ZONE_GRAPH.get(current, {}).items():
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    parent[neighbor] = current
-                    queue.append(neighbor)
-        return RouteResponse(
-            steps=[RouteStep(instruction="No route found", distance_m=0)],
-            total_distance_m=0,
-            accessible=req.accessible,
-        )
+        steps, total = [], 0
+        for i in range(len(path) - 1):
+            d = ZONE_GRAPH[path[i]][path[i + 1]]
+            total += d
+            zone_name = next((z.name for z in ZONES if z.id == path[i + 1]), path[i + 1])
+            steps.append(RouteStep(instruction=f"Proceed to {zone_name}", distance_m=d))
+        return RouteResponse(steps=steps, total_distance_m=total, accessible=req.accessible)
 
     async def get_wayfinding_route(self, req: WayfindingRequest) -> WayfindingRoute:
         path = _bfs(req.from_zone, req.to_zone)

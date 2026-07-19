@@ -11,7 +11,7 @@ from app.services.ops_service import OpsService
 from app.services.evacuation.agent import CrowdAgent
 from app.services.evacuation.responder import ResponderAgent
 from app.services.evacuation.pathfinding import Cell
-from app.services.rag_service import RAGService
+from app.services.langchain_rag import LangChainRAGService
 from app.services.sustainability_service import SustainabilityService
 
 
@@ -352,19 +352,22 @@ class TestRAGService:
     @pytest.mark.asyncio
     async def test_retrieve_no_api_key(self):
         """When no chroma_api_key is set, returns empty list."""
-        with patch("app.services.rag_service.settings") as mock_settings:
+        with patch("app.services.langchain_rag.settings") as mock_settings:
             mock_settings.chroma_api_key = ""
-            svc = RAGService()
+            LangChainRAGService._vector_store = None
+            svc = LangChainRAGService()
             result = await svc.retrieve("test query")
             assert result == []
 
     @pytest.mark.asyncio
     async def test_retrieve_chroma_exception(self):
         """When chroma throws, returns empty list gracefully."""
-        with patch("app.services.rag_service.settings") as mock_settings:
+        with patch("app.services.langchain_rag.settings") as mock_settings:
             mock_settings.chroma_api_key = "test-key"
-            with patch("app.services.rag_service.get_chroma_client", side_effect=Exception("Connection refused")):
-                svc = RAGService()
+            mock_settings.gemini_api_key = ""
+            LangChainRAGService._vector_store = None
+            with patch("langchain_chroma.Chroma", side_effect=Exception("Connection refused")):
+                svc = LangChainRAGService()
                 result = await svc.retrieve("test query")
                 assert result == []
 

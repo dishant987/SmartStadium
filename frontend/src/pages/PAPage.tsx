@@ -85,7 +85,9 @@ export function PAPage() {
       });
       setResult(res);
       setMessage("");
-    } catch {}
+    } catch {
+      // ponytail: silent catch, result stays null
+    }
     setLoading(false);
   };
 
@@ -94,8 +96,9 @@ export function PAPage() {
     try {
       const res = await apiClient<PALogResponse>("/pa/log");
       setLog(res);
-    } catch {}
-    setLogLoading(false);
+    } catch {
+      // ponytail: silent catch, log stays null
+    }
   };
 
   useEffect(() => {
@@ -149,8 +152,8 @@ export function PAPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Target Gate</label>
-                    <select value={gate} onChange={(e) => setGate(e.target.value)}
+                    <label htmlFor="pa-gate" className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Target Gate</label>
+                    <select id="pa-gate" value={gate} onChange={(e) => setGate(e.target.value)}
                       className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2 text-body text-text-primary outline-none focus:border-rose-500/50 transition-colors">
                       {GATES.map((g) => <option key={g} value={g}>{g}</option>)}
                     </select>
@@ -165,8 +168,8 @@ export function PAPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Message Content</label>
-                  <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
+                   <label htmlFor="pa-message" className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Message Content</label>
+                   <textarea id="pa-message" value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
                     placeholder="Enter broadcast message details in English..."
                     className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2.5 text-body text-text-primary outline-none focus:border-rose-500/50 resize-none transition-colors placeholder:text-text-muted" />
                 </div>

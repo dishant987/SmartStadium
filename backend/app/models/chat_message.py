@@ -19,8 +19,8 @@ class ChatMessage(Base):
     id: Mapped[str] = mapped_column(
         String, primary_key=True, default=lambda: str(uuid.uuid4())
     )
-    session_id: Mapped[str] = mapped_column(String, ForeignKey("chat_sessions.id"))
+    session_id: Mapped[str] = mapped_column(String, ForeignKey("chat_sessions.id"), index=True)
     role: Mapped[MessageRole] = mapped_column(SAEnum(MessageRole))
     content: Mapped[str] = mapped_column(Text)
     language: Mapped[str] = mapped_column(String, default="en")
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
