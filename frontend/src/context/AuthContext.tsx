@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
-import { apiClient, setToken, clearToken } from "@/services/apiClient";
+import { apiClient } from "@/services/apiClient";
 
 interface User {
   id: string;
@@ -22,10 +22,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("stadiumsense_token");
     const saved = localStorage.getItem("stadiumsense_user");
-    if (token && saved) {
-      try { setUser(JSON.parse(saved)); } catch { clearToken(); }
+    if (saved) {
+      try { setUser(JSON.parse(saved)); } catch { localStorage.removeItem("stadiumsense_user"); }
     }
     setLoading(false);
   }, []);
@@ -35,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
-    setToken(res.access_token);
     localStorage.setItem("stadiumsense_user", JSON.stringify(res.user));
     setUser(res.user);
   }, []);
@@ -45,13 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       body: JSON.stringify({ email, password, name }),
     });
-    setToken(res.access_token);
     localStorage.setItem("stadiumsense_user", JSON.stringify(res.user));
     setUser(res.user);
   }, []);
 
-  const logout = useCallback(() => {
-    clearToken();
+  const logout = useCallback(async () => {
+    try { await apiClient("/auth/logout", { method: "POST" }); } catch { /* ignore */ }
     localStorage.removeItem("stadiumsense_user");
     setUser(null);
   }, []);

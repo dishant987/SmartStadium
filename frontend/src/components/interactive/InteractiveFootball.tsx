@@ -122,8 +122,8 @@ function fbmNoise(x: number, y: number, octaves: number = 3): number {
 function generateTextures(variant: "classic" | "modern") {
   if (typeof document === "undefined") return { map: null, normal: null };
 
-  const W = 2048;
-  const H = 1024;
+  const W = 512;
+  const H = 256;
   const centers = buildBallCenters();
 
   const colorCanvas = document.createElement("canvas");
@@ -319,6 +319,24 @@ function generateTextures(variant: "classic" | "modern") {
   return { map, normal };
 }
 
+// Cache generated textures globally so they persist across component unmounts/remounts
+let cachedClassicTextures: { map: THREE.CanvasTexture | null; normal: THREE.CanvasTexture | null } | null = null;
+let cachedModernTextures: { map: THREE.CanvasTexture | null; normal: THREE.CanvasTexture | null } | null = null;
+
+function getClassicTextures() {
+  if (!cachedClassicTextures) {
+    cachedClassicTextures = generateTextures("classic");
+  }
+  return cachedClassicTextures;
+}
+
+function getModernTextures() {
+  if (!cachedModernTextures) {
+    cachedModernTextures = generateTextures("modern");
+  }
+  return cachedModernTextures;
+}
+
 // 3D Ball Mesh Component
 function Ball({
   physicsObj,
@@ -460,9 +478,9 @@ export function InteractiveFootball() {
     physicsRef.current.right.y = homeRight.y;
   }, []);
 
-  // Pre-generate textures for both variants
-  const classicTextures = useMemo(() => generateTextures("classic"), []);
-  const modernTextures = useMemo(() => generateTextures("modern"), []);
+  // Pre-generate textures for both variants (cached globally to avoid freezing UI on page navigation)
+  const classicTextures = useMemo(() => getClassicTextures(), []);
+  const modernTextures = useMemo(() => getModernTextures(), []);
 
   interface CollisionInstance {
     id: number;
@@ -842,27 +860,6 @@ export function InteractiveFootball() {
     <div tabIndex={0} onKeyDown={onKeyDown} className="outline-none" role="application" aria-label="Interactive football game. Use arrow keys to move the ball.">
       {/* Collision Pressure Ring Layer */}
       <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
-        <style dangerouslySetInnerHTML={{
-          __html: `
-          @keyframes pressureWave {
-            0% {
-              transform: translate(-50%, -50%) scale(0.1);
-              opacity: 0.7;
-            }
-            100% {
-              transform: translate(-50%, -50%) scale(1);
-              opacity: 0;
-            }
-          }
-          .collision-wave {
-            position: absolute;
-            border: 1.5px solid rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: pressureWave 0.35s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-          }
-        `}} />
-
         {collisions.map(c => {
           const size = 15 + c.intensity * 40;
           return (

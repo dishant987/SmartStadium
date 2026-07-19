@@ -159,7 +159,16 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         {/* Left Island: Logo */}
         <div className="pointer-events-auto flex h-11 items-center rounded-full border border-white/[0.08] bg-pitch-night/85 px-4 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-white/[0.15]">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link
+            to="/"
+            onClick={(e) => {
+              if (location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="flex items-center gap-2 group"
+          >
             <svg className="h-5 w-5 text-pitch-green-400 animate-[spin_12s_linear_infinite] group-hover:animate-[spin_3s_linear_infinite] transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="12" cy="12" r="10" stroke="currentColor" fill="none" />
               <polygon points="12,9 14.5,11 13.5,14 10.5,14 9.5,11" fill="currentColor" stroke="currentColor" strokeWidth="1" />
@@ -189,6 +198,12 @@ export function Navbar() {
         <div className="hidden md:flex pointer-events-auto h-11 items-center gap-6 rounded-full border border-white/[0.08] bg-pitch-night/85 px-6 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-white/[0.15]">
           <Link
             to="/"
+            onClick={(e) => {
+              if (location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             className={`text-xs uppercase tracking-wider font-semibold transition-colors hover:text-white ${location.pathname === "/" && activeSection === "home" ? "text-pitch-green-400" : "text-text-secondary"
               }`}
           >
@@ -338,7 +353,13 @@ export function Navbar() {
                 to="/"
                 className={`block rounded-xl px-3 py-2 text-body font-medium transition-all ${location.pathname === "/" && activeSection === "home" ? "bg-white/[0.04] text-pitch-green-400 font-semibold" : "text-text-secondary"
                   }`}
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  if (location.pathname === "/") {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
+                  setIsOpen(false);
+                }}
               >
                 Home
               </Link>

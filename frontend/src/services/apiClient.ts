@@ -8,31 +8,34 @@ export class ApiError extends Error {
   }
 }
 
-function getToken(): string | null {
-  return localStorage.getItem("stadiumsense_token");
-}
-
-export function setToken(token: string) {
-  localStorage.setItem("stadiumsense_token", token);
-}
-
-export function clearToken() {
-  localStorage.removeItem("stadiumsense_token");
-  localStorage.removeItem("stadiumsense_user");
-}
-
-function handle401() {
-  clearToken();
-  window.location.href = "/login";
+async function refreshSession(): Promise<boolean> {
+  try {
+    const res = await fetch(`${BASE}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return !!(data.access_token);
+  } catch {
+    return false;
+  }
 }
 
 export async function apiClient<T>(path: string, options?: RequestInit): Promise<T> {
-  const token = getToken();
   const headers: Record<string, string> = { "Content-Type": "application/json", ...((options?.headers as Record<string, string>) || {}) };
-  if (token && token !== "undefined" && token !== "null") headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${BASE}${path}`, { ...options, headers });
-  if (res.status === 401) { handle401(); throw new ApiError(401, "Session expired"); }
+  const res = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
+  if (res.status === 401) {
+    const refreshed = await refreshSession();
+    if (refreshed) {
+      const retry = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
+      if (retry.status === 401) { redirectLogin(); throw new ApiError(401, "Session expired"); }
+      return retry.json();
+    }
+    redirectLogin();
+    throw new ApiError(401, "Session expired");
+  }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const msg = body?.error?.message || body?.detail || body?.error || res.statusText;
@@ -41,20 +44,23 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
   return res.json();
 }
 
+function redirectLogin() {
+  localStorage.removeItem("stadiumsense_user");
+  window.location.href = "/login";
+}
+
 export function apiStream(path: string, body: unknown, onToken: (t: string) => void, onDone: () => void, onError: (e: Error) => void): AbortController {
   const ctrl = new AbortController();
-  const token = getToken();
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (token && token !== "undefined" && token !== "null") headers["Authorization"] = `Bearer ${token}`;
 
   fetch(`${BASE}${path}`, {
     method: "POST",
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
+    credentials: "include",
     signal: ctrl.signal,
   })
     .then(async (res) => {
-      if (res.status === 401) { handle401(); onError(new ApiError(401, "Session expired")); return; }
+      if (res.status === 401) { redirectLogin(); onError(new ApiError(401, "Session expired")); return; }
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         onError(new ApiError(res.status, err?.error?.message || err.detail || res.statusText));

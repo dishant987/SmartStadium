@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 
 export function Footer() {
+  const location = useLocation();
   return (
     <footer className="relative border-t border-white/[0.07] bg-pitch-night/80 backdrop-blur-md">
       {/* Decorative Top Glow Line */}
@@ -11,7 +12,16 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-4">
           {/* Brand Info */}
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5 group">
+            <Link
+              to="/"
+              onClick={(e) => {
+                if (location.pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+              className="flex items-center gap-2.5 group"
+            >
               <svg className="h-5 w-5 text-pitch-green-400 animate-[spin_16s_linear_infinite] group-hover:animate-[spin_4s_linear_infinite] transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="12" cy="12" r="10" stroke="currentColor" fill="none" />
                 <polygon points="12,9 14.5,11 13.5,14 10.5,14 9.5,11" fill="currentColor" stroke="currentColor" strokeWidth="1" />
