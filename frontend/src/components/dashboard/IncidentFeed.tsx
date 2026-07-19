@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { AlertTriangle, Plus, AlertCircle, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,7 +41,7 @@ const statusConfig = {
   },
 } as const;
 
-export function IncidentFeed() {
+export const IncidentFeed = memo(function IncidentFeed() {
   const { data, isLoading } = useIncidents();
   const { mutate: report, isPending } = useReportIncident();
   const { addToast } = useToast();
@@ -191,4 +191,4 @@ export function IncidentFeed() {
       </Modal>
     </>
   );
-}
+});

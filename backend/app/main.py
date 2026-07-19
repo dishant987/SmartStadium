@@ -1,6 +1,8 @@
 import os
 import secrets
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -54,6 +56,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         return response
 
 
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
 app = FastAPI(
     title="Spectra Stadium — FIFA World Cup 2026",
     description="AI-powered stadium operations platform for FIFA World Cup 2026 at MetLife Stadium. "
@@ -61,6 +69,7 @@ app = FastAPI(
     "PA broadcasting, real-time analytics, volunteer coordination, and AI chat.",
     version="1.0.0",
     contact={"name": "Spectra Stadium Team", "url": "https://github.com/anomalyco/fifa"},
+    lifespan=lifespan,
 )
 
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
@@ -80,12 +89,6 @@ if os.environ.get("DISABLE_CSRF") != "1":
     app.add_middleware(CSRFProtectMiddleware)
 
 register_error_handlers(app)
-
-
-@app.on_event("startup")
-def create_tables():
-    Base.metadata.create_all(bind=engine)
-
 
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(health_router, prefix="/api/health", tags=["health"])

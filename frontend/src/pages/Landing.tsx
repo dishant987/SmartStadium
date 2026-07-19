@@ -13,7 +13,7 @@ import { WaitTimeWidget } from "@/components/waittimes/WaitTimeWidget";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/navigation/Footer";
 import { InteractiveFootball } from "@/components/interactive/InteractiveFootball";
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import {
   Clock,
   Volume2,
@@ -75,7 +75,7 @@ const HOW_STEPS = [
   { num: "03", title: "Ask Anything", desc: "Where is the nearest water refiller? What time is the next train? The assistant responds instantly.", icon: <Users size={18} className="text-floodlight-200" /> },
 ];
 
-export function Landing() {
+export const Landing = memo(function Landing() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
@@ -420,4 +420,4 @@ export function Landing() {
       <Footer />
     </div>
   );
-}
+});

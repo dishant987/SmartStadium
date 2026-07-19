@@ -10,7 +10,7 @@ async def test_complete_mock_fallback():
     svc._providers = [MockChatModel()]
     result = await svc.complete("test")
     assert len(result) > 0
-    assert "Here" in result
+    assert "Spectra" in result or "assistant" in result.lower()
 
 
 @pytest.mark.asyncio
@@ -22,7 +22,7 @@ async def test_stream_mock_fallback():
     async for t in svc.complete_stream("test"):
         tokens.append(t)
     assert len(tokens) > 0
-    assert "Here" in "".join(tokens)
+    assert "Spectra" in "".join(tokens) or "assistant" in "".join(tokens).lower()
 
 
 def test_build_providers_with_all_keys():

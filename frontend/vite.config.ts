@@ -14,9 +14,18 @@ export default defineConfig({
         manualChunks: {
           vendor: ["react", "react-dom", "react-router-dom"],
           three: ["three", "@react-three/fiber", "@react-three/drei"],
+          ui: ["lucide-react", "react-markdown", "react-hook-form", "zod"],
         },
       },
+      treeshake: {
+        preset: "smallest",
+        propertyReadSideEffects: false,
+        moduleSideEffects: false,
+      },
     },
+    minify: "esbuild",
+    cssMinify: true,
+    sourcemap: false,
   },
   test: {
     environment: "jsdom",

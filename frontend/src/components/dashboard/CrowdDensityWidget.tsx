@@ -1,9 +1,10 @@
+import { memo } from "react";
 import { useCrowdDensity } from "@/hooks/useCrowdDensity";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Activity } from "lucide-react";
 
-export function CrowdDensityWidget() {
+export const CrowdDensityWidget = memo(function CrowdDensityWidget() {
   const { data, isLoading } = useCrowdDensity();
 
   return (
@@ -80,4 +81,4 @@ export function CrowdDensityWidget() {
       </div>
     </Card>
   );
-}
+});
