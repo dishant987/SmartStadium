@@ -32,13 +32,21 @@ def test_error_handlers_integration():
     def trigger_validation(data: Model):
         return data
 
+    class CustomAppException(AppException):
+        status_code = 400
+        code = "custom_code"
+
+    class CauseAppException(AppException):
+        status_code = 400
+        code = "cause_code"
+
     @app.get("/app-error")
     def trigger_app():
-        raise AppException("App error message", code="custom_code", status_code=400)
+        raise CustomAppException("App error message")
 
     @app.get("/app-error-with-cause")
     def trigger_app_with_cause():
-        raise AppException("App error with cause", code="cause_code", status_code=400, original=ValueError("Internal cause"))
+        raise CauseAppException("App error with cause", original=ValueError("Internal cause"))
 
     @app.get("/generic-error")
     def trigger_generic():

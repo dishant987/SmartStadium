@@ -64,15 +64,15 @@ def test_get_embeddings_no_gemini_key():
         assert embeddings.embed_query("test") == [0.0] * 768
 
 def test_get_vector_store_cached():
+    LangChainRAGService._vector_store = "cached_store"
     svc = LangChainRAGService()
-    svc._vector_store = "cached_store"
     assert svc._get_vector_store() == "cached_store"
     # reset for other tests
-    svc._vector_store = None
+    LangChainRAGService._vector_store = None
 
 def test_get_vector_store_fails_and_rmtree():
+    LangChainRAGService._vector_store = None
     svc = LangChainRAGService()
-    svc._vector_store = None
     with patch("langchain_chroma.Chroma", side_effect=[Exception("Dimensionality mismatch"), MagicMock()]) as mock_chroma, \
          patch("shutil.rmtree") as mock_rmtree, \
          patch.object(svc, "_get_embeddings", return_value=MagicMock()):
