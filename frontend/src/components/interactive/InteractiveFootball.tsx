@@ -90,7 +90,7 @@ const SEAM_DEPTH = 0.042;
 const PANEL_DOME = 0.015;
 
 function hash2D(x: number, y: number): number {
-  let n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+  const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
   return n - Math.floor(n);
 }
 
