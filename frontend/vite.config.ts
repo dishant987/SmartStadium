@@ -17,11 +17,6 @@ export default defineConfig({
           ui: ["lucide-react", "react-markdown", "react-hook-form", "zod"],
         },
       },
-      treeshake: {
-        preset: "smallest",
-        propertyReadSideEffects: false,
-        moduleSideEffects: false,
-      },
     },
     minify: "esbuild",
     cssMinify: true,
