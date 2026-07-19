@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$(pwd)"
 echo "Running Alembic migrations..."
 alembic upgrade head
 echo "Starting uvicorn..."
