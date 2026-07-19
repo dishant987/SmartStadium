@@ -107,6 +107,27 @@ KNOWLEDGE_DOCS = [
     "Volunteers receive: Meal voucher, parking pass, volunteer kit (vest, radio, map), and certificate of appreciation.",
 ]
 
+MATCH_DOCS = [
+    # ─── Group Stage ───
+    "Match 1 — Group C: Saturday, June 13, 2026 at 6:00 PM ET. Brazil vs Morocco at New York New Jersey Stadium (MetLife Stadium). Result: Brazil 1-1 Morocco. Brazil opened the scoring through Vinicius Jr in the 12th minute. Morocco equalized via a Hakim Ziyech free kick in the 38th minute. Attendance: 78,432.",
+    "Match 2 — Group I: Tuesday, June 16, 2026 at 3:00 PM ET. France vs Senegal at New York New Jersey Stadium (MetLife Stadium). Result: France 3-1 Senegal. Goals: Kylian Mbappe (24'), Antoine Griezmann (52'), Olivier Giroud (78') for France; Ismaïla Sarr (63') for Senegal. Attendance: 75,891.",
+    "Match 3 — Group I: Monday, June 22, 2026 at 8:00 PM ET. Norway vs Senegal at New York New Jersey Stadium (MetLife Stadium). Result: Norway 3-2 Senegal. Goals: Erling Haaland (15', 67'), Martin Ødegaard (44') for Norway; Sadio Mane (8'), Ismaïla Sarr (82' pen) for Senegal. Attendance: 72,304.",
+    "Match 4 — Group E: Thursday, June 25, 2026 at 4:00 PM ET. Ecuador vs Germany at New York New Jersey Stadium (MetLife Stadium). Result: Ecuador 2-1 Germany. Goals: Enner Valencia (31'), Moises Caicedo (58') for Ecuador; Kai Havertz (72') for Germany. Attendance: 80,115.",
+    "Match 5 — Group L: Saturday, June 27, 2026 at 5:00 PM ET. Panama vs England at New York New Jersey Stadium (MetLife Stadium). Result: Panama 0-2 England. Goals: Harry Kane (41'), Jude Bellingham (65') for England. Attendance: 79,450.",
+
+    # ─── Knockout Stage ───
+    "Match 6 — Round of 32: Tuesday, June 30, 2026 at 5:00 PM ET. France vs Sweden at New York New Jersey Stadium (MetLife Stadium). Result: France 3-0 Sweden. Goals: Antoine Griezmann (33'), Kylian Mbappe (51'), Eduardo Camavinga (79'). France advanced to the Round of 16. Attendance: 76,220.",
+    "Match 7 — Round of 16: Sunday, July 5, 2026 at 4:00 PM ET. Norway vs Brazil at New York New Jersey Stadium (MetLife Stadium). Result: Norway 2-1 Brazil. Goals: Erling Haaland (28', 64') for Norway; Vinicius Jr (73') for Brazil. Norway advanced to the Quarterfinals. Attendance: 81,003.",
+    "Match 8 — Final: Sunday, July 19, 2026 at 3:00 PM ET. France vs Norway at New York New Jersey Stadium (MetLife Stadium). FIFA World Cup 2026 Final. France won Group I and beat Sweden 3-0 in the Round of 32. Norway won Group I and beat Brazil 2-1 in the Round of 16. Pre-match ceremonies begin at 1:30 PM ET. Gates open at 12:00 PM ET. Expected attendance: 82,500 (sellout).",
+
+    # ─── Full Schedule Overview ───
+    "MetLife Stadium hosts 8 matches at FIFA World Cup 2026: 5 Group Stage matches, 1 Round of 32, 1 Round of 16, and the Final. Dates: June 13, 16, 22, 25, 27, 30, July 5, and July 19.",
+    "Group C at MetLife: Brazil vs Morocco (June 13, 1-1 draw). Group I at MetLife: France vs Senegal (June 16, 3-1 France wins), Norway vs Senegal (June 22, 3-2 Norway wins). Group E: Ecuador vs Germany (June 25, 2-1 Ecuador wins). Group L: Panama vs England (June 27, 0-2 England wins).",
+    "Knockout matches at MetLife: Round of 32 — France 3-0 Sweden (June 30). Round of 16 — Norway 2-1 Brazil (July 5). Final — France vs Norway (July 19, 3:00 PM ET).",
+    "France squad at FIFA World Cup 2026 includes Kylian Mbappe, Antoine Griezmann, Olivier Giroud, Eduardo Camavinga, and others. France are the defending champions.",
+    "Norway squad at FIFA World Cup 2026 includes Erling Haaland, Martin Odegaard, and others. Norway advanced through Group I and beat Brazil in the Round of 16.",
+]
+
 
 def main():
     rag = LangChainRAGService()
@@ -134,6 +155,9 @@ def main():
             category = "amenities"
         texts.append(doc)
         metadatas.append({"source": "fifa_knowledge_base", "category": category, "doc_id": i})
+    for i, doc in enumerate(MATCH_DOCS):
+        texts.append(doc)
+        metadatas.append({"source": "fifa_knowledge_base", "category": "matches", "doc_id": len(KNOWLEDGE_DOCS) + i})
     rag.add_documents(texts, metadatas)
     print(f"Seeded {len(texts)} documents into ChromaDB at {__import__('app.services.langchain_rag').services.langchain_rag.CHROMA_PERSIST_DIR}")
 

@@ -833,16 +833,21 @@ function AgentInstances({ agents }: { agents: Agent[] }) {
 
   useFrame(() => {
     if (!ref.current) return;
-    for (let i = 0; i < count; i++) {
-      const a = agents[i];
-      const scale = heightScales[i];
-      // Capsule height is roughly 0.52 units. Keep base of capsule on the ground.
-      dummy.position.set(a.evacuated ? -10 : a.x * S, a.evacuated ? -10 : 0.26 * scale, a.evacuated ? -10 : a.y * S);
-      dummy.scale.set(1, scale, 1);
+    for (let i = 0; i < MAX_AGENTS; i++) {
+      if (i < count) {
+        const a = agents[i];
+        const scale = heightScales[i];
+        // Capsule height is roughly 0.52 units. Keep base of capsule on the ground.
+        dummy.position.set(a.evacuated ? -9999 : a.x * S, a.evacuated ? -9999 : 0.26 * scale, a.evacuated ? -9999 : a.y * S);
+        dummy.scale.set(1, scale, 1);
+      } else {
+        dummy.position.set(-9999, -9999, -9999);
+        dummy.scale.set(0, 0, 0);
+      }
       dummy.updateMatrix();
       ref.current.setMatrixAt(i, dummy.matrix);
     }
-    if (count > 0) ref.current.instanceMatrix.needsUpdate = true;
+    ref.current.instanceMatrix.needsUpdate = true;
   });
 
   return (
@@ -866,66 +871,72 @@ function FireInstances({ fires }: { fires: [number, number][] }) {
     const t = clock.elapsedTime;
 
     // 1. Blazing, Flickering Flames
-    for (let i = 0; i < count; i++) {
-      const [r, c] = fires[i];
+    for (let i = 0; i < MAX_FIRES; i++) {
+      if (i < count) {
+        const [r, c] = fires[i];
 
-      // Dynamic stretching/flicker scale
-      const scaleY = 0.8 + Math.sin(t * 18 + i * 2.3) * 0.35;
-      const scaleXZ = 0.9 + Math.sin(t * 12 + i * 1.1) * 0.15;
+        // Dynamic stretching/flicker scale
+        const scaleY = 0.8 + Math.sin(t * 18 + i * 2.3) * 0.35;
+        const scaleXZ = 0.9 + Math.sin(t * 12 + i * 1.1) * 0.15;
 
-      dummy.position.set(c * S, 0.22 * scaleY, r * S);
-      dummy.scale.set(scaleXZ, scaleY, scaleXZ);
+        dummy.position.set(c * S, 0.22 * scaleY, r * S);
+        dummy.scale.set(scaleXZ, scaleY, scaleXZ);
+        
+        // Flickering color interpolation
+        const colorVal = 0.5 + Math.sin(t * 22 + i * 3.1) * 0.5;
+        const color = new THREE.Color();
+        if (colorVal < 0.3) {
+          color.set("#dc2626"); // deep red
+        } else if (colorVal < 0.7) {
+          color.set("#ea580c"); // hot orange
+        } else {
+          color.set("#facc15"); // yellow core
+        }
+        fireRef.current.setColorAt(i, color);
+      } else {
+        dummy.position.set(-9999, -9999, -9999);
+        dummy.scale.set(0, 0, 0);
+      }
       dummy.updateMatrix();
       fireRef.current.setMatrixAt(i, dummy.matrix);
-
-      // Flickering color interpolation
-      const colorVal = 0.5 + Math.sin(t * 22 + i * 3.1) * 0.5;
-      const color = new THREE.Color();
-      if (colorVal < 0.3) {
-        color.set("#dc2626"); // deep red
-      } else if (colorVal < 0.7) {
-        color.set("#ea580c"); // hot orange
-      } else {
-        color.set("#facc15"); // yellow core
-      }
-      fireRef.current.setColorAt(i, color);
     }
-    if (count > 0) {
-      fireRef.current.instanceMatrix.needsUpdate = true;
-      if (fireRef.current.instanceColor) {
-        fireRef.current.instanceColor.needsUpdate = true;
-      }
+    fireRef.current.instanceMatrix.needsUpdate = true;
+    if (fireRef.current.instanceColor) {
+      fireRef.current.instanceColor.needsUpdate = true;
     }
 
     // 2. Rising, Swelling Smoke Particles
     if (smokeRef.current) {
-      for (let i = 0; i < count; i++) {
-        const [r, c] = fires[i];
+      for (let i = 0; i < MAX_FIRES; i++) {
+        if (i < count) {
+          const [r, c] = fires[i];
 
-        // Loop position vertically
-        const lifetime = 1.4; // seconds
-        const age = (t * 0.9 + i * 0.25) % lifetime;
-        const progress = age / lifetime;
+          // Loop position vertically
+          const lifetime = 1.4; // seconds
+          const age = (t * 0.9 + i * 0.25) % lifetime;
+          const progress = age / lifetime;
 
-        const yStart = 0.2;
-        const yEnd = 1.5;
-        const y = yStart + progress * (yEnd - yStart);
+          const yStart = 0.2;
+          const yEnd = 1.5;
+          const y = yStart + progress * (yEnd - yStart);
 
-        // Drift outwards slightly
-        const drift = progress * 0.22;
-        const driftX = Math.sin(t * 2 + i * 5) * drift;
-        const driftZ = Math.cos(t * 2 + i * 5) * drift;
+          // Drift outwards slightly
+          const drift = progress * 0.22;
+          const driftX = Math.sin(t * 2 + i * 5) * drift;
+          const driftZ = Math.cos(t * 2 + i * 5) * drift;
 
-        const scale = 0.5 * progress + 0.15; // swells as it rises
+          const scale = 0.5 * progress + 0.15; // swells as it rises
 
-        dummy.position.set(c * S + driftX, y, r * S + driftZ);
-        dummy.scale.setScalar(scale);
+          dummy.position.set(c * S + driftX, y, r * S + driftZ);
+          dummy.scale.setScalar(scale);
+        } else {
+          dummy.position.set(-9999, -9999, -9999);
+          dummy.scale.setScalar(0);
+        }
         dummy.updateMatrix();
         smokeRef.current.setMatrixAt(i, dummy.matrix);
       }
-      if (count > 0) {
-        smokeRef.current.instanceMatrix.needsUpdate = true;
-      }
+      smokeRef.current.instanceMatrix.needsUpdate = true;
     }
   });
 
@@ -950,19 +961,28 @@ function FireInstances({ fires }: { fires: [number, number][] }) {
 function ObstacleInstances({ obstacles }: { obstacles: [number, number][] }) {
   const ref = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
+  const MAX_OBSTACLES = 100;
 
   useEffect(() => {
-    if (!ref.current || !obstacles.length) return;
-    obstacles.forEach(([r, c], i) => {
-      dummy.position.set(c * S, 0.2, r * S);
+    if (!ref.current) return;
+    const count = Math.min(obstacles.length, MAX_OBSTACLES);
+    for (let i = 0; i < MAX_OBSTACLES; i++) {
+      if (i < count) {
+        const [r, c] = obstacles[i];
+        dummy.position.set(c * S, 0.175, r * S);
+        dummy.scale.set(1, 1, 1);
+      } else {
+        dummy.position.set(-9999, -9999, -9999);
+        dummy.scale.set(0, 0, 0);
+      }
       dummy.updateMatrix();
-      ref.current!.setMatrixAt(i, dummy.matrix);
-    });
+      ref.current.setMatrixAt(i, dummy.matrix);
+    }
     ref.current.instanceMatrix.needsUpdate = true;
   }, [obstacles, dummy]);
 
   return (
-    <instancedMesh ref={ref} args={[undefined, undefined, 100]} frustumCulled={false}>
+    <instancedMesh ref={ref} args={[undefined, undefined, MAX_OBSTACLES]} frustumCulled={false}>
       <boxGeometry args={[S * 0.85, 0.35, S * 0.85]} />
       <meshStandardMaterial color="#f97316" emissive="#f97316" emissiveIntensity={0.3} />
     </instancedMesh>

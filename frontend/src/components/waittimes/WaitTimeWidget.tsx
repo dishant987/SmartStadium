@@ -1,10 +1,19 @@
 import { useState, useEffect } from "react";
 import { Clock, TrendingUp, TrendingDown, RefreshCw, Sparkles, MapPin } from "lucide-react";
+import Markdown from "react-markdown";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
 import type { WaitTimeResponse } from "@/services/waitTimes";
+
+const mdComponents = {
+  p: ({ children }: any) => <p className="mb-1 last:mb-0 leading-relaxed">{children}</p>,
+  strong: ({ children }: any) => <strong className="font-semibold text-text-primary">{children}</strong>,
+  ul: ({ children }: any) => <ul className="list-disc pl-4 space-y-1 mb-1">{children}</ul>,
+  ol: ({ children }: any) => <ol className="list-decimal pl-4 space-y-1 mb-1">{children}</ol>,
+  li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+};
 
 const ZONES = [
   { id: "all", name: "All Zones" },
@@ -169,9 +178,11 @@ export function WaitTimeWidget() {
           ) : (
             <>
               {data.summary && (
-                <div className="rounded-lg border border-white/[0.04] bg-indigo-500/5 p-2.5 flex gap-2">
+                <div className="rounded-lg border border-white/[0.04] bg-indigo-500/5 p-2.5 flex gap-2 text-text-secondary">
                   <Sparkles size={13} className="text-indigo-400 shrink-0 mt-0.5" />
-                  <p className="font-ui text-[11px] text-text-secondary leading-relaxed">{data.summary}</p>
+                  <div className="font-ui text-[11px] leading-relaxed flex-1">
+                    <Markdown components={mdComponents}>{data.summary}</Markdown>
+                  </div>
                 </div>
               )}
               

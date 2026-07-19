@@ -34,18 +34,18 @@ except ImportError:
 def _build_providers() -> list[BaseChatModel]:
     providers: list[BaseChatModel] = []
     if settings.groq_api_key and ChatGroq:
-        providers.append(ChatGroq(model="llama-3.3-70b-versatile", api_key=settings.groq_api_key, temperature=0.3))
+        providers.append(ChatGroq(model=settings.groq_model, api_key=settings.groq_api_key, temperature=0.3))
     if settings.gemini_api_key and ChatGoogleGenerativeAI:
-        providers.append(ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=settings.gemini_api_key, temperature=0.3))
+        providers.append(ChatGoogleGenerativeAI(model=settings.gemini_model, api_key=settings.gemini_api_key, temperature=0.3))
     if settings.mistral_api_key and ChatMistralAI:
-        providers.append(ChatMistralAI(model="mistral-large-latest", api_key=settings.mistral_api_key, temperature=0.3))
+        providers.append(ChatMistralAI(model=settings.mistral_model, api_key=settings.mistral_api_key, temperature=0.3))
     if settings.openrouter_api_key and ChatOpenAI:
         providers.append(ChatOpenAI(
-            model="qwen/qwen3-coder:free",
+            model=settings.openrouter_model,
             api_key=settings.openrouter_api_key,
             base_url="https://openrouter.ai/api/v1",
             temperature=0.2,
-    max_retries=2,
+            max_retries=2,
         ))
     if not providers:
         providers.append(MockChatModel())

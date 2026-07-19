@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
 import { Accessibility, Type, AlertTriangle, Cpu, RefreshCw } from "lucide-react";
+import Markdown from "react-markdown";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
+
+const mdComponents = {
+  p: ({ children }: any) => <p className="mb-1 last:mb-0 leading-relaxed">{children}</p>,
+  strong: ({ children }: any) => <strong className="font-semibold text-text-primary">{children}</strong>,
+  ul: ({ children }: any) => <ul className="list-disc pl-4 space-y-1 mb-1">{children}</ul>,
+  ol: ({ children }: any) => <ol className="list-decimal pl-4 space-y-1 mb-1">{children}</ol>,
+  li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+};
 
 interface ElevatorStatus {
   elevator_id: string;
@@ -113,8 +122,10 @@ export function AccessibilityPanel({ accessibleMode, onToggle, largeText, onTogg
         <div className="mb-3 rounded-lg border border-blue-500/15 bg-blue-500/[0.04] p-2.5">
           <div className="flex items-start gap-2">
             <Cpu size={14} className="text-blue-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-ui text-[11px] text-text-secondary leading-relaxed">{aiRoute.ai_summary}</p>
+            <div className="flex-1 min-w-0">
+              <div className="font-ui text-[11px] text-text-secondary leading-relaxed">
+                <Markdown components={mdComponents}>{aiRoute.ai_summary}</Markdown>
+              </div>
               {aiRoute.warnings.filter((w) => w !== "All accessibility infrastructure operational").length > 0 && (
                 <div className="mt-1.5 space-y-0.5">
                   {aiRoute.warnings.filter((w) => w !== "All accessibility infrastructure operational").map((w, i) => (

@@ -21,7 +21,7 @@ class LangChainRAGService:
             try:
                 from langchain_google_genai import GoogleGenerativeAIEmbeddings
                 return GoogleGenerativeAIEmbeddings(
-                    model="models/text-embedding-004",
+                    model=settings.gemini_embedding_model,
                     google_api_key=settings.gemini_api_key
                 )
             except Exception as e:

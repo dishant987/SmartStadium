@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://localhost:4173"
     jwt_secret: str = ""
     openrouter_api_key: str = ""
+    groq_model: str = "llama-3.3-70b-versatile"
+    gemini_model: str = "gemini-2.5-flash"
+    mistral_model: str = "mistral-large-latest"
+    openrouter_model: str = "tencent/hy3:free"
+    gemini_embedding_model: str = "models/gemini-embedding-001"
 
     model_config = {"env_file": ".env", "case_sensitive": False, "extra": "ignore"}
 

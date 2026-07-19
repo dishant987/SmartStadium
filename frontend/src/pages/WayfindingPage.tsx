@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Navigation, Accessibility, Clock, MapPin, ChevronRight } from "lucide-react";
+import Markdown from "react-markdown";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
@@ -7,6 +8,14 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { apiClient } from "@/services/apiClient";
 import { Navbar } from "@/components/navigation/Navbar";
 import type { WayfindingRoute } from "@/services/wayfinding";
+
+const mdComponents = {
+  p: ({ children }: any) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+  strong: ({ children }: any) => <strong className="font-semibold text-text-primary">{children}</strong>,
+  ul: ({ children }: any) => <ul className="list-disc pl-4 space-y-1 mb-2">{children}</ul>,
+  ol: ({ children }: any) => <ol className="list-decimal pl-4 space-y-1 mb-2">{children}</ol>,
+  li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+};
 
 const ZONES = [
   { id: "z1", name: "Main Stand (100 Level)" },
@@ -250,14 +259,14 @@ export function WayfindingPage() {
                 </div>
 
                 {route.accessibility_summary && (
-                  <div className="rounded-fan border border-pitch-green-500/20 bg-pitch-green-500/5 p-4">
-                    <p className="text-data-md text-pitch-green-400 leading-relaxed font-medium">{route.accessibility_summary}</p>
+                  <div className="rounded-fan border border-pitch-green-500/20 bg-pitch-green-500/5 p-4 text-data-md text-pitch-green-400 leading-relaxed font-medium">
+                    <Markdown components={mdComponents}>{route.accessibility_summary}</Markdown>
                   </div>
                 )}
 
                 {route.wheelchair_alternative && (
-                  <div className="rounded-fan border border-blue-500/20 bg-blue-500/5 p-4">
-                    <p className="text-data-md text-blue-400 leading-relaxed font-medium">Wheelchair Alt: {route.wheelchair_alternative}</p>
+                  <div className="rounded-fan border border-blue-500/20 bg-blue-500/5 p-4 text-data-md text-blue-400 leading-relaxed font-medium">
+                    <Markdown components={mdComponents}>{`Wheelchair Alt: ${route.wheelchair_alternative}`}</Markdown>
                   </div>
                 )}
               </div>

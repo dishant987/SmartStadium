@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import { BarChart3, TrendingUp, TrendingDown, Minus, Users, Zap, RefreshCw } from "lucide-react";
+import Markdown from "react-markdown";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiClient } from "@/services/apiClient";
 import { Navbar } from "@/components/navigation/Navbar";
 import type { PostMatchAnalyticsResponse } from "@/services/analytics";
+
+const mdComponents = {
+  p: ({ children }: any) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+  strong: ({ children }: any) => <strong className="font-semibold text-text-primary">{children}</strong>,
+  ul: ({ children }: any) => <ul className="list-disc pl-4 space-y-1 mb-2">{children}</ul>,
+  ol: ({ children }: any) => <ol className="list-decimal pl-4 space-y-1 mb-2">{children}</ol>,
+  li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+};
 
 function TrendIcon({ trend }: { trend: string }) {
   if (trend === "up") return <TrendingUp size={14} className="text-rose-400" />;
@@ -262,25 +271,33 @@ export function AnalyticsPage() {
                 <h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-pitch-green-400" /> Executive Operations Summary
                 </h3>
-                <p className="text-body text-text-secondary leading-relaxed">{data.narrative.executive_summary}</p>
+                <div className="text-body text-text-secondary leading-relaxed">
+                  <Markdown components={mdComponents}>{data.narrative.executive_summary}</Markdown>
+                </div>
               </div>
               <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data">
                 <h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-400" /> Crowd Movement Analysis
                 </h3>
-                <p className="text-body text-text-secondary leading-relaxed">{data.narrative.crowd_analysis}</p>
+                <div className="text-body text-text-secondary leading-relaxed">
+                  <Markdown components={mdComponents}>{data.narrative.crowd_analysis}</Markdown>
+                </div>
               </div>
               <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data">
                 <h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> Gate Performance &amp; Delays
                 </h3>
-                <p className="text-body text-text-secondary leading-relaxed">{data.narrative.gate_performance}</p>
+                <div className="text-body text-text-secondary leading-relaxed">
+                  <Markdown components={mdComponents}>{data.narrative.gate_performance}</Markdown>
+                </div>
               </div>
               <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data">
                 <h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-purple-400" /> Public Transit &amp; Rail Impact
                 </h3>
-                <p className="text-body text-text-secondary leading-relaxed">{data.narrative.transit_impact}</p>
+                <div className="text-body text-text-secondary leading-relaxed">
+                  <Markdown components={mdComponents}>{data.narrative.transit_impact}</Markdown>
+                </div>
               </div>
             </div>
 
@@ -294,7 +311,9 @@ export function AnalyticsPage() {
                 {data.narrative.recommendations.map((rec, i) => (
                   <div key={i} className="flex items-start gap-3.5 rounded-data bg-white/[0.02] border border-white/[0.04] p-4 hover:bg-white/[0.04] transition-colors">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-floodlight-200/10 text-floodlight-200 text-data font-bold">{i + 1}</span>
-                    <p className="text-body text-text-secondary leading-relaxed">{rec}</p>
+                    <div className="text-body text-text-secondary leading-relaxed flex-1">
+                      <Markdown components={mdComponents}>{rec}</Markdown>
+                    </div>
                   </div>
                 ))}
               </div>
