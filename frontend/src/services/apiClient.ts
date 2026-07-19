@@ -9,15 +9,20 @@ export class ApiError extends Error {
 }
 
 async function refreshSession(): Promise<boolean> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), 8000);
   try {
     const res = await fetch(`${BASE}/auth/refresh`, {
       method: "POST",
       credentials: "include",
+      signal: controller.signal,
     });
+    clearTimeout(id);
     if (!res.ok) return false;
     const data = await res.json();
     return !!(data.access_token);
   } catch {
+    clearTimeout(id);
     return false;
   }
 }
@@ -25,23 +30,44 @@ async function refreshSession(): Promise<boolean> {
 export async function apiClient<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json", ...((options?.headers as Record<string, string>) || {}) };
 
-  const res = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
-  if (res.status === 401) {
-    const refreshed = await refreshSession();
-    if (refreshed) {
-      const retry = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
-      if (retry.status === 401) { redirectLogin(); throw new ApiError(401, "Session expired"); }
-      return retry.json();
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const res = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include", signal: controller.signal });
+    clearTimeout(id);
+    if (res.status === 401) {
+      const refreshed = await refreshSession();
+      if (refreshed) {
+        const retryController = new AbortController();
+        const retryId = setTimeout(() => retryController.abort(), 15000);
+        try {
+          const retry = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include", signal: retryController.signal });
+          clearTimeout(retryId);
+          if (retry.status === 401) { redirectLogin(); throw new ApiError(401, "Session expired"); }
+          return retry.json();
+        } catch (err: any) {
+          clearTimeout(retryId);
+          if (err.name === "AbortError") throw new ApiError(504, "Server connection timed out");
+          throw err;
+        }
+      }
+      redirectLogin();
+      throw new ApiError(401, "Session expired");
     }
-    redirectLogin();
-    throw new ApiError(401, "Session expired");
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const msg = body?.error?.message || body?.detail || body?.error || res.statusText;
+      throw new ApiError(res.status, typeof msg === "string" ? msg : res.statusText);
+    }
+    return res.json();
+  } catch (err: any) {
+    clearTimeout(id);
+    if (err.name === "AbortError") {
+      throw new ApiError(504, "Server connection timed out");
+    }
+    throw err;
   }
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const msg = body?.error?.message || body?.detail || body?.error || res.statusText;
-    throw new ApiError(res.status, typeof msg === "string" ? msg : res.statusText);
-  }
-  return res.json();
 }
 
 function redirectLogin() {

@@ -51,11 +51,12 @@ origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://smart-stadium-.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
 )
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "testserver", "test", "*.onrender.com", "*.fly.dev"])
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(RateLimitMiddleware, max_requests=30, window_seconds=60)
