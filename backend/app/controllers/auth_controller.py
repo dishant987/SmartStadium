@@ -10,8 +10,8 @@ router = APIRouter()
 
 import os
 
-COOKIE_ACCESS = "stadiumsense_token"
-COOKIE_REFRESH = "stadiumsense_refresh"
+COOKIE_ACCESS = "spectrastadium_token"
+COOKIE_REFRESH = "spectrastadium_refresh"
 
 _is_prod = os.environ.get("RENDER") == "true" or "vercel.app" in settings.cors_origins
 _samesite = "none" if _is_prod else "lax"

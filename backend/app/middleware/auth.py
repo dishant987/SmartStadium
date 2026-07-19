@@ -18,7 +18,7 @@ def get_current_user(
     if creds is not None:
         token = creds.credentials
     if not token or token in ("undefined", "null", ""):
-        token = request.cookies.get("stadiumsense_token") if request else None
+        token = request.cookies.get("spectrastadium_token") if request else None
     if not token or token in ("undefined", "null", ""):
         raise HTTPException(status_code=401, detail="Please sign in again")
     user_id = decode_token(token)

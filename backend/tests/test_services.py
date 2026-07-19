@@ -75,6 +75,13 @@ async def test_nav_service():
     res_bad = await svc.get_route(bad_route_req)
     assert res_bad.total_distance_m == 0
 
+    # Route request with UI-specific IDs (resolved dynamically)
+    resolved_route_req = RouteRequest(from_zone="gate-c", to_zone="section-100", accessible=False)
+    res_resolved = await svc.get_route(resolved_route_req)
+    assert res_resolved.total_distance_m > 0
+    assert len(res_resolved.steps) > 0
+    assert not any(s.instruction == "Unknown zone" for s in res_resolved.steps)
+
     # Wayfinding route request
     wf_req = WayfindingRequest(from_zone="z1", to_zone="z3", accessible=True, wheelchair=True)
     res_wf = await svc.get_wayfinding_route(wf_req)
@@ -267,7 +274,7 @@ async def test_chat_service(db_session):
     assert sessions[0].id == session.id
 
     # Respond (static prompt fallback or mock)
-    chat_req = ChatRequest(session_id=session.id, message="Hi StadiumSense, where is First Aid?")
+    chat_req = ChatRequest(session_id=session.id, message="Hi Spectra, where is First Aid?")
     res = await svc.respond(user_id, chat_req)
     assert res.reply is not None
     assert res.session_id == session.id

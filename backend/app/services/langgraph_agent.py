@@ -21,7 +21,7 @@ from app.schemas.wait_time_schema import WaitTimeRequest
 from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
 
-SYSTEM_PROMPT = """You are StadiumSense, an expert AI assistant for the FIFA World Cup 2026 at MetLife Stadium. You help fans, staff, volunteers, and organizers.
+SYSTEM_PROMPT = """You are Spectra, an expert AI assistant for the FIFA World Cup 2026 at MetLife Stadium. You help fans, staff, volunteers, and organizers.
 
 You have tools to look up stadium knowledge, wayfinding routes, transit status, crowd density, and wait times. Use them to look up information when the user asks about stadium-related topics (gates, sections, food, transit, accessibility, schedules, amenities).
 

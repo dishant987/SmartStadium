@@ -1,6 +1,10 @@
-# StadiumSense — FIFA World Cup 2026 Fan Companion
+# Spectra Stadium — FIFA World Cup 2026 Fan Companion
 
 GenAI-enabled stadium operations platform. Built for the FIFA World Cup 2026 challenge.
+
+## 🔗 Live Links
+* **Live Deployment**: [https://smart-stadium-theta.vercel.app](https://smart-stadium-theta.vercel.app)
+* **GitHub Repository**: [https://github.com/dishant987/SmartStadium](https://github.com/dishant987/SmartStadium)
 
 ---
 
@@ -93,7 +97,7 @@ backend/   — FastAPI + SQLAlchemy + ChromaDB + SQLite/Neon
 
 2. Configure environment variables in `backend/.env` (copying from `.env.example`):
    ```ini
-   NEON_DATABASE_URL=sqlite:///./stadiumsense.db
+   NEON_DATABASE_URL=sqlite:///./spectrastadium.db
    CORS_ORIGINS=http://localhost:5173,http://localhost:4173
    JWT_SECRET=your-random-secret
    

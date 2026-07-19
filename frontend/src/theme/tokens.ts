@@ -1,5 +1,5 @@
 /**
- * StadiumSense Design Tokens
+ * Spectra Stadium Design Tokens
  * Centralised design primitives consumed by tailwind.config.ts
  */
 

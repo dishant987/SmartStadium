@@ -196,7 +196,45 @@ TRANSLATIONS = {
 }
 
 
+def resolve_zone_id(zone_or_item_id: str) -> str:
+    if not zone_or_item_id:
+        return zone_or_item_id
+    val = zone_or_item_id.lower().strip()
+    if val in ("z1", "z2", "z3", "z4", "z5", "z6"):
+        return val
+    # Map gates
+    if val in ("gate-a", "ga"):
+        return "z1"
+    if val in ("gate-b", "gb"):
+        return "z2"
+    if val in ("gate-c", "gc"):
+        return "z3"
+    if val in ("gate-d", "gd"):
+        return "z4"
+    if val in ("gate-e", "ge"):
+        return "z5"
+    # Map sections
+    if val in ("section-100", "100"):
+        return "z1"
+    if val in ("section-200", "200"):
+        return "z2"
+    if val in ("section-300", "300"):
+        return "z3"
+    # Map amenities
+    if val in ("first-aid", "first aid", "a2"):
+        return "z2"
+    if val in ("info", "info desk", "guest services", "a1"):
+        return "z1"
+    if val == "a3":
+        return "z4"
+    if val == "a4":
+        return "z5"
+    return zone_or_item_id
+
+
 def _bfs(start: str, end: str) -> list[str] | None:
+    start = resolve_zone_id(start)
+    end = resolve_zone_id(end)
     if start not in ZONE_GRAPH or end not in ZONE_GRAPH:
         return None
     visited, queue, parent = {start}, [(start, 0)], {start: None}
@@ -223,7 +261,8 @@ class NavService:
         return VenueMapResponse(zones=ZONES, gates=GATES, amenities=AMENITIES)
 
     async def get_route(self, req: RouteRequest) -> RouteResponse:
-        start, end = req.from_zone, req.to_zone
+        start = resolve_zone_id(req.from_zone)
+        end = resolve_zone_id(req.to_zone)
         if start not in ZONE_GRAPH or end not in ZONE_GRAPH:
             return RouteResponse(
                 steps=[RouteStep(instruction="Unknown zone", distance_m=0)],

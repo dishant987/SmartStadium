@@ -52,7 +52,7 @@ export function ChatInput({ onSend, onStop, isStreaming, disabled, centered, def
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Message StadiumSense..."
+          placeholder="Message Spectra..."
           disabled={disabled}
           rows={1}
           className="w-full resize-none bg-transparent px-4 pt-3.5 pb-2 text-[15px] text-text-primary placeholder-text-muted outline-none font-ui disabled:opacity-50"

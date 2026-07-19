@@ -177,7 +177,7 @@ export function ChatPage() {
 
           {hasMessages && (
             <div className="pb-2 text-center relative z-10">
-              <p className="text-[11px] text-text-muted">StadiumSense AI can make mistakes. Cross-check critical operations instructions.</p>
+              <p className="text-[11px] text-text-muted">Spectra Stadium AI can make mistakes. Cross-check critical operations instructions.</p>
             </div>
           )}
         </div>

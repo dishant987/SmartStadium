@@ -20,7 +20,8 @@ import {
   BarChart3,
   Users,
   ArrowRight,
-  Navigation
+  Navigation,
+  Activity
 } from "lucide-react";
 
 export function Landing() {
@@ -29,201 +30,255 @@ export function Landing() {
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [accessibleMode, setAccessibleMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
+  const [activeTab, setActiveTab] = useState<"venue" | "crowd" | "incident" | "transit">("venue");
   const toggleAccessible = useCallback(() => setAccessibleMode((p) => !p), []);
   const toggleLargeText = useCallback(() => setLargeText((p) => !p), []);
 
   return (
-    <div className={`min-h-screen bg-pitch-night text-text-primary font-ui relative ${largeText ? "accessibility-large-text" : ""}`}>
+    <div className={`min-h-screen bg-pitch-night text-text-primary font-ui relative overflow-x-hidden ${largeText ? "accessibility-large-text" : ""}`}>
       {/* ─── GLOBAL NAVBAR ─── */}
       <Navbar />
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-20">
-        {/* Moving Grid lines */}
-        <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
-
-        {/* Glowing Blobs */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="absolute left-1/4 top-1/4 h-[400px] w-[400px] rounded-full bg-pitch-green-500/[0.05] blur-[120px] animate-pulse-glow" />
-          <div className="absolute right-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-floodlight-200/[0.04] blur-[120px] animate-pulse-glow" style={{ animationDelay: "2s" }} />
+      <header className="relative flex min-h-[85vh] flex-col items-center justify-center overflow-hidden px-6 pt-28 pb-12">
+        {/* Modern Dot Grid Background */}
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-70" />
+        
+        {/* Soft Ambient Mesh Orbs */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+          <div className="absolute left-[-10%] top-[-10%] h-[600px] w-[600px] rounded-full bg-pitch-green-500/[0.04] blur-[180px] animate-pulse-glow" />
+          <div className="absolute right-[-10%] bottom-[-10%] h-[600px] w-[600px] rounded-full bg-blue-500/[0.03] blur-[180px] animate-pulse-glow" style={{ animationDelay: "3s" }} />
         </div>
 
         {/* Floating Grab & Throw 3D Football (Interactive Physics-based) */}
         <InteractiveFootball />
 
-
-        <div className="relative mx-auto max-w-4xl text-center z-10">
-          <Badge variant="success" className="mb-6 bg-pitch-green-500/10 border-pitch-green-500/30 px-3 py-1 text-data font-semibold tracking-wide animate-float">
-            <span className="relative flex h-2 w-2 mr-2">
+        {/* Hero Content */}
+        <div className="relative mx-auto max-w-3xl text-center z-10 px-4">
+          <div className="inline-flex items-center gap-2 mb-6 bg-white/[0.03] border border-white/[0.08] px-4 py-1.5 rounded-full text-data font-semibold text-text-primary tracking-wide backdrop-blur-md shadow-lg">
+            <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pitch-green-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-pitch-green-500" />
             </span>
-            FIFA World Cup 2026 — MetLife Stadium
-          </Badge>
+            <span>FIFA WORLD CUP 2026</span>
+            <span className="h-3 w-px bg-white/20" />
+            <span className="text-pitch-green-400 uppercase font-mono text-[10px]">Telemetry</span>
+          </div>
 
-          <h1 className="font-display text-5xl font-extrabold leading-[1.15] tracking-tight text-text-primary md:text-7xl">
-            Know the stadium.
+          <h1 className="font-display text-4xl font-extrabold leading-[1.1] tracking-tight text-white md:text-5xl lg:text-6xl">
+            The next generation of
             <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pitch-green-400 via-emerald-500 to-floodlight-200 text-glow-green">
-              Every single second.
+            <span className="text-pitch-green-400 font-extrabold block mt-3">
+              Stadium Intelligence
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-body-lg leading-relaxed text-text-secondary">
-            Real-time crowd density tracking, step-free wayfinding, PA broadcast translation, and a multilingual AI companion. Built for stadium commanders and fans in the stands.
+          <p className="mx-auto mt-6 text-sm md:text-base leading-relaxed text-text-secondary max-w-xl">
+            Real-time crowd tracking, predictive transit feeds, emergency PA translation, and an AI companion for fans. Experience matchdays driven by data.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Button size="lg" onClick={() => navigate(user ? "/chat" : "/login")} className="shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:scale-103 transition-transform">
-              {user ? "Open AI Companion" : "Get Started"} <ArrowRight size={16} />
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button size="lg" onClick={() => navigate(user ? "/chat" : "/login")} className="w-full sm:w-auto bg-pitch-green-500 hover:bg-pitch-green-600 text-pitch-night font-semibold px-8 py-3.5 rounded-xl shadow-[0_4px_20px_rgba(74,222,128,0.2)] hover:scale-102 transition-all">
+              {user ? "Open AI Companion" : "Launch Console"} <ArrowRight className="ml-2 inline-block" size={16} />
             </Button>
-            <Button variant="secondary" size="lg" onClick={() => document.getElementById("dashboard-preview")?.scrollIntoView({ behavior: "smooth" })}>
-              View Ops Dashboard
+            <Button variant="secondary" size="lg" onClick={() => document.getElementById("dashboard-preview")?.scrollIntoView({ behavior: "smooth" })} className="w-full sm:w-auto bg-white/5 border border-white/10 hover:bg-white/10 text-white px-8 py-3.5 rounded-xl backdrop-blur-md transition-all">
+              Explore Live Telemetry
             </Button>
           </div>
         </div>
 
         {/* Stats Strip */}
-        <div className="relative mt-20 grid w-full max-w-3xl grid-cols-3 gap-px overflow-hidden rounded-fan border border-white/[0.08] bg-white/[0.05] backdrop-blur-md shadow-modal z-10 animate-float-delayed">
+        <div className="relative mt-12 grid w-full max-w-4xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md shadow-2xl z-10">
           {[
-            { value: "82,500", label: "Monitored Seats" },
-            { value: "< 30s", label: "Gemini Response" },
-            { value: "6", label: "Supported Languages" },
+            { value: "82,500", label: "Monitored Seats", icon: <Users size={18} className="text-pitch-green-400" /> },
+            { value: "< 30s", label: "Gemini Sync Speed", icon: <Clock size={18} className="text-emerald-400" /> },
+            { value: "6 Languages", label: "PA Translation", icon: <Volume2 size={18} className="text-blue-400" /> },
           ].map((stat) => (
-            <div key={stat.label} className="bg-pitch-surface/30 backdrop-blur-lg px-6 py-5 text-center transition-all hover:bg-white/[0.04]">
-              <div className="font-display text-2xl font-bold text-floodlight-200 md:text-3xl">{stat.value}</div>
-              <div className="mt-1 text-data font-medium text-text-muted uppercase tracking-wider">{stat.label}</div>
+            <div key={stat.label} className="bg-pitch-surface/20 px-6 py-6 text-center transition-all hover:bg-white/[0.03] flex flex-col items-center justify-center">
+              <div className="mb-2 flex items-center justify-center p-2 rounded-full bg-white/[0.02] border border-white/[0.06]">
+                {stat.icon}
+              </div>
+              <div className="font-display text-2xl font-bold text-white md:text-3xl tracking-tight">{stat.value}</div>
+              <div className="mt-1 text-[10px] font-mono text-text-muted uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
+
+        {/* Scrolling Telemetry Marquee Log Ticker */}
+        <div className="w-full max-w-4xl mt-4 border border-white/[0.06] bg-slate-950/45 rounded-xl px-4 py-2.5 flex items-center overflow-hidden z-10 backdrop-blur-sm">
+          <div className="flex items-center gap-2 border-r border-white/10 pr-4 mr-4 text-[10px] font-mono text-[#00FF87] shrink-0">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <span>SYSTEM MONITOR:</span>
+          </div>
+          <div className="relative flex-1 overflow-hidden h-4">
+            <div className="absolute flex gap-12 text-[10px] font-mono text-text-secondary/75 whitespace-nowrap animate-marquee">
+              <span>[18:22:49] CONCOURSE_WEST: FLOW RATE OPTIMAL</span>
+              <span>[18:22:52] PA_BROADCAST: TRANSLATION SERVERS OPERATIONAL</span>
+              <span>[18:22:55] RADAR_DENSITY: SECTIONS 100-104 STABLE</span>
+              <span>[18:22:58] WAYFINDING_ACC: ALL LIFTS ACTIVE</span>
+              <span>[18:23:02] MEADOWLANDS_RAIL: ON-TIME DISPATCH SCHEDULED</span>
+              <span>[18:22:49] CONCOURSE_WEST: FLOW RATE OPTIMAL</span>
+            </div>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-marquee {
+            display: flex;
+            animation: marquee 25s linear infinite;
+          }
+        `}} />
       </header>
 
       {/* ─── FEATURES SECTION ─── */}
-      <section id="features" className="relative mx-auto max-w-7xl px-6 py-24 z-10">
-        <div className="mb-16 max-w-2xl">
-          <Badge variant="default" className="mb-4 bg-white/5 border border-white/10">What We Built</Badge>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
-            Two products. One stadium network.
+      <section id="features" className="relative mx-auto max-w-7xl px-6 py-20 z-10">
+        <div className="mb-20 text-center max-w-3xl mx-auto">
+          <Badge variant="default" className="mb-4 bg-white/5 border border-white/10 px-3 py-1 text-xs">Features Overview</Badge>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-5xl">
+            Dual-threat intelligence suite.
           </h2>
-          <p className="mt-3 text-body-lg text-text-secondary">
-            A command center dashboard for ops managers, paired with an AI companion for fans, connected to a unified real-time telemetry stream.
+          <p className="mt-4 text-lg text-text-secondary leading-relaxed">
+            One unified core delivering operational mastery for coordinators and instant assistant utilities for fans in the stadium seats.
           </p>
         </div>
 
         {/* Bento Grid */}
-        <div className="grid gap-5 md:grid-cols-3">
-          {/* Big Card - spans 2 cols */}
-          <div className="group relative overflow-hidden rounded-fan border border-white/[0.07] bg-pitch-surface/40 p-6 md:col-span-2 md:row-span-2 shadow-data hover:border-pitch-green-500/20 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-300">
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-pitch-green-500/[0.03] transition-transform duration-500 group-hover:scale-150" />
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Dashboard Preview Card - spans 2 columns */}
+          <div className="group relative overflow-hidden rounded-3xl border border-white/[0.06] bg-pitch-surface/10 p-8 md:col-span-2 md:row-span-2 shadow-2xl hover:border-pitch-green-500/20 transition-all duration-300 backdrop-blur-md">
+            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-pitch-green-500/[0.02] blur-[80px] group-hover:scale-125 transition-all duration-500" />
             <div className="relative">
-              <Badge variant="success" className="mb-3 bg-pitch-green-500/10 border-pitch-green-500/30">Ops Dashboard</Badge>
-              <h3 className="font-display text-2xl font-bold text-text-primary">Crowd intelligence in real time</h3>
-              <p className="mt-2 text-body text-text-secondary">
-                Live density mapping across every gate, section, and concourse. Automated incident tracking with Gemini-suggested evacuations and rerouting.
+              <Badge variant="success" className="mb-4 bg-pitch-green-500/10 border border-pitch-green-500/30 px-2.5 py-1 text-xs text-pitch-green-400">COMMAND PORTAL</Badge>
+              <h3 className="font-display text-2xl font-bold text-white tracking-tight">Real-time Command Hub</h3>
+              <p className="mt-2 text-text-secondary leading-relaxed max-w-xl">
+                Observe live crowd densities across gates, corridors, and stands. Handle active incident dispatching, dynamic pathway suggestions, and automated broadcasts.
               </p>
             </div>
-            <div className="relative mt-6 overflow-hidden rounded-data border border-white/[0.08] bg-pitch-night/80">
+            <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/[0.08] bg-pitch-night/60 p-4 shadow-inner">
               <CrowdDensityWidget />
             </div>
           </div>
 
-          {/* Tall Card */}
-          <div className="group relative overflow-hidden rounded-fan border border-white/[0.07] bg-pitch-surface/40 p-6 shadow-data hover:border-pitch-green-500/20 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-300 flex flex-col justify-between">
-            <div>
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-fan bg-pitch-green-500/10 text-pitch-green-400 group-hover:scale-110 transition-transform">
-                <Users size={20} />
+          {/* Fan Companion Card - tall column */}
+          <div className="group relative overflow-hidden rounded-3xl border border-white/[0.06] bg-pitch-surface/10 p-8 shadow-2xl hover:border-blue-500/20 transition-all duration-300 flex flex-col justify-between backdrop-blur-md">
+            <div className="absolute -right-24 -bottom-24 h-72 w-72 rounded-full bg-blue-500/[0.02] blur-[80px]" />
+            <div className="relative">
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                <Users size={24} />
               </div>
-              <h3 className="font-display text-lg font-bold text-text-primary">Fan Companion</h3>
-              <p className="mt-2 text-body text-text-secondary leading-relaxed">
-                Multilingual AI helper answering stadium questions (gates, food options, transport schedules) in English, Spanish, French, German, Arabic, and Mandarin.
+              <h3 className="font-display text-xl font-bold text-white tracking-tight">AI Fan Companion</h3>
+              <p className="mt-3 text-text-secondary leading-relaxed">
+                A multilingual assistant answering stadium FAQs, transit schedules, concession queues, and gate coordinates. Supporting English, Spanish, French, German, Arabic, and Mandarin.
               </p>
             </div>
-            <Link to="/chat" className="mt-4 text-data-md font-semibold text-pitch-green-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Ask AI Assistant &rarr;
-            </Link>
+            <div className="relative mt-8 pt-4 border-t border-white/[0.06]">
+              <Link to="/chat" className="text-sm font-semibold text-blue-400 flex items-center gap-1 group-hover:translate-x-1.5 transition-transform">
+                Open AI Companion <ArrowRight size={14} />
+              </Link>
+            </div>
           </div>
 
-          {/* Regular Card */}
-          <div className="group relative overflow-hidden rounded-fan border border-white/[0.07] bg-pitch-surface/40 p-6 shadow-data hover:border-pitch-green-500/20 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] transition-all duration-300">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-fan bg-floodlight-200/10 text-floodlight-200 group-hover:scale-110 transition-transform">
-              <Clock size={20} />
+          {/* Transit Live Feed Card */}
+          <div className="group relative overflow-hidden rounded-3xl border border-white/[0.06] bg-pitch-surface/10 p-8 shadow-2xl hover:border-emerald-500/20 transition-all duration-300 backdrop-blur-md">
+            <div className="absolute -left-24 -bottom-24 h-72 w-72 rounded-full bg-emerald-500/[0.02] blur-[80px]" />
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform duration-300">
+              <Clock size={24} />
             </div>
-            <h3 className="font-display text-lg font-bold text-text-primary">Transit Live Feed</h3>
-            <p className="mt-2 text-body text-text-secondary leading-relaxed">
-              NJ Transit Meadowlands Rail status, bus arrivals, rideshare waitlists, and vehicle traffic queues updated constantly.
+            <h3 className="font-display text-xl font-bold text-white tracking-tight">Transit Dispatch</h3>
+            <p className="mt-3 text-text-secondary leading-relaxed">
+              Meadowlands Rail timetables, shuttle status, active parking occupancy rates, and real-time rideshare congestion data updated dynamically.
             </p>
           </div>
         </div>
 
         {/* Modular Grid Link Cards */}
-        <div className="mt-6 grid gap-5 md:grid-cols-4">
+        <div className="mt-8 grid gap-6 md:grid-cols-4">
           {[
             {
               title: "Smart Wayfinding",
-              desc: "Step-by-step directions with elevator, escalator, and wheelchair routes.",
-              color: "text-blue-400 bg-blue-500/10 hover:border-blue-500/30",
-              icon: <Navigation size={18} />,
+              desc: "Step-by-step navigation avoiding escalators or stairs for custom accessibility routing.",
+              borderClass: "hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.08)]",
+              iconColor: "text-blue-400",
+              bgColor: "bg-blue-500/5",
+              icon: <Navigation size={20} />,
               link: "/wayfinding"
             },
             {
-              title: "Wait Time Predictor",
-              desc: "AI concessions wait times calculated based on live stand crowd volumes.",
-              color: "text-emerald-400 bg-emerald-500/10 hover:border-emerald-500/30",
-              icon: <Clock size={18} />,
+              title: "Concessions Monitor",
+              desc: "AI concessions wait times calculated based on live stand volumes and heatmaps.",
+              borderClass: "hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)]",
+              iconColor: "text-emerald-400",
+              bgColor: "bg-emerald-500/5",
+              icon: <Clock size={20} />,
               link: "/chat"
             },
             {
-              title: "Emergency PA Broadcast",
-              desc: "Broadcast emergency announcements translated instantly into 6 languages.",
-              color: "text-rose-400 bg-rose-500/10 hover:border-rose-500/30",
-              icon: <Volume2 size={18} />,
+              title: "Emergency PA",
+              desc: "Emergency broadcast module translating messages instantly into 6 world languages.",
+              borderClass: "hover:border-rose-500/30 hover:shadow-[0_0_30px_rgba(244,63,94,0.08)]",
+              iconColor: "text-rose-400",
+              bgColor: "bg-rose-500/5",
+              icon: <Volume2 size={20} />,
               link: "/pa"
             },
             {
-              title: "Post-Match Analytics",
-              desc: "AI summaries on crowd exit speed, transit delays, and operational suggestions.",
-              color: "text-purple-400 bg-purple-500/10 hover:border-purple-500/30",
-              icon: <BarChart3 size={18} />,
+              title: "Match Analytics",
+              desc: "Post-match crowd speed diagnostics, gate throughput stats, and transit reviews.",
+              borderClass: "hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(168,85,247,0.08)]",
+              iconColor: "text-purple-400",
+              bgColor: "bg-purple-500/5",
+              icon: <BarChart3 size={20} />,
               link: "/analytics"
             },
           ].map((f) => (
             <Link
               key={f.title}
               to={user ? f.link : "/login"}
-              className={`group rounded-fan border border-white/[0.07] bg-pitch-surface/40 p-5 shadow-data transition-all hover:translate-y-[-2px] ${f.color}`}
+              className={`group rounded-2xl border border-white/[0.06] bg-pitch-surface/10 p-6 shadow-xl transition-all hover:translate-y-[-4px] hover:bg-pitch-surface/20 ${f.borderClass}`}
             >
-              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-fan bg-white/5 transition-transform group-hover:scale-105">
+              <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${f.bgColor} ${f.iconColor} transition-transform group-hover:scale-105`}>
                 {f.icon}
               </div>
-              <h4 className="font-display text-body-lg font-semibold text-text-primary group-hover:text-text-primary transition-colors">
+              <h4 className="font-display text-base font-bold text-white transition-colors">
                 {f.title}
               </h4>
-              <p className="mt-1.5 text-body text-text-secondary leading-relaxed">{f.desc}</p>
+              <p className="mt-2 text-sm text-text-secondary leading-relaxed">{f.desc}</p>
             </Link>
           ))}
         </div>
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="relative border-y border-white/[0.07] bg-white/[0.01] px-6 py-24">
+      <section className="relative border-y border-white/[0.06] bg-white/[0.01] px-6 py-28">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
-            <Badge variant="default" className="mb-4 bg-white/5 border border-white/10">Stadium Experience</Badge>
-            <h2 className="font-display text-3xl font-extrabold tracking-tight text-text-primary">
+          <div className="mb-16 text-center">
+            <Badge variant="default" className="mb-4 bg-white/5 border border-white/10 px-3 py-1 text-xs">Stadium Experience</Badge>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-white">
               From arrival to seat to final whistle
             </h2>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
             {[
-              { num: "01", title: "Arrive Smart", desc: "Check Meadowlands rail status, parking lot capacity, and gate lines before leaving." },
-              { num: "02", title: "Navigate Accessible", desc: "Get steps avoiding stairs, escalator status, and lift coordinates in real time." },
-              { num: "03", title: "Ask Anything", desc: "Where is the nearest water refiller? What time is the next train? The assistant responds instantly." },
+              { num: "01", title: "Arrive Smart", desc: "Check Meadowlands rail status, parking lot capacity, and gate lines before leaving.", icon: <Navigation size={18} className="text-blue-400" /> },
+              { num: "02", title: "Navigate Accessible", desc: "Get steps avoiding stairs, escalator status, and lift coordinates in real time.", icon: <Activity size={18} className="text-pitch-green-400" /> },
+              { num: "03", title: "Ask Anything", desc: "Where is the nearest water refiller? What time is the next train? The assistant responds instantly.", icon: <Users size={18} className="text-floodlight-200" /> },
             ].map((step) => (
-              <div key={step.num} className="relative p-6 rounded-fan border border-white/[0.04] bg-pitch-surface/20">
-                <div className="font-display text-5xl font-extrabold text-pitch-green-500/10 mb-3">{step.num}</div>
-                <h3 className="font-display text-lg font-bold text-text-primary">{step.title}</h3>
-                <p className="mt-2 text-body text-text-secondary leading-relaxed">{step.desc}</p>
+              <div key={step.num} className="group relative p-8 rounded-3xl border border-white/[0.04] bg-pitch-surface/10 hover:border-pitch-green-500/20 hover:bg-pitch-surface/15 transition-all duration-300">
+                <div className="absolute top-8 right-8 flex items-center justify-center h-10 w-10 rounded-xl bg-white/[0.02] border border-white/[0.05] group-hover:scale-105 transition-transform duration-300">
+                  {step.icon}
+                </div>
+                <div className="font-display text-5xl font-extrabold text-pitch-green-500/10 mb-4 transition-colors group-hover:text-pitch-green-500/20">{step.num}</div>
+                <h3 className="font-display text-lg font-bold text-white">{step.title}</h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -231,113 +286,124 @@ export function Landing() {
       </section>
 
       {/* ─── FULL DASHBOARD PREVIEW ─── */}
-      <section id="dashboard-preview" className="relative mx-auto max-w-7xl px-6 py-24 z-10">
-        <div className="mb-10">
-          <Badge variant="success" className="mb-4 bg-pitch-green-500/10 border border-pitch-green-500/30">Live Ops preview</Badge>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
-            Command Center Dashboard
-          </h2>
-          <p className="mt-3 max-w-xl text-body-lg text-text-secondary">
-            Operational dashboard layout updated constantly with sensor logs, fan reports, and transit delays.
-          </p>
-        </div>
-
-        {/* Dashboard Widgets Grid */}
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <CrowdDensityWidget />
-          <IncidentFeed />
-          <DecisionSupportPanel />
-          <div className="lg:col-span-2 glass-card rounded-fan p-4 shadow-modal">
-            <VenueMap selectedZone={selectedZone} onSelectZone={setSelectedZone} accessibleMode={accessibleMode} />
-          </div>
-          <TransitWidget />
-          <div className="glass-card rounded-fan p-4 shadow-modal">
-            <AccessibilityPanel accessibleMode={accessibleMode} onToggle={toggleAccessible} largeText={largeText} onToggleText={toggleLargeText} />
-          </div>
-          <SustainabilityWidget />
-          <WaitTimeWidget />
-
-          {/* Quick link blocks */}
-          <Link to={user ? "/wayfinding" : "/login"} className="glass-card glass-card-hover rounded-fan p-6 flex flex-col items-center justify-center text-center">
-            <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-fan bg-blue-500/10 text-blue-400">
-              <Navigation size={20} />
-            </div>
-            <h4 className="font-display text-body-lg font-bold text-text-primary">Smart Wayfinding</h4>
-            <p className="mt-1 text-data text-text-muted">Agnostic step-free navigation tool</p>
-          </Link>
-          <Link to={user ? "/pa" : "/login"} className="glass-card glass-card-hover rounded-fan p-6 flex flex-col items-center justify-center text-center">
-            <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-fan bg-rose-500/10 text-rose-400">
-              <Volume2 size={20} />
-            </div>
-            <h4 className="font-display text-body-lg font-bold text-text-primary">Emergency PA Broadcast</h4>
-            <p className="mt-1 text-data text-text-muted">Broadcast translation panel</p>
-          </Link>
-          <Link to={user ? "/analytics" : "/login"} className="glass-card glass-card-hover rounded-fan p-6 flex flex-col items-center justify-center text-center">
-            <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-fan bg-purple-500/10 text-purple-400">
-              <BarChart3 size={20} />
-            </div>
-            <h4 className="font-display text-body-lg font-bold text-text-primary">Post-Match Analytics</h4>
-            <p className="mt-1 text-data text-text-muted">AI generated match reviews</p>
-          </Link>
-        </div>
-      </section>
-
-      {/* ─── EVACUATION SIMULATOR ─── */}
-      <section className="relative mx-auto max-w-7xl px-6 py-24 z-10">
-        <div className="glass-card rounded-fan p-8 shadow-modal flex items-start gap-12 md:items-center md:flex-row flex-col border border-white/[0.08]">
-          <div className="flex-1">
-            <Badge variant="warning" className="mb-4 bg-amber-500/10 border border-amber-500/30 text-amber-300">Interactive Simulation</Badge>
-            <h2 className="font-display text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
-              Crowd Evacuation Simulator
+      <section id="dashboard-preview" className="relative mx-auto max-w-7xl px-6 py-28 z-10">
+        <div className="mb-14 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <Badge variant="success" className="mb-4 bg-pitch-green-500/10 border border-pitch-green-500/30 px-2.5 py-1 text-xs text-pitch-green-400">Live Preview Console</Badge>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-5xl">
+              Telemetry Command Center
             </h2>
-            <p className="mt-3 text-body-lg text-text-secondary leading-relaxed">
-              Inject custom fire hazards into a stadium model grid. Watch crowd agents run for safety while Gemini AI responders collaborate dynamically to clear pathways and reroute exits.
+            <p className="mt-3 max-w-xl text-text-secondary leading-relaxed">
+              Explore the functional modules of the operational dashboard. Click the tabs below to switch between live active control segments.
             </p>
-            <div className="mt-6 flex flex-wrap gap-4 items-center">
-              <Button size="lg" onClick={() => navigate(user ? "/evacuation" : "/login")} className="shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                Launch Simulator
-              </Button>
-              <div className="flex items-center gap-4 text-data text-text-muted">
-                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-blue-400" /> Agents</span>
-                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-rose-400" /> Fire</span>
-                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber-400" /> AI Responders</span>
-              </div>
+          </div>
+          
+          {/* Tab buttons - styled like a segmented controller */}
+          <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-md self-center md:self-end">
+            {[
+              { id: "venue", label: "Venue Telemetry" },
+              { id: "crowd", label: "Crowd Flows" },
+              { id: "incident", label: "Incident Center" },
+              { id: "transit", label: "Transit Hub" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? "bg-pitch-green-500 text-white shadow-lg shadow-pitch-green-500/20"
+                    : "text-text-secondary hover:text-white hover:bg-white/[0.03]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Dashboard Mockup Browser Frame */}
+        <div className="relative rounded-3xl border border-white/[0.08] bg-pitch-surface/5 backdrop-blur-md overflow-hidden shadow-2xl">
+          {/* Mock Browser Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-white/[0.01]">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500/50" />
+              <div className="w-3 h-3 rounded-full bg-amber-500/50" />
+              <div className="w-3 h-3 rounded-full bg-emerald-500/50" />
+            </div>
+            <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-md bg-white/[0.02] border border-white/[0.05] font-mono text-[10px] text-text-muted">
+              <span>https://console.spectrastadium.com/metlife-dashboard</span>
+            </div>
+            <div className="flex items-center gap-2 font-mono text-[10px] text-pitch-green-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-pitch-green-500 animate-ping" />
+              <span>LIVE_STREAM_ON</span>
             </div>
           </div>
-          <div className="flex-1 w-full bg-white/[0.02] rounded-fan border border-white/[0.05] p-6">
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: "300", desc: "Agent Nodes", color: "text-blue-400" },
-                { label: "3", desc: "AI Controllers", color: "text-floodlight-200" },
-                { label: "20 Hz", desc: "Sim ticks", color: "text-pitch-green-400" },
-                { label: "Gemini", desc: "Brain Model", color: "text-purple-400" },
-                { label: "Dynamic", desc: "A* Pathfinding", color: "text-amber-500" },
-                { label: "Live", desc: "SSE Data feed", color: "text-text-primary" },
-              ].map((s) => (
-                <div key={s.label} className="rounded-data bg-white/[0.04] p-3 text-center border border-white/[0.04] hover:bg-white/[0.06] transition-colors">
-                  <div className={`font-display text-lg font-bold ${s.color}`}>{s.label}</div>
-                  <div className="text-data font-medium text-text-muted mt-0.5">{s.desc}</div>
+
+          {/* Mock Console Content */}
+          <div className="p-6 md:p-8">
+            {activeTab === "venue" && (
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="md:col-span-2 glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
+                  <VenueMap selectedZone={selectedZone} onSelectZone={setSelectedZone} accessibleMode={accessibleMode} />
                 </div>
-              ))}
-            </div>
+                <div className="glass-card rounded-2xl p-6 shadow-modal border border-white/[0.06] bg-pitch-surface/10 flex flex-col justify-between">
+                  <AccessibilityPanel accessibleMode={accessibleMode} onToggle={toggleAccessible} largeText={largeText} onToggleText={toggleLargeText} />
+                </div>
+              </div>
+            )}
+
+            {activeTab === "crowd" && (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10 lg:col-span-2">
+                  <CrowdDensityWidget />
+                </div>
+                <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
+                  <WaitTimeWidget />
+                </div>
+              </div>
+            )}
+
+            {activeTab === "incident" && (
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
+                  <IncidentFeed />
+                </div>
+                <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
+                  <DecisionSupportPanel />
+                </div>
+              </div>
+            )}
+
+            {activeTab === "transit" && (
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="md:col-span-2 glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
+                  <TransitWidget />
+                </div>
+                <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
+                  <SustainabilityWidget />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* ─── FOOTER CTA ─── */}
-      <section className="relative px-6 py-24 overflow-hidden border-t border-white/[0.07] bg-white/[0.01]">
+      <section className="relative px-6 py-32 overflow-hidden border-t border-white/[0.06] bg-white/[0.01]">
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="h-[300px] w-[300px] rounded-full bg-pitch-green-500/[0.03] blur-[100px]" />
+          <div className="h-[400px] w-[400px] rounded-full bg-pitch-green-500/[0.04] blur-[120px]" />
+          <div className="h-[400px] w-[400px] rounded-full bg-blue-500/[0.03] blur-[120px] translate-x-32" />
         </div>
-        <div className="relative mx-auto max-w-3xl text-center z-10">
-          <h2 className="font-display text-4xl font-extrabold tracking-tight text-text-primary md:text-5xl">
+        <div className="relative mx-auto max-w-4xl text-center z-10 bg-pitch-surface/5 border border-white/[0.06] rounded-3xl p-12 md:p-16 backdrop-blur-md">
+          <Badge variant="default" className="mb-4 bg-white/5 border border-white/10 px-3 py-1 text-xs">Access Portal</Badge>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-6xl">
             Ready for kickoff?
           </h2>
-          <p className="mt-4 text-body-lg text-text-secondary max-w-xl mx-auto leading-relaxed">
-            Create an account or sign in to experience StadiumSense modules during FIFA matches.
+          <p className="mt-6 text-base md:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            Experience MetLife Stadium matchday telemetry powered by Gemini. Open the assistant companion or sign in to start mapping your path.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button size="lg" onClick={() => navigate(user ? "/chat" : "/login")} className="shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Button size="lg" onClick={() => navigate(user ? "/chat" : "/login")} className="bg-pitch-green-500 hover:bg-pitch-green-600 text-white font-semibold px-8 py-6 rounded-xl shadow-[0_4px_20px_rgba(16,185,129,0.2)] hover:scale-102 transition-all">
               {user ? "Open Assistant Companion" : "Create Free Account"}
             </Button>
           </div>

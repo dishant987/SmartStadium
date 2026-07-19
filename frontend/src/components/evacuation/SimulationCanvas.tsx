@@ -386,9 +386,9 @@ function AdBoards() {
   return (
     <group position={[GW * S / 2, 0, GH * S / 2]}>
       {/* Top Ad board */}
-      <AdBoardSegment position={[0, 0.22, -fh / 2 - 0.6]} width={fw + 1} rotation={[0, 0, 0]} sponsorText="STADIUM SENSE   •   GEMINI AI   •   FIFA PARTNER" />
+      <AdBoardSegment position={[0, 0.22, -fh / 2 - 0.6]} width={fw + 1} rotation={[0, 0, 0]} sponsorText="SPECTRA STADIUM   •   GEMINI AI   •   FIFA PARTNER" />
       {/* Bottom Ad board */}
-      <AdBoardSegment position={[0, 0.22, fh / 2 + 0.6]} width={fw + 1} rotation={[0, Math.PI, 0]} sponsorText="SAFE EVACUATION   •   AI RESPONDERS   •   STADIUM SENSE" />
+      <AdBoardSegment position={[0, 0.22, fh / 2 + 0.6]} width={fw + 1} rotation={[0, Math.PI, 0]} sponsorText="SAFE EVACUATION   •   AI RESPONDERS   •   SPECTRA STADIUM" />
       {/* Left Top Ad board */}
       <AdBoardSegment position={[-fw / 2 - 0.6, 0.22, -fh / 4 - 0.6]} width={fh / 2 - 1} rotation={[0, Math.PI / 2, 0]} sponsorText="FIFA" />
       {/* Left Bottom Ad board */}
@@ -396,7 +396,7 @@ function AdBoards() {
       {/* Right Top Ad board */}
       <AdBoardSegment position={[fw / 2 + 0.6, 0.22, -fh / 4 - 0.6]} width={fh / 2 - 1} rotation={[0, -Math.PI / 2, 0]} sponsorText="GEMINI" />
       {/* Right Bottom Ad board */}
-      <AdBoardSegment position={[fw / 2 + 0.6, 0.22, fh / 4 + 0.6]} width={fh / 2 - 1} rotation={[0, -Math.PI / 2, 0]} sponsorText="STADIUMSENSE" />
+      <AdBoardSegment position={[fw / 2 + 0.6, 0.22, fh / 4 + 0.6]} width={fh / 2 - 1} rotation={[0, -Math.PI / 2, 0]} sponsorText="SPECTRA" />
     </group>
   );
 }
@@ -1052,19 +1052,19 @@ function Jumbotron({ evacuated, totalAgents, running, complete }: { evacuated: n
       {/* Four screens */}
       {/* South facing screen (towards +Z) */}
       <group position={[0, 0, 1.61]}>
-        <ScreenText title="STADIUM SENSE" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
+        <ScreenText title="SPECTRA STADIUM" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
       </group>
       {/* North facing screen (towards -Z) */}
       <group position={[0, 0, -1.61]} rotation={[0, Math.PI, 0]}>
-        <ScreenText title="STADIUM SENSE" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
+        <ScreenText title="SPECTRA STADIUM" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
       </group>
       {/* East facing screen (towards +X) */}
       <group position={[1.61, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <ScreenText title="STADIUM SENSE" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
+        <ScreenText title="SPECTRA STADIUM" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
       </group>
       {/* West facing screen (towards -X) */}
       <group position={[-1.61, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <ScreenText title="STADIUM SENSE" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
+        <ScreenText title="SPECTRA STADIUM" pct={pct} remaining={totalAgents - evacuated} status={statusText} statusColor={statusColor} />
       </group>
 
       {/* Support cable */}

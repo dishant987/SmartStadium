@@ -189,7 +189,7 @@ export function Navbar() {
               <line x1="2.5" y1="8.5" x2="6.5" y2="4" stroke="currentColor" />
             </svg>
             <span className="font-display text-sm font-extrabold uppercase tracking-widest text-text-primary flex items-center gap-1.5">
-              Stadium<span className="text-pitch-green-400 bg-pitch-green-500/10 px-1.5 py-0.5 rounded text-[10px] tracking-normal font-bold border border-pitch-green-400/20 text-glow-green">SENSE</span>
+              Spectra<span className="text-pitch-green-400 bg-pitch-green-500/10 px-1.5 py-0.5 rounded text-[10px] tracking-normal font-bold border border-pitch-green-400/20 text-glow-green">STADIUM</span>
             </span>
           </Link>
         </div>

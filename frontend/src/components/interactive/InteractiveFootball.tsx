@@ -453,12 +453,12 @@ export function InteractiveFootball() {
     const size = side === "left" ? leftSize : rightSize;
     if (side === "left") {
       return {
-        x: width * 0.14 - size / 2,
+        x: width * 0.08 - size / 2,
         y: height * 0.62 - size / 2,
       };
     }
     return {
-      x: width * 0.76 - size / 2,
+      x: width * 0.88 - size / 2,
       y: height * 0.35 - size / 2,
     };
   };
@@ -888,6 +888,20 @@ export function InteractiveFootball() {
         >
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-pitch-green-500/15 blur-md pointer-events-none w-24 h-4" />
 
+          {/* High-tech Tracking HUD Ring that follows the ball */}
+          <div className="absolute inset-0 pointer-events-none z-0 scale-[1.3] opacity-60">
+            <svg className="w-full h-full text-pitch-green-500/35" viewBox="0 0 100 100">
+              <path d="M 6 12 L 6 6 L 12 6" fill="none" stroke="currentColor" strokeWidth="1" />
+              <path d="M 94 12 L 94 6 L 88 6" fill="none" stroke="currentColor" strokeWidth="1" />
+              <path d="M 6 88 L 6 94 L 12 94" fill="none" stroke="currentColor" strokeWidth="1" />
+              <path d="M 94 88 L 94 94 L 88 94" fill="none" stroke="currentColor" strokeWidth="1" />
+            </svg>
+            <div className="absolute -top-7 left-1/2 -translate-x-1/2 font-mono text-[8px] text-[#00FF87] bg-pitch-night/90 border border-pitch-green-500/35 px-1 py-0.5 rounded shadow-modal whitespace-nowrap flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-pitch-green-400 animate-ping" />
+              <span>RADAR_L_X{leftPos.x.toFixed(0)}</span>
+            </div>
+          </div>
+
           <Canvas
             camera={{ position: [0, 0, 4.5], fov: 50 }}
             style={{ width: "100%", height: "100%", background: "transparent" }}
@@ -914,6 +928,20 @@ export function InteractiveFootball() {
           onTouchStart={onTouchStartRight}
         >
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-pitch-green-500/15 blur-md pointer-events-none w-32 h-6" />
+
+          {/* High-tech Tracking HUD Ring that follows the ball */}
+          <div className="absolute inset-0 pointer-events-none z-0 scale-[1.25] opacity-60">
+            <svg className="w-full h-full text-floodlight-300/35" viewBox="0 0 100 100">
+              <path d="M 6 12 L 6 6 L 12 6" fill="none" stroke="currentColor" strokeWidth="1" />
+              <path d="M 94 12 L 94 6 L 88 6" fill="none" stroke="currentColor" strokeWidth="1" />
+              <path d="M 6 88 L 6 94 L 12 94" fill="none" stroke="currentColor" strokeWidth="1" />
+              <path d="M 94 88 L 94 94 L 88 94" fill="none" stroke="currentColor" strokeWidth="1" />
+            </svg>
+            <div className="absolute -top-7 left-1/2 -translate-x-1/2 font-mono text-[8px] text-floodlight-200 bg-pitch-night/90 border border-floodlight-300/35 px-1 py-0.5 rounded shadow-modal whitespace-nowrap flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-floodlight-300 animate-pulse" />
+              <span>RADAR_R_Y{rightPos.y.toFixed(0)}</span>
+            </div>
+          </div>
 
           <Canvas
             camera={{ position: [0, 0, 4.5], fov: 50 }}

@@ -39,12 +39,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 
 app = FastAPI(
-    title="StadiumSense — FIFA World Cup 2026",
+    title="Spectra Stadium — FIFA World Cup 2026",
     description="AI-powered stadium operations platform for FIFA World Cup 2026 at MetLife Stadium. "
     "Provides navigation, crowd management, accessibility, transit, sustainability, "
     "PA broadcasting, real-time analytics, volunteer coordination, and AI chat.",
     version="1.0.0",
-    contact={"name": "StadiumSense Team", "url": "https://github.com/anomalyco/fifa"},
+    contact={"name": "Spectra Stadium Team", "url": "https://github.com/anomalyco/fifa"},
 )
 
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]

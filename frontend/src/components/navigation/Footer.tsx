@@ -42,7 +42,7 @@ export function Footer() {
                 <line x1="2.5" y1="8.5" x2="6.5" y2="4" stroke="currentColor" />
               </svg>
               <span className="font-display text-xs font-extrabold uppercase tracking-widest text-text-primary flex items-center gap-1">
-                Stadium<span className="text-pitch-green-400 bg-pitch-green-500/10 px-1 py-0.5 rounded text-[9px] tracking-normal font-bold border border-pitch-green-400/20">SENSE</span>
+                Spectra<span className="text-pitch-green-400 bg-pitch-green-500/10 px-1 py-0.5 rounded text-[9px] tracking-normal font-bold border border-pitch-green-400/20">STADIUM</span>
               </span>
             </Link>
             <p className="mt-3 text-data-md text-text-muted leading-relaxed">
@@ -140,7 +140,7 @@ export function Footer() {
         {/* Bottom copyright and project notes */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/[0.05] pt-6 text-data text-text-muted md:flex-row">
           <div className="flex items-center gap-1">
-            <span>&copy; 2026 StadiumSense. Built with</span>
+            <span>&copy; 2026 Spectra Stadium. Built with</span>
             <Heart size={10} className="text-rose-500 fill-rose-500 animate-pulse" />
             <span>for FIFA World Cup Hackathon.</span>
           </div>

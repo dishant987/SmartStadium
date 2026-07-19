@@ -22,9 +22,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem("stadiumsense_user");
+    const saved = localStorage.getItem("spectrastadium_user");
     if (saved) {
-      try { setUser(JSON.parse(saved)); } catch { localStorage.removeItem("stadiumsense_user"); }
+      try { setUser(JSON.parse(saved)); } catch { localStorage.removeItem("spectrastadium_user"); }
     }
     setLoading(false);
   }, []);
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
-    localStorage.setItem("stadiumsense_user", JSON.stringify(res.user));
+    localStorage.setItem("spectrastadium_user", JSON.stringify(res.user));
     setUser(res.user);
   }, []);
 
@@ -43,13 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: "POST",
       body: JSON.stringify({ email, password, name }),
     });
-    localStorage.setItem("stadiumsense_user", JSON.stringify(res.user));
+    localStorage.setItem("spectrastadium_user", JSON.stringify(res.user));
     setUser(res.user);
   }, []);
 
   const logout = useCallback(async () => {
     try { await apiClient("/auth/logout", { method: "POST" }); } catch { /* ignore */ }
-    localStorage.removeItem("stadiumsense_user");
+    localStorage.removeItem("spectrastadium_user");
     setUser(null);
   }, []);
 

@@ -71,7 +71,7 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
 }
 
 function redirectLogin() {
-  localStorage.removeItem("stadiumsense_user");
+  localStorage.removeItem("spectrastadium_user");
   window.location.href = "/login";
 }
 
