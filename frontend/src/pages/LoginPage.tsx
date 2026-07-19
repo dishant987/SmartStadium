@@ -3,7 +3,7 @@ import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 
 export function LoginPage() {
   const { user, login, register } = useAuth();
@@ -106,7 +106,7 @@ export function LoginPage() {
 
           {error && (
             <div className="rounded-data border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-data text-rose-400 flex items-center gap-1.5">
-              <ShieldCheck size={12} className="shrink-0" />
+              <AlertCircle size={12} className="shrink-0" />
               <span>{error}</span>
             </div>
           )}

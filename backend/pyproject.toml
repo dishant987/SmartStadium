@@ -12,3 +12,4 @@ quote-style = "double"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+addopts = "--cov=app --cov-report=term --cov-report=json --cov-fail-under=80 --no-cov-on-fail"

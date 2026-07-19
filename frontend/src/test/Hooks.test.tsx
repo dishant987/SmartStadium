@@ -89,4 +89,34 @@ describe("React Hooks Test Suite", () => {
     expect(result.current.data).toEqual(mockData);
     expect(apiClient).toHaveBeenCalledWith("/sustainability/tip");
   });
+
+  it("useIncidents fetches incidents", async () => {
+    const { useIncidents } = await import("@/hooks/useIncidents");
+    const mockData = [{ id: "i1", severity: "high", category: "fire", description: "test", location: "z1", status: "open", createdAt: "2026-01-01" }];
+    vi.mocked(apiClient).mockResolvedValue(mockData);
+    const { result } = renderHook(() => useIncidents(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(mockData);
+    expect(apiClient).toHaveBeenCalledWith("/ops/incidents");
+  });
+
+  it("useVenueMap fetches venue map", async () => {
+    const { useVenueMap } = await import("@/hooks/useNavRoute");
+    const mockData = { zones: [], gates: [], amenities: [] };
+    vi.mocked(apiClient).mockResolvedValue(mockData);
+    const { result } = renderHook(() => useVenueMap(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(mockData);
+    expect(apiClient).toHaveBeenCalledWith("/nav/venue-map");
+  });
+
+  it("useTransport fetches transport status", async () => {
+    const { useTransport } = await import("@/hooks/useTransport");
+    const mockData = { lines: [], last_updated: "2026-01-01" };
+    vi.mocked(apiClient).mockResolvedValue(mockData);
+    const { result } = renderHook(() => useTransport(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(mockData);
+    expect(apiClient).toHaveBeenCalledWith("/transport/status");
+  });
 });
