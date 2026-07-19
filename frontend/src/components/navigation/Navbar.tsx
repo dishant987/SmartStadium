@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
@@ -69,7 +69,7 @@ const TOOLS = [
 
 
 
-export function Navbar() {
+export const Navbar = memo(function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -451,4 +451,4 @@ export function Navbar() {
       )}
     </nav>
   );
-}
+});

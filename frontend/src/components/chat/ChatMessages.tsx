@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, memo, type ReactNode } from "react";
 import Markdown from "react-markdown";
 import { Copy, Check, RotateCcw, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -13,7 +13,7 @@ interface Props {
   isLoading?: boolean;
 }
 
-function CopyButton({ text }: { text: string }) {
+const CopyButton = memo(function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text);
@@ -25,9 +25,9 @@ function CopyButton({ text }: { text: string }) {
       {copied ? <Check size={14} className="text-pitch-green-500" /> : <Copy size={14} />}
     </button>
   );
-}
+});
 
-function MessageActions({ content, isAssistant, onRegenerate }: { content: string; isAssistant: boolean; onRegenerate?: () => void }) {
+const MessageActions = memo(function MessageActions({ content, isAssistant, onRegenerate }: { content: string; isAssistant: boolean; onRegenerate?: () => void }) {
   const [liked, setLiked] = useState<boolean | null>(null);
   return (
     <div className="mt-2 flex items-center gap-1 opacity-0 focus-within:opacity-100 transition-opacity group-hover:opacity-100">
@@ -49,7 +49,7 @@ function MessageActions({ content, isAssistant, onRegenerate }: { content: strin
       )}
     </div>
   );
-}
+});
 
 interface MdProps { href?: string; children?: ReactNode; className?: string; }
 
@@ -80,7 +80,7 @@ const mdComponents = {
   td: ({ children }: MdProps) => <td className="border border-border px-3 py-2 text-text-secondary">{children}</td>,
 };
 
-export function ChatMessages({ messages, streamingText, isStreaming, error, onRegenerate, isLoading }: Props) {
+export const ChatMessages = memo(function ChatMessages({ messages, streamingText, isStreaming, error, onRegenerate, isLoading }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const liveRef = useRef<HTMLDivElement>(null);
 
@@ -176,4 +176,4 @@ export function ChatMessages({ messages, streamingText, isStreaming, error, onRe
       <div ref={bottomRef} />
     </div>
   );
-}
+});

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.middleware.auth import get_current_user
 from app.schemas.analytics_schema import PostMatchAnalyticsResponse
-from app.services.auth_service import UserResponse
+from app.schemas.auth_schema import UserResponse
 from app.services.analytics_service import AnalyticsService
 
 router = APIRouter()

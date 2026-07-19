@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 
 from app.middleware.auth import get_current_user
 from app.schemas.pa_schema import PAAnnouncementRequest, PAAnnouncementResponse, PALogResponse
-from app.services.auth_service import UserResponse
+from app.schemas.auth_schema import UserResponse
 from app.services.pa_service import PAService
 
 router = APIRouter()

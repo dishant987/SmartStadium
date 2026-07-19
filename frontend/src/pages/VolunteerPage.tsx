@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/navigation/Footer";
@@ -50,15 +50,15 @@ export function VolunteerPage() {
 
   useEffect(() => { load(); }, []);
 
-  const handleStatusChange = async (id: string, status: string) => {
+  const handleStatusChange = useCallback(async (id: string, status: string) => {
     await updateVolunteerStatus(id, { status });
     load();
-  };
+  }, []);
 
-  const handleTaskStatus = async (id: string, status: string) => {
+  const handleTaskStatus = useCallback(async (id: string, status: string) => {
     await updateTask(id, { status });
     load();
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-pitch-night text-text-primary font-ui">

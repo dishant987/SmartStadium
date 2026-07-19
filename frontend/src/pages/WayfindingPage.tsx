@@ -72,10 +72,10 @@ export function WayfindingPage() {
           {/* Left: Search Input Card */}
           <div className="space-y-4">
             <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data">
-              <h3 className="mb-4 font-display text-body-lg font-semibold text-text-primary flex items-center gap-2">
+              <h2 className="mb-4 font-display text-body-lg font-semibold text-text-primary flex items-center gap-2">
                 <Navigation size={16} className="text-blue-400" />
                 Find Your Route
-              </h3>
+              </h2>
               <div className="space-y-4">
                 <div>
                   <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Start Position</label>
@@ -103,6 +103,7 @@ export function WayfindingPage() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setAccessible(!accessible)}
+                    aria-pressed={accessible}
                     className={`flex-1 flex items-center justify-center gap-1.5 rounded-data border px-3 py-1.5 text-data-md font-medium transition-all ${
                       accessible 
                         ? "bg-blue-500/20 text-blue-400 border-blue-500/30" 
@@ -113,6 +114,7 @@ export function WayfindingPage() {
                   </button>
                   <button 
                     onClick={() => setWheelchair(!wheelchair)}
+                    aria-pressed={wheelchair}
                     className={`flex-1 flex items-center justify-center gap-1.5 rounded-data border px-3 py-1.5 text-data-md font-medium transition-all ${
                       wheelchair 
                         ? "bg-blue-500/20 text-blue-400 border-blue-500/30" 
@@ -142,9 +144,9 @@ export function WayfindingPage() {
               </div>
             ) : route ? (
               <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data space-y-4">
-                <h3 className="font-display text-body-lg font-semibold text-text-primary border-b border-white/[0.05] pb-2">
+                <h2 className="font-display text-body-lg font-semibold text-text-primary border-b border-white/[0.05] pb-2">
                   Route Summary
-                </h3>
+                </h2>
                 <div className="space-y-2.5 text-data-md">
                   <div className="flex items-center justify-between">
                     <span className="text-text-muted">Total Distance</span>

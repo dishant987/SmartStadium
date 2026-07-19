@@ -8,7 +8,7 @@ from app.schemas.volunteer_schema import (
     VolunteerDashboardResponse,
 )
 from app.services.volunteer_service import VolunteerService
-from app.services.auth_service import UserResponse
+from app.schemas.auth_schema import UserResponse
 from app.middleware.auth import get_current_user
 
 router = APIRouter()

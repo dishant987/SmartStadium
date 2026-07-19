@@ -1,7 +1,6 @@
 """Volunteer management service with LangGraph-powered task assignment."""
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 from dataclasses import dataclass
 
 from sqlalchemy import select, func
@@ -22,14 +21,14 @@ class VolunteerService:
 
     # ─── Volunteers ───
 
-    def list_volunteers(self, role: Optional[str] = None) -> list[VolunteerResponse]:
+    def list_volunteers(self, role: str | None = None) -> list[VolunteerResponse]:
         q = select(Volunteer)
         if role:
             q = q.where(Volunteer.role == role)
         rows = self.db.execute(q.order_by(Volunteer.name)).scalars().all()
         return [self._vol_to_resp(r) for r in rows]
 
-    def get_volunteer(self, volunteer_id: str) -> Optional[VolunteerResponse]:
+    def get_volunteer(self, volunteer_id: str) -> VolunteerResponse | None:
         v = self.db.get(Volunteer, volunteer_id)
         return self._vol_to_resp(v) if v else None
 
@@ -43,7 +42,7 @@ class VolunteerService:
         self.db.refresh(v)
         return self._vol_to_resp(v)
 
-    def update_volunteer(self, volunteer_id: str, req: VolunteerUpdate) -> Optional[VolunteerResponse]:
+    def update_volunteer(self, volunteer_id: str, req: VolunteerUpdate) -> VolunteerResponse | None:
         v = self.db.get(Volunteer, volunteer_id)
         if not v:
             return None
@@ -57,7 +56,7 @@ class VolunteerService:
 
     # ─── Tasks ───
 
-    def list_tasks(self, status: Optional[str] = None) -> list[VolunteerTaskResponse]:
+    def list_tasks(self, status: str | None = None) -> list[VolunteerTaskResponse]:
         q = select(VolunteerTask)
         if status:
             q = q.where(VolunteerTask.status == status)
@@ -75,7 +74,7 @@ class VolunteerService:
         self.db.refresh(t)
         return self._task_to_resp(t)
 
-    def update_task(self, task_id: str, req: VolunteerTaskUpdate) -> Optional[VolunteerTaskResponse]:
+    def update_task(self, task_id: str, req: VolunteerTaskUpdate) -> VolunteerTaskResponse | None:
         t = self.db.get(VolunteerTask, task_id)
         if not t:
             return None

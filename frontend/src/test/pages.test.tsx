@@ -56,7 +56,7 @@ describe("Pages", () => {
   it("Landing renders hero section", async () => {
     const { Landing } = await import("@/pages/Landing");
     wrap(<Landing />);
-    expect(screen.getByText(/FIFA World Cup 2026/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(/FIFA World Cup 2026/i)).toBeInTheDocument());
   });
 
   it("Landing switches tabs on click", async () => {

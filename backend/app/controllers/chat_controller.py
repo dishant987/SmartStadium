@@ -6,7 +6,7 @@ import json
 from app.db.session import get_db
 from app.schemas.chat_schema import ChatRequest, RenameRequest
 from app.services.chat_service import ChatService
-from app.services.auth_service import UserResponse
+from app.schemas.auth_schema import UserResponse
 from app.middleware.auth import get_current_user
 
 router = APIRouter()

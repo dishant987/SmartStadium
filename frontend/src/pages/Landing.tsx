@@ -2,18 +2,19 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { CrowdDensityWidget } from "@/components/dashboard/CrowdDensityWidget";
-import { IncidentFeed } from "@/components/dashboard/IncidentFeed";
-import { DecisionSupportPanel } from "@/components/dashboard/DecisionSupportPanel";
-import { VenueMap } from "@/components/navigation/VenueMap";
-import { TransitWidget } from "@/components/transport/TransitWidget";
-import { AccessibilityPanel } from "@/components/accessibility/AccessibilityPanel";
-import { SustainabilityWidget } from "@/components/sustainability/SustainabilityWidget";
-import { WaitTimeWidget } from "@/components/waittimes/WaitTimeWidget";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/navigation/Footer";
-import { InteractiveFootball } from "@/components/interactive/InteractiveFootball";
-import { useState, useCallback, memo } from "react";
+import { useState, useCallback, memo, lazy, Suspense } from "react";
+
+const CrowdDensityWidget = lazy(() => import("@/components/dashboard/CrowdDensityWidget").then(m => ({ default: m.CrowdDensityWidget })));
+const IncidentFeed = lazy(() => import("@/components/dashboard/IncidentFeed").then(m => ({ default: m.IncidentFeed })));
+const DecisionSupportPanel = lazy(() => import("@/components/dashboard/DecisionSupportPanel").then(m => ({ default: m.DecisionSupportPanel })));
+const VenueMap = lazy(() => import("@/components/navigation/VenueMap").then(m => ({ default: m.VenueMap })));
+const TransitWidget = lazy(() => import("@/components/transport/TransitWidget").then(m => ({ default: m.TransitWidget })));
+const AccessibilityPanel = lazy(() => import("@/components/accessibility/AccessibilityPanel").then(m => ({ default: m.AccessibilityPanel })));
+const SustainabilityWidget = lazy(() => import("@/components/sustainability/SustainabilityWidget").then(m => ({ default: m.SustainabilityWidget })));
+const WaitTimeWidget = lazy(() => import("@/components/waittimes/WaitTimeWidget").then(m => ({ default: m.WaitTimeWidget })));
+const InteractiveFootball = lazy(() => import("@/components/interactive/InteractiveFootball").then(m => ({ default: m.InteractiveFootball })));
 import {
   Clock,
   Volume2,
@@ -102,7 +103,9 @@ export const Landing = memo(function Landing() {
         </div>
 
         {/* Floating Grab & Throw 3D Football (Interactive Physics-based) */}
-        <InteractiveFootball />
+        <Suspense fallback={null}>
+          <InteractiveFootball />
+        </Suspense>
 
         {/* Hero Content */}
         <div className="relative mx-auto max-w-3xl text-center z-10 px-4">
@@ -305,7 +308,7 @@ export const Landing = memo(function Landing() {
           </div>
           
           {/* Tab buttons - styled like a segmented controller */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-md self-center md:self-end">
+          <div role="tablist" className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-md self-center md:self-end">
             {[
               { id: "venue", label: "Venue Telemetry" },
               { id: "crowd", label: "Crowd Flows" },
@@ -314,6 +317,9 @@ export const Landing = memo(function Landing() {
             ].map((tab) => (
               <button
                 key={tab.id}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls={`tabpanel-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as "venue" | "crowd" | "incident" | "transit")}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   activeTab === tab.id
@@ -347,8 +353,9 @@ export const Landing = memo(function Landing() {
 
           {/* Mock Console Content */}
           <div className="p-6 md:p-8">
+            <Suspense fallback={<div className="h-64 animate-pulse rounded-fan bg-white/[0.03]" />}>
             {activeTab === "venue" && (
-              <div className="grid gap-6 md:grid-cols-3">
+              <div role="tabpanel" id="tabpanel-venue" className="grid gap-6 md:grid-cols-3">
                 <div className="md:col-span-2 glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
                   <VenueMap selectedZone={selectedZone} onSelectZone={setSelectedZone} accessibleMode={accessibleMode} />
                 </div>
@@ -359,7 +366,7 @@ export const Landing = memo(function Landing() {
             )}
 
             {activeTab === "crowd" && (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div role="tabpanel" id="tabpanel-crowd" className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10 lg:col-span-2">
                   <CrowdDensityWidget />
                 </div>
@@ -370,7 +377,7 @@ export const Landing = memo(function Landing() {
             )}
 
             {activeTab === "incident" && (
-              <div className="grid gap-6 md:grid-cols-2">
+              <div role="tabpanel" id="tabpanel-incident" className="grid gap-6 md:grid-cols-2">
                 <div className="glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
                   <IncidentFeed />
                 </div>
@@ -381,7 +388,7 @@ export const Landing = memo(function Landing() {
             )}
 
             {activeTab === "transit" && (
-              <div className="grid gap-6 md:grid-cols-3">
+              <div role="tabpanel" id="tabpanel-transit" className="grid gap-6 md:grid-cols-3">
                 <div className="md:col-span-2 glass-card rounded-2xl p-4 shadow-modal border border-white/[0.06] bg-pitch-surface/10">
                   <TransitWidget />
                 </div>
@@ -390,6 +397,7 @@ export const Landing = memo(function Landing() {
                 </div>
               </div>
             )}
+            </Suspense>
           </div>
         </div>
       </section>

@@ -5,7 +5,7 @@ Tries Groq → Gemini → Mistral, falls back to mock when no keys configured.""
 from dataclasses import dataclass, field
 from typing import AsyncGenerator
 
-from langchain_core.messages import HumanMessage, BaseMessage
+from langchain_core.messages import HumanMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from app.config import settings
@@ -56,10 +56,7 @@ def _build_providers() -> list[BaseChatModel]:
 class LLMProvider:
     _providers: list = field(default_factory=_build_providers)
 
-    def _get_messages(self, prompt: str) -> list[BaseMessage]:
-        return [HumanMessage(content=prompt)]
-
-    async def complete(self, prompt: str, system_prompt: str | None = None) -> str:
+    async def complete(self, prompt: str) -> str:
         messages = [HumanMessage(content=prompt)]
         for provider in self._providers:
             try:
@@ -69,7 +66,7 @@ class LLMProvider:
                 logger.warning("Provider {p} failed: {err}", p=type(provider).__name__, err=str(e))
         return "I'm having trouble connecting right now. Please try again."
 
-    async def complete_stream(self, prompt: str, system_prompt: str | None = None) -> AsyncGenerator[str, None]:
+    async def complete_stream(self, prompt: str) -> AsyncGenerator[str, None]:
         messages = [HumanMessage(content=prompt)]
         for provider in self._providers:
             try:

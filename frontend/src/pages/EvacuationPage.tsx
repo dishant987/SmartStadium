@@ -93,10 +93,10 @@ export function EvacuationPage() {
           {/* Subheader */}
           <div className="flex items-center justify-between mb-5 border-b border-white/[0.05] pb-3.5 shrink-0">
             <div>
-              <h2 className="font-display text-lg font-bold text-text-primary flex items-center gap-2">
+              <h1 className="font-display text-lg font-bold text-text-primary flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
                 Crowd Evacuation Simulator
-              </h2>
+              </h1>
               <p className="text-data text-text-muted">Dynamic hazard injection & Gemini responder rerouting</p>
             </div>
 

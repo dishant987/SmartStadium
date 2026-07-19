@@ -128,10 +128,10 @@ export function PAPage() {
         <div className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
           <div className="space-y-4">
             <div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data">
-              <h3 className="mb-4 font-display text-body-lg font-semibold text-text-primary flex items-center gap-2">
+              <h2 className="mb-4 font-display text-body-lg font-semibold text-text-primary flex items-center gap-2">
                 <Radio size={16} className="text-rose-500" />
                 Compose Broadcast
-              </h3>
+              </h2>
 
               <div className="space-y-4">
                 <div>
@@ -140,6 +140,7 @@ export function PAPage() {
                     {ANNOUNCEMENT_TYPES.map((t) => (
                       <button key={t.id}
                         onClick={() => { setType(t.id); setSeverity(t.severity); }}
+                        aria-pressed={type === t.id}
                         className={`flex items-center gap-2 rounded-data px-3 py-2 text-data-md font-semibold text-left transition-all ${
                           type === t.id
                             ? "bg-rose-500/15 text-rose-400 border border-rose-500/30"
@@ -179,6 +180,7 @@ export function PAPage() {
                   <div className="flex flex-wrap gap-1.5">
                     {LANGUAGES.map((l) => (
                       <button key={l.id} onClick={() => toggleLang(l.id)}
+                        aria-pressed={languages.includes(l.id)}
                         className={`rounded-pill px-3 py-1 text-data font-semibold border transition-all ${
                           languages.includes(l.id)
                             ? "bg-pitch-green-500/10 text-pitch-green-400 border-pitch-green-500/30"
@@ -232,7 +234,7 @@ export function PAPage() {
 
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-white/[0.05] pb-3">
-              <h3 className="font-display text-body-lg font-bold text-text-primary">Logs Feed</h3>
+              <h2 className="font-display text-body-lg font-bold text-text-primary">Logs Feed</h2>
               <Button size="sm" variant="ghost" onClick={loadLog} disabled={logLoading}>
                 {logLoading ? <Spinner size="sm" /> : <RefreshCw size={14} className={logLoading ? "animate-spin" : ""} />}
               </Button>

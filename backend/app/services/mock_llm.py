@@ -1,7 +1,7 @@
 """Mock chat model for demo when no API keys are configured."""
 
 import asyncio
-from typing import Any, AsyncIterator, Iterator, List
+from typing import Any, AsyncIterator, Iterator
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, AIMessageChunk
@@ -12,20 +12,20 @@ class MockChatModel(BaseChatModel):
     """Returns canned responses so the demo works without API keys."""
 
     def _generate(
-        self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any
+        self, messages: list[BaseMessage], stop: list[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any
     ) -> ChatResult:
         return ChatResult(generations=[ChatGeneration(message=AIMessage(content=self._mock_response(messages)))])
 
     async def _agenerate(
-        self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any
+        self, messages: list[BaseMessage], stop: list[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any
     ) -> ChatResult:
         return self._generate(messages, stop, run_manager, **kwargs)
 
-    def _stream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> Iterator[ChatGenerationChunk]:
+    def _stream(self, messages: list[BaseMessage], stop: list[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> Iterator[ChatGenerationChunk]:
         for token in self._mock_stream(messages):
             yield ChatGenerationChunk(message=AIMessageChunk(content=token))
 
-    async def _astream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> AsyncIterator[ChatGenerationChunk]:
+    async def _astream(self, messages: list[BaseMessage], stop: list[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> AsyncIterator[ChatGenerationChunk]:
         for token in self._mock_stream(messages):
             yield ChatGenerationChunk(message=AIMessageChunk(content=token))
             await asyncio.sleep(0.03)
@@ -34,7 +34,7 @@ class MockChatModel(BaseChatModel):
     def _llm_type(self) -> str:
         return "mock"
 
-    def _mock_response(self, messages: List[BaseMessage]) -> str:
+    def _mock_response(self, messages: list[BaseMessage]) -> str:
         last = messages[-1].content.lower() if messages else ""
         if "gate" in last or "entrance" in last:
             return (
@@ -90,6 +90,6 @@ class MockChatModel(BaseChatModel):
             "What would you like to know?"
         )
 
-    def _mock_stream(self, messages: List[BaseMessage] | None = None) -> list[str]:
+    def _mock_stream(self, messages: list[BaseMessage] | None = None) -> list[str]:
         text = self._mock_response(messages or [])
         return [text[i:i+3] for i in range(0, len(text), 3)]

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
@@ -30,7 +30,7 @@ describe("Edge cases", () => {
   it("Landing renders without auth", async () => {
     const { Landing } = await import("@/pages/Landing");
     wrap(<Landing />);
-    expect(screen.getByText(/FIFA World Cup 2026/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(/FIFA World Cup 2026/i)).toBeInTheDocument());
   });
 
   it("Login page renders", async () => {

@@ -89,11 +89,6 @@ async def test_agent_respond_stream_graph_exception():
             chunks.append(chunk)
         assert "".join(chunks) == "fallback"
 
-def test_bind_langgraph():
-    agent = LangGraphAgent()
-    agent._graph = "test-graph"
-    assert agent.bind_langgraph(None) == "test-graph"
-
 def test_build_graph_bind_tools_success():
     agent = LangGraphAgent()
     mock_provider = MagicMock()

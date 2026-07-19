@@ -52,8 +52,8 @@ class LangChainRAGService:
             import shutil
             try:
                 shutil.rmtree(CHROMA_PERSIST_DIR, ignore_errors=True)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to clean Chroma dir: {e}", e=e)
             store = Chroma(
                 collection_name=COLLECTION_NAME,
                 embedding_function=embeddings,

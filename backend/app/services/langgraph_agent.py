@@ -164,7 +164,3 @@ class LangGraphAgent:
         last_user = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "Hello")
         prompt = f"{SYSTEM_PROMPT}\n\nUser: {last_user}"
         return await self.llm.complete(prompt)
-
-    def bind_langgraph(self, model):
-        """For use outside this class — expose the compiled graph."""
-        return self._graph

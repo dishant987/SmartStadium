@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { BarChart3, TrendingUp, TrendingDown, Minus, Users, Zap, RefreshCw } from "lucide-react";
 import Markdown from "react-markdown";
 import { Badge } from "@/components/ui/Badge";
@@ -15,8 +15,8 @@ function TrendIcon({ trend }: { trend: string }) {
   return <Minus size={14} className="text-text-muted" />;
 }
 
-function CrowdChart({ data }: { data: Array<{ minute: number; count: number }> }) {
-  const max = Math.max(...data.map((d) => d.count));
+const CrowdChart = memo(function CrowdChart({ data }: { data: Array<{ minute: number; count: number }> }) {
+  const max = useMemo(() => Math.max(...data.map((d) => d.count)), [data]);
   return (
     <div className="flex items-end gap-1.5 h-36 pt-4 px-2">
       {data.map((d) => (
@@ -34,7 +34,7 @@ function CrowdChart({ data }: { data: Array<{ minute: number; count: number }> }
       ))}
     </div>
   );
-}
+});
 
 export function AnalyticsPage() {
   const [data, setData] = useState<PostMatchAnalyticsResponse | null>(null);
@@ -226,6 +226,7 @@ export function AnalyticsPage() {
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-data-md">
+                  <caption className="sr-only">Gate flow performance and response times for each access gate</caption>
                   <thead>
                     <tr className="border-b border-white/[0.06] text-text-muted font-medium">
                       <th className="pb-3 text-left">Access Gate</th>

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.orm import Session
 
 from app.models.chat_session import ChatSession
@@ -38,16 +38,17 @@ class ChatService:
         if contains_injection(req.message):
             req.message = "[Content moderated]"
 
-        db_messages = (
+        db_messages = list(reversed(
             self.db.execute(
                 select(ChatMessage)
                 .where(ChatMessage.session_id == req.session_id)
-                .order_by(ChatMessage.created_at)
+                .order_by(desc(ChatMessage.created_at))
+                .limit(10)
             )
             .scalars()
             .all()
-        )
-        history = [{"role": m.role.value, "content": m.content} for m in db_messages[-10:]]
+        ))
+        history = [{"role": m.role.value, "content": m.content} for m in db_messages]
         history.append({"role": "user", "content": req.message})
 
         reply = await self.agent.respond(history)
@@ -89,16 +90,17 @@ class ChatService:
         if contains_injection(req.message):
             req.message = "[Content moderated]"
 
-        db_messages = (
+        db_messages = list(reversed(
             self.db.execute(
                 select(ChatMessage)
                 .where(ChatMessage.session_id == req.session_id)
-                .order_by(ChatMessage.created_at)
+                .order_by(desc(ChatMessage.created_at))
+                .limit(10)
             )
             .scalars()
             .all()
-        )
-        history = [{"role": m.role.value, "content": m.content} for m in db_messages[-10:]]
+        ))
+        history = [{"role": m.role.value, "content": m.content} for m in db_messages]
         history.append({"role": "user", "content": req.message})
 
         user_msg = ChatMessage(

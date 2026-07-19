@@ -1384,7 +1384,7 @@ export function SimulationCanvas({
   const controlsRef = useRef<any>(null);
 
   return (
-    <div className="relative h-full w-full rounded-fan border border-border overflow-hidden bg-[#0a0f1d]">
+    <div className="relative h-full w-full rounded-fan border border-border overflow-hidden bg-[#0a0f1d]" role="img" aria-label="3D stadium evacuation simulation canvas">
       <Canvas
         camera={{ position: [12, 14, 22], fov: 42 }}
         gl={{ antialias: true, alpha: false }}

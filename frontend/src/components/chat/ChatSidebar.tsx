@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Plus, MessageSquare, Trash2, PanelLeftClose, PanelLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -15,7 +15,7 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-export function ChatSidebar({ sessions, activeSessionId, isLoading, onSelect, onNew, onDelete }: Props) {
+export const ChatSidebar = memo(function ChatSidebar({ sessions, activeSessionId, isLoading, onSelect, onNew, onDelete }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -145,4 +145,4 @@ export function ChatSidebar({ sessions, activeSessionId, isLoading, onSelect, on
       />
     </>
   );
-}
+});

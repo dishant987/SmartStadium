@@ -136,9 +136,9 @@ WAYFINDING_DETAILS = {
 
 
 
-def resolve_zone_id(zone_or_item_id: str) -> str:
+def resolve_zone_id(zone_or_item_id: str) -> str | None:
     if not zone_or_item_id:
-        return zone_or_item_id
+        return None
     val = zone_or_item_id.lower().strip()
     if val in ("z1", "z2", "z3", "z4", "z5", "z6"):
         return val
@@ -169,7 +169,7 @@ def resolve_zone_id(zone_or_item_id: str) -> str:
         return "z4"
     if val == "a4":
         return "z5"
-    return zone_or_item_id
+    return None
 
 
 def _bfs(start: str, end: str) -> list[str] | None:

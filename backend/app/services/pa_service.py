@@ -124,7 +124,6 @@ class PAService:
         ann_id = str(uuid.uuid4())[:8]
 
         translations = {}
-        tts_urls = {}
         for lang in req.languages:
             templates = TRANSLATION_TEMPLATES.get(lang, TRANSLATION_TEMPLATES["en"])
             template = templates.get(req.type, templates["general"])
@@ -133,11 +132,13 @@ class PAService:
             translated = template.format(gate=gate_label, message=req.message, extra=extra)
             translations[lang] = translated
 
-            # Generate TTS audio file
+        async def _gen_tts(lang: str, text: str) -> tuple[str, str]:
             filename = f"{ann_id}_{lang}.mp3"
-            success = await self._generate_tts(translated, lang, filename)
-            
-            tts_urls[lang] = f"/api/pa/tts/{ann_id}/{lang}" if success else ""
+            success = await self._generate_tts(text, lang, filename)
+            return lang, f"/api/pa/tts/{ann_id}/{lang}" if success else ""
+
+        tts_results = await asyncio.gather(*[_gen_tts(lang, translations[lang]) for lang in req.languages])
+        tts_urls = dict(tts_results)
 
         announcement = PAAnnouncement(
             id=ann_id, type=req.type, severity=req.severity,
