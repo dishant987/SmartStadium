@@ -420,8 +420,10 @@ export function InteractiveFootball() {
   const containerLeftRef = useRef<HTMLDivElement>(null);
   const containerRightRef = useRef<HTMLDivElement>(null);
 
-  const [leftPos, setLeftPos] = useState({ x: 0, y: 0 });
-  const [rightPos, setRightPos] = useState({ x: 0, y: 0 });
+  const leftPosRef = useRef({ x: 0, y: 0 });
+  const rightPosRef = useRef({ x: 0, y: 0 });
+  const hudLeftRef = useRef<HTMLSpanElement>(null);
+  const hudRightRef = useRef<HTMLSpanElement>(null);
 
   const [isLeftDragging, setIsLeftDragging] = useState(false);
   const [isRightDragging, setIsRightDragging] = useState(false);
@@ -468,14 +470,16 @@ export function InteractiveFootball() {
     const h = window.innerHeight;
 
     const homeLeft = getHomePosition("left", w, h);
-    setLeftPos(homeLeft);
+    leftPosRef.current = homeLeft;
     physicsRef.current.left.x = homeLeft.x;
     physicsRef.current.left.y = homeLeft.y;
+    if (containerLeftRef.current) containerLeftRef.current.style.transform = `translate3d(${homeLeft.x}px, ${homeLeft.y}px, 0)`;
 
     const homeRight = getHomePosition("right", w, h);
-    setRightPos(homeRight);
+    rightPosRef.current = homeRight;
     physicsRef.current.right.x = homeRight.x;
     physicsRef.current.right.y = homeRight.y;
+    if (containerRightRef.current) containerRightRef.current.style.transform = `translate3d(${homeRight.x}px, ${homeRight.y}px, 0)`;
   }, []);
 
   // Pre-generate textures for both variants (cached globally to avoid freezing UI on page navigation)
@@ -509,6 +513,7 @@ export function InteractiveFootball() {
   // Physics animation tick
   useEffect(() => {
     let animationFrameId: number;
+    let frameCount = 0;
     const tick = () => {
       const state = physicsRef.current;
       const cw = window.innerWidth;
@@ -747,10 +752,22 @@ export function InteractiveFootball() {
       state.right.wobble += state.right.wobbleVelocity;
       state.right.wobbleVelocity *= 0.92;
 
-      // 4. Propagate positions to React state
-      setRightPos({ x: state.right.x, y: state.right.y });
+      // 4. Propagate positions directly to DOM (no React re-renders at 60fps)
+      rightPosRef.current = { x: state.right.x, y: state.right.y };
+      if (containerRightRef.current) {
+        containerRightRef.current.style.transform = `translate3d(${state.right.x}px, ${state.right.y}px, 0)`;
+      }
       if (isLg) {
-        setLeftPos({ x: state.left.x, y: state.left.y });
+        leftPosRef.current = { x: state.left.x, y: state.left.y };
+        if (containerLeftRef.current) {
+          containerLeftRef.current.style.transform = `translate3d(${state.left.x}px, ${state.left.y}px, 0)`;
+        }
+      }
+      // Update HUD text at ~10fps to avoid layout thrash
+      frameCount++;
+      if (frameCount % 6 === 0) {
+        if (hudRightRef.current) hudRightRef.current.textContent = `RADAR_R_Y${state.right.y.toFixed(0)}`;
+        if (hudLeftRef.current && isLg) hudLeftRef.current.textContent = `RADAR_L_X${state.left.x.toFixed(0)}`;
       }
 
       animationFrameId = requestAnimationFrame(tick);
@@ -790,8 +807,13 @@ export function InteractiveFootball() {
     state.lastMouseX = clientX;
     state.lastMouseY = clientY;
     state.lastTime = now;
-    if (side === "left") setLeftPos({ x: state.x, y: state.y });
-    else setRightPos({ x: state.x, y: state.y });
+    if (side === "left") {
+      leftPosRef.current = { x: state.x, y: state.y };
+      if (containerLeftRef.current) containerLeftRef.current.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+    } else {
+      rightPosRef.current = { x: state.x, y: state.y };
+      if (containerRightRef.current) containerRightRef.current.style.transform = `translate3d(${state.x}px, ${state.y}px, 0)`;
+    }
   };
 
   const handleEnd = (side: "left" | "right") => {
@@ -882,7 +904,7 @@ export function InteractiveFootball() {
         <div
           ref={containerLeftRef}
           className="absolute cursor-grab active:cursor-grabbing pointer-events-auto select-none rounded-full"
-          style={{ transform: `translate3d(${leftPos.x}px, ${leftPos.y}px, 0)`, width: `${leftSize}px`, height: `${leftSize}px`, transition: "none" }}
+          style={{ transform: `translate3d(${leftPosRef.current.x}px, ${leftPosRef.current.y}px, 0)`, width: `${leftSize}px`, height: `${leftSize}px`, transition: "none" }}
           onMouseDown={onMouseDownLeft}
           onTouchStart={onTouchStartLeft}
         >
@@ -898,7 +920,7 @@ export function InteractiveFootball() {
             </svg>
             <div className="absolute -top-7 left-1/2 -translate-x-1/2 font-mono text-[8px] text-[#00FF87] bg-pitch-night/90 border border-pitch-green-500/35 px-1 py-0.5 rounded shadow-modal whitespace-nowrap flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-pitch-green-400 animate-ping" />
-              <span>RADAR_L_X{leftPos.x.toFixed(0)}</span>
+              <span ref={hudLeftRef}>RADAR_L_X{leftPosRef.current.x.toFixed(0)}</span>
             </div>
           </div>
 
@@ -923,7 +945,7 @@ export function InteractiveFootball() {
         <div
           ref={containerRightRef}
           className="absolute cursor-grab active:cursor-grabbing pointer-events-auto select-none rounded-full"
-          style={{ transform: `translate3d(${rightPos.x}px, ${rightPos.y}px, 0)`, width: `${rightSize}px`, height: `${rightSize}px`, transition: "none" }}
+          style={{ transform: `translate3d(${rightPosRef.current.x}px, ${rightPosRef.current.y}px, 0)`, width: `${rightSize}px`, height: `${rightSize}px`, transition: "none" }}
           onMouseDown={onMouseDownRight}
           onTouchStart={onTouchStartRight}
         >
@@ -939,7 +961,7 @@ export function InteractiveFootball() {
             </svg>
             <div className="absolute -top-7 left-1/2 -translate-x-1/2 font-mono text-[8px] text-floodlight-200 bg-pitch-night/90 border border-floodlight-300/35 px-1 py-0.5 rounded shadow-modal whitespace-nowrap flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-floodlight-300 animate-pulse" />
-              <span>RADAR_R_Y{rightPos.y.toFixed(0)}</span>
+              <span ref={hudRightRef}>RADAR_R_Y{rightPosRef.current.y.toFixed(0)}</span>
             </div>
           </div>
 

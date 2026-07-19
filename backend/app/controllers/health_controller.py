@@ -1,9 +1,10 @@
 import httpx
 from fastapi import APIRouter
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 
 import app.db.chroma_client
 from app.config import settings
+from app.db.session import engine
 from app.utils.logger import logger
 
 router = APIRouter()
@@ -13,7 +14,6 @@ async def _check_db() -> bool:
     if not settings.neon_database_url:
         return False
     try:
-        engine = create_engine(settings.neon_database_url, pool_pre_ping=True)
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         return True
@@ -72,6 +72,6 @@ async def health():
         "chroma": await _check_chroma(),
         "llm_providers": await _check_llm(),
     }
-    overall = checks["database"] or any([settings.neon_database_url])
+    overall = checks["database"]
     logger.info("Health check: {checks}", checks=checks)
     return {"status": "ok" if overall else "degraded", "checks": checks}

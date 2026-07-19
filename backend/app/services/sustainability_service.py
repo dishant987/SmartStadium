@@ -108,7 +108,8 @@ class SustainabilityService:
         if greener and greener in CO2_PER_MODE:
             greener_co2 = round(CO2_PER_MODE[greener] * distance_km * group_size, 2)
             saving = round(co2_kg - greener_co2, 2)
-            greener_option = f"Switch to {greener} to save {saving}kg CO2 ({(saving/co2_kg*100):.0f}% reduction)"
+            pct = (saving / co2_kg * 100) if co2_kg > 0 else 0
+            greener_option = f"Switch to {greener} to save {saving}kg CO2 ({pct:.0f}% reduction)"
 
         tip_prompt = f"Give a one-sentence sustainability tip for a fan traveling {distance_km}km by {transport_mode} to a FIFA match."
         try:

@@ -5,6 +5,6 @@ interface Props {
   style?: CSSProperties;
 }
 
-export function Skeleton({ className = "" }: Props) {
-  return <div className={`animate-pulse rounded-data bg-pitch-raised ${className}`} />;
+export function Skeleton({ className = "", style }: Props) {
+  return <div className={`animate-pulse rounded-data bg-pitch-raised ${className}`} style={style} />;
 }

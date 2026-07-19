@@ -5,14 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { apiClient } from "@/services/apiClient";
-
-const mdComponents = {
-  p: ({ children }: any) => <p className="mb-1 last:mb-0 leading-relaxed">{children}</p>,
-  strong: ({ children }: any) => <strong className="font-semibold text-text-primary">{children}</strong>,
-  ul: ({ children }: any) => <ul className="list-disc pl-4 space-y-1 mb-1">{children}</ul>,
-  ol: ({ children }: any) => <ol className="list-decimal pl-4 space-y-1 mb-1">{children}</ol>,
-  li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
-};
+import { mdComponents } from "@/components/ui/markdownComponents";
 
 interface ElevatorStatus {
   elevator_id: string;

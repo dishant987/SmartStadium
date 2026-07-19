@@ -30,11 +30,6 @@ export function EnvironmentPanel({
     }
   };
 
-  // Toggle lighting when clicking again
-  const toggleLighting = (target: "matchday" | "night" | "emergency") => {
-    setLightingMode(lightingMode === target ? "night" : target);
-  };
-
   return (
     <div className="space-y-4 rounded-fan border border-white/[0.06] bg-pitch-surface/30 p-4 backdrop-blur-md">
       <div className="text-data text-text-muted uppercase tracking-wider font-semibold">Environment & Views</div>
@@ -72,16 +67,16 @@ export function EnvironmentPanel({
         </div>
         <div className="grid grid-cols-3 gap-1.5">
           {[
-            { id: "matchday", label: "Day", icon: Sun, activeClass: "border-amber-500/50 bg-amber-500/10 text-amber-400" },
-            { id: "night", label: "Night", icon: Moon, activeClass: "border-blue-500/50 bg-blue-500/10 text-blue-400" },
-            { id: "emergency", label: "Alert", icon: AlertTriangle, activeClass: "border-red-500/50 bg-red-500/10 text-red-400 animate-pulse font-semibold" },
+            { id: "matchday" as const, label: "Day", icon: Sun, activeClass: "border-amber-500/50 bg-amber-500/10 text-amber-400" },
+            { id: "night" as const, label: "Night", icon: Moon, activeClass: "border-blue-500/50 bg-blue-500/10 text-blue-400" },
+            { id: "emergency" as const, label: "Alert", icon: AlertTriangle, activeClass: "border-red-500/50 bg-red-500/10 text-red-400 animate-pulse font-semibold" },
           ].map((item) => {
             const Icon = item.icon;
             const active = lightingMode === item.id;
             return (
               <button
                 key={item.id}
-                onClick={() => toggleLighting(item.id as any)}
+                onClick={() => setLightingMode(item.id)}
                 className={`flex flex-col items-center gap-1 rounded-data py-2 text-data-xs font-medium transition-all border ${active
                     ? item.activeClass
                     : "border-white/[0.04] bg-white/[0.02] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]"

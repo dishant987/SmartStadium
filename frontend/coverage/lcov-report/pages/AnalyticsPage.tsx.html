@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.88% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>208/254</span>
+                <span class='fraction'>216/264</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.88% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>208/254</span>
+                <span class='fraction'>216/264</span>
             </div>
         
             
@@ -370,7 +370,21 @@
 <a name='L305'></a><a href='#L305'>305</a>
 <a name='L306'></a><a href='#L306'>306</a>
 <a name='L307'></a><a href='#L307'>307</a>
-<a name='L308'></a><a href='#L308'>308</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -655,6 +669,14 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -664,6 +686,8 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -679,11 +703,13 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useState, useEffect } from "react";
 import { BarChart3, TrendingUp, TrendingDown, Minus, Users, Zap, RefreshCw } from "lucide-react";
+import Markdown from "react-markdown";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiClient } from "@/services/apiClient";
 import { Navbar } from "@/components/navigation/Navbar";
+import { mdComponents } from "@/components/ui/markdownComponents";
 import type { PostMatchAnalyticsResponse } from "@/services/analytics";
 &nbsp;
 <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function TrendIcon({ trend }: { trend: string }) {</span></span>
@@ -941,25 +967,33 @@ export function AnalyticsPage() {
                 &lt;h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5"&gt;
                   &lt;span className="h-1.5 w-1.5 rounded-full bg-pitch-green-400" /&gt; Executive Operations Summary
                 &lt;/h3&gt;
-                &lt;p className="text-body text-text-secondary leading-relaxed"&gt;{data.narrative.executive_summary}&lt;/p&gt;
+                &lt;div className="text-body text-text-secondary leading-relaxed"&gt;
+                  &lt;Markdown components={mdComponents}&gt;{data.narrative.executive_summary}&lt;/Markdown&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data"&gt;
                 &lt;h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5"&gt;
                   &lt;span className="h-1.5 w-1.5 rounded-full bg-blue-400" /&gt; Crowd Movement Analysis
                 &lt;/h3&gt;
-                &lt;p className="text-body text-text-secondary leading-relaxed"&gt;{data.narrative.crowd_analysis}&lt;/p&gt;
+                &lt;div className="text-body text-text-secondary leading-relaxed"&gt;
+                  &lt;Markdown components={mdComponents}&gt;{data.narrative.crowd_analysis}&lt;/Markdown&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data"&gt;
                 &lt;h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5"&gt;
                   &lt;span className="h-1.5 w-1.5 rounded-full bg-amber-400" /&gt; Gate Performance &amp;amp; Delays
                 &lt;/h3&gt;
-                &lt;p className="text-body text-text-secondary leading-relaxed"&gt;{data.narrative.gate_performance}&lt;/p&gt;
+                &lt;div className="text-body text-text-secondary leading-relaxed"&gt;
+                  &lt;Markdown components={mdComponents}&gt;{data.narrative.gate_performance}&lt;/Markdown&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="glass-card p-5 rounded-fan border border-white/[0.08] shadow-data"&gt;
                 &lt;h3 className="mb-2.5 font-display text-body-lg font-bold text-text-primary flex items-center gap-1.5"&gt;
                   &lt;span className="h-1.5 w-1.5 rounded-full bg-purple-400" /&gt; Public Transit &amp;amp; Rail Impact
                 &lt;/h3&gt;
-                &lt;p className="text-body text-text-secondary leading-relaxed"&gt;{data.narrative.transit_impact}&lt;/p&gt;
+                &lt;div className="text-body text-text-secondary leading-relaxed"&gt;
+                  &lt;Markdown components={mdComponents}&gt;{data.narrative.transit_impact}&lt;/Markdown&gt;
+                &lt;/div&gt;
               &lt;/div&gt;
             &lt;/div&gt;
 &nbsp;
@@ -973,7 +1007,9 @@ export function AnalyticsPage() {
                 {data.narrative.recommendations.map((rec, i) =&gt; (
 <span class="cstat-no" title="statement not covered" >                  &lt;div key={i} className="flex items-start gap-3.5 rounded-data bg-white/[0.02] border border-white/[0.04] p-4 hover:bg-white/[0.04] transition-colors"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                    &lt;span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-floodlight-200/10 text-floodlight-200 text-data font-bold"&gt;{i + 1}&lt;/span&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;p className="text-body text-text-secondary leading-relaxed"&gt;{rec}&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;div className="text-body text-text-secondary leading-relaxed flex-1"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                      &lt;Markdown components={mdComponents}&gt;{rec}&lt;/Markdown&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;/div&gt;</span>
                 ))}
               &lt;/div&gt;
@@ -991,7 +1027,7 @@ export function AnalyticsPage() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-19T07:55:34.625Z
+                at 2026-07-19T14:59:55.703Z
             </div>
         <script src="../prettify.js"></script>
         <script>

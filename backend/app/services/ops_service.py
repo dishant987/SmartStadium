@@ -13,9 +13,14 @@ from app.services.llm_provider import LLMProvider
 
 
 class OpsService:
-    def __init__(self):
-        self.llm = LLMProvider()
-        self._incidents: list = []
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.llm = LLMProvider()
+            cls._instance._incidents: list = []
+        return cls._instance
 
     async def list_incidents(self) -> list[dict]:
         return [i for i in self._incidents if i.get("status") != "resolved"]

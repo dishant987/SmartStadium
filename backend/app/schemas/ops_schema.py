@@ -1,12 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import Literal
 
 
 class IncidentReportRequest(BaseModel):
-    severity: str
-    category: str
-    description: str
-    location: str
+    severity: Literal["low", "medium", "high", "critical"]
+    category: str = Field(min_length=1, max_length=100)
+    description: str = Field(min_length=1, max_length=2000)
+    location: str = Field(min_length=1, max_length=200)
 
 
 class IncidentReportResponse(BaseModel):

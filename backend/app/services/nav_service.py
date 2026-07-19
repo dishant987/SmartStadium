@@ -1,3 +1,4 @@
+from collections import deque
 from dataclasses import dataclass
 
 from app.schemas.nav_schema import (
@@ -237,9 +238,9 @@ def _bfs(start: str, end: str) -> list[str] | None:
     end = resolve_zone_id(end)
     if start not in ZONE_GRAPH or end not in ZONE_GRAPH:
         return None
-    visited, queue, parent = {start}, [(start, 0)], {start: None}
+    visited, queue, parent = {start}, deque([start]), {start: None}
     while queue:
-        current, _ = queue.pop(0)
+        current = queue.popleft()
         if current == end:
             path = []
             while current:
@@ -251,7 +252,7 @@ def _bfs(start: str, end: str) -> list[str] | None:
             if neighbor not in visited:
                 visited.add(neighbor)
                 parent[neighbor] = current
-                queue.append((neighbor, 0))
+                queue.append(neighbor)
     return None
 
 
@@ -269,9 +270,9 @@ class NavService:
                 total_distance_m=0,
                 accessible=req.accessible,
             )
-        visited, queue, parent = {start}, [(start, 0)], {start: None}
+        visited, queue, parent = {start}, deque([start]), {start: None}
         while queue:
-            current, dist = queue.pop(0)
+            current = queue.popleft()
             if current == end:
                 path, steps = [], []
                 while current:
@@ -295,7 +296,7 @@ class NavService:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     parent[neighbor] = current
-                    queue.append((neighbor, dist + distance))
+                    queue.append(neighbor)
         return RouteResponse(
             steps=[RouteStep(instruction="No route found", distance_m=0)],
             total_distance_m=0,

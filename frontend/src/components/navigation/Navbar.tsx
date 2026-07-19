@@ -16,6 +16,57 @@ import {
   Users
 } from "lucide-react";
 
+const TOOLS = [
+  {
+    name: "AI Companion",
+    desc: "Multilingual fan chatbot support",
+    path: "/chat",
+    icon: MessageSquare,
+    color: "text-emerald-400 bg-emerald-500/10",
+    requiresAuth: true
+  },
+  {
+    name: "Smart Wayfinding",
+    desc: "Step-free & accessible routing",
+    path: "/wayfinding",
+    icon: NavIcon,
+    color: "text-blue-400 bg-blue-500/10",
+    requiresAuth: true
+  },
+  {
+    name: "Evacuation Simulator",
+    desc: "Gemini hazard agent simulation",
+    path: "/evacuation",
+    icon: ShieldAlert,
+    color: "text-rose-400 bg-rose-500/10",
+    requiresAuth: true
+  },
+  {
+    name: "Emergency PA Broadcast",
+    desc: "Multi-language audio translation",
+    path: "/pa",
+    icon: Volume2,
+    color: "text-amber-400 bg-amber-500/10",
+    requiresAuth: true
+  },
+  {
+    name: "Post-Match Analytics",
+    desc: "AI report on crowd and transit",
+    path: "/analytics",
+    icon: BarChart3,
+    color: "text-purple-400 bg-purple-500/10",
+    requiresAuth: true
+  },
+  {
+    name: "Volunteer Ops",
+    desc: "Manage volunteer shifts & tasks",
+    path: "/volunteer",
+    icon: Users,
+    color: "text-teal-400 bg-teal-500/10",
+    requiresAuth: true
+  }
+];
+
 
 
 export function Navbar() {
@@ -103,57 +154,6 @@ export function Navbar() {
     }
   };
 
-  const tools = [
-    {
-      name: "AI Companion",
-      desc: "Multilingual fan chatbot support",
-      path: "/chat",
-      icon: MessageSquare,
-      color: "text-emerald-400 bg-emerald-500/10",
-      requiresAuth: true
-    },
-    {
-      name: "Smart Wayfinding",
-      desc: "Step-free & accessible routing",
-      path: "/wayfinding",
-      icon: NavIcon,
-      color: "text-blue-400 bg-blue-500/10",
-      requiresAuth: true
-    },
-    {
-      name: "Evacuation Simulator",
-      desc: "Gemini hazard agent simulation",
-      path: "/evacuation",
-      icon: ShieldAlert,
-      color: "text-rose-400 bg-rose-500/10",
-      requiresAuth: true
-    },
-    {
-      name: "Emergency PA Broadcast",
-      desc: "Multi-language audio translation",
-      path: "/pa",
-      icon: Volume2,
-      color: "text-amber-400 bg-amber-500/10",
-      requiresAuth: true
-    },
-    {
-      name: "Post-Match Analytics",
-      desc: "AI report on crowd and transit",
-      path: "/analytics",
-      icon: BarChart3,
-      color: "text-purple-400 bg-purple-500/10",
-      requiresAuth: true
-    },
-    {
-      name: "Volunteer Ops",
-      desc: "Manage volunteer shifts & tasks",
-      path: "/volunteer",
-      icon: Users,
-      color: "text-teal-400 bg-teal-500/10",
-      requiresAuth: true
-    }
-  ];
-
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 w-full px-4 sm:px-6 lg:px-8 pointer-events-none">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
@@ -233,7 +233,7 @@ export function Navbar() {
             <button
               aria-haspopup="true"
               onFocus={() => {}}
-              className={`text-xs uppercase tracking-wider font-semibold transition-colors group-hover:text-white group-focus-within:text-white flex items-center gap-1 outline-none ${tools.some(t => location.pathname.startsWith(t.path)) ? "text-pitch-green-400" : "text-text-secondary"
+              className={`text-xs uppercase tracking-wider font-semibold transition-colors group-hover:text-white group-focus-within:text-white flex items-center gap-1 outline-none ${TOOLS.some(t => location.pathname.startsWith(t.path)) ? "text-pitch-green-400" : "text-text-secondary"
                 }`}
             >
               Modules <ChevronDown size={12} className="transition-transform duration-200 text-text-muted group-hover:rotate-180 group-focus-within:rotate-180" />
@@ -247,7 +247,7 @@ export function Navbar() {
                   </p>
                 </div>
                 <div className="space-y-1">
-                  {tools.map((item) => {
+                  {TOOLS.map((item) => {
                     const Icon = item.icon;
                     const isSelected = location.pathname.startsWith(item.path);
                     return (
@@ -388,7 +388,7 @@ export function Navbar() {
                   Stadium Modules
                 </p>
                 <div className="grid grid-cols-1 gap-1">
-                  {tools.map((item) => {
+                  {TOOLS.map((item) => {
                     const Icon = item.icon;
                     const isSelected = location.pathname.startsWith(item.path);
                     return (

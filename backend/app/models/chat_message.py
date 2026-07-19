@@ -23,4 +23,4 @@ class ChatMessage(Base):
     role: Mapped[MessageRole] = mapped_column(SAEnum(MessageRole))
     content: Mapped[str] = mapped_column(Text)
     language: Mapped[str] = mapped_column(String, default="en")
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))

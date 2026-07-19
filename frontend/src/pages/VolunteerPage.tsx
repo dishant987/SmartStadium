@@ -117,10 +117,12 @@ export function VolunteerPage() {
         ) : null}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 p-1 rounded-fan bg-white/[0.03] border border-white/[0.06] w-fit">
+        <div className="flex gap-1 mb-6 p-1 rounded-fan bg-white/[0.03] border border-white/[0.06] w-fit" role="tablist">
           {(["volunteers", "tasks"] as const).map((tab) => (
             <button key={tab}
               onClick={() => setActiveTab(tab)}
+              role="tab"
+              aria-selected={activeTab === tab}
               className={`px-4 py-2 rounded-fan text-data font-semibold transition-all capitalize ${
                 activeTab === tab ? "bg-pitch-green-500/20 text-pitch-green-400" : "text-text-secondary hover:text-text-primary"
               }`}

@@ -5,6 +5,7 @@ Serves audio through the /api/pa/tts/{ann_id}/{lang} endpoint."""
 import uuid
 import os
 import asyncio
+from collections import deque
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -90,9 +91,14 @@ LANG_TTS_CODES = {"en": "en", "es": "es", "fr": "fr", "de": "de", "ar": "ar", "z
 
 
 class PAService:
-    def __init__(self):
-        self.llm = LLMProvider()
-        self._announcements: list = []
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.llm = LLMProvider()
+            cls._instance._announcements: deque = deque(maxlen=500)
+        return cls._instance
 
     @property
     def announcements(self) -> list:
@@ -146,8 +152,6 @@ class PAService:
             "message": req.message, "gate": req.gate, "timestamp": now,
             "broadcast": req.broadcast, "languages": req.languages,
         })
-        if len(self._announcements) > 500:
-            self.announcements.pop(0)
 
         return PAAnnouncementResponse(announcement=announcement, tts_urls=tts_urls)
 

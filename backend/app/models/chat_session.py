@@ -15,8 +15,8 @@ class ChatSession(Base):
     )
     user_session_id: Mapped[str] = mapped_column(String)
     title: Mapped[str] = mapped_column(String)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)
+        DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc)
     )
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

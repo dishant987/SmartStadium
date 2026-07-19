@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
 
@@ -9,7 +9,7 @@ def _to_camel(s: str) -> str:
 
 class ChatRequest(BaseModel):
     session_id: str
-    message: str
+    message: str = Field(min_length=1, max_length=10000)
 
 
 class ChatResponse(BaseModel):
@@ -40,4 +40,4 @@ class MessageResponse(BaseModel):
 
 
 class RenameRequest(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=200)

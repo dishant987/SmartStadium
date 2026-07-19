@@ -26,7 +26,7 @@ export function ToastContainer() {
         >
           <span className="text-text-secondary">{iconMap[t.type || "info"]}</span>
           <span className="flex-1 font-ui text-body text-text-primary">{t.message}</span>
-          <button onClick={() => removeToast(t.id)} className="text-text-muted hover:text-text-primary">&times;</button>
+          <button onClick={() => removeToast(t.id)} className="text-text-muted hover:text-text-primary" aria-label="Dismiss notification">&times;</button>
         </div>
       ))}
     </div>

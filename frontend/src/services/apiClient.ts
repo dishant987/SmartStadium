@@ -46,9 +46,9 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
           clearTimeout(retryId);
           if (retry.status === 401) { redirectLogin(); throw new ApiError(401, "Session expired"); }
           return retry.json();
-        } catch (err: any) {
+        } catch (err: unknown) {
           clearTimeout(retryId);
-          if (err.name === "AbortError") throw new ApiError(504, "Server connection timed out");
+          if (err instanceof Error && err.name === "AbortError") throw new ApiError(504, "Server connection timed out");
           throw err;
         }
       }
@@ -61,9 +61,9 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
       throw new ApiError(res.status, typeof msg === "string" ? msg : res.statusText);
     }
     return res.json();
-  } catch (err: any) {
+  } catch (err: unknown) {
     clearTimeout(id);
-    if (err.name === "AbortError") {
+    if (err instanceof Error && err.name === "AbortError") {
       throw new ApiError(504, "Server connection timed out");
     }
     throw err;

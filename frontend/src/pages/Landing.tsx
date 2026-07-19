@@ -24,6 +24,57 @@ import {
   Activity
 } from "lucide-react";
 
+const STATS = [
+  { value: "82,500", label: "Monitored Seats", icon: <Users size={18} className="text-pitch-green-400" /> },
+  { value: "< 30s", label: "Gemini Sync Speed", icon: <Clock size={18} className="text-emerald-400" /> },
+  { value: "6 Languages", label: "PA Translation", icon: <Volume2 size={18} className="text-blue-400" /> },
+];
+
+const FEATURE_LINKS = [
+  {
+    title: "Smart Wayfinding",
+    desc: "Step-by-step navigation avoiding escalators or stairs for custom accessibility routing.",
+    borderClass: "hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.08)]",
+    iconColor: "text-blue-400",
+    bgColor: "bg-blue-500/5",
+    icon: <Navigation size={20} />,
+    link: "/wayfinding"
+  },
+  {
+    title: "Concessions Monitor",
+    desc: "AI concessions wait times calculated based on live stand volumes and heatmaps.",
+    borderClass: "hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)]",
+    iconColor: "text-emerald-400",
+    bgColor: "bg-emerald-500/5",
+    icon: <Clock size={20} />,
+    link: "/chat"
+  },
+  {
+    title: "Emergency PA",
+    desc: "Emergency broadcast module translating messages instantly into 6 world languages.",
+    borderClass: "hover:border-rose-500/30 hover:shadow-[0_0_30px_rgba(244,63,94,0.08)]",
+    iconColor: "text-rose-400",
+    bgColor: "bg-rose-500/5",
+    icon: <Volume2 size={20} />,
+    link: "/pa"
+  },
+  {
+    title: "Match Analytics",
+    desc: "Post-match crowd speed diagnostics, gate throughput stats, and transit reviews.",
+    borderClass: "hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(168,85,247,0.08)]",
+    iconColor: "text-purple-400",
+    bgColor: "bg-purple-500/5",
+    icon: <BarChart3 size={20} />,
+    link: "/analytics"
+  },
+];
+
+const HOW_STEPS = [
+  { num: "01", title: "Arrive Smart", desc: "Check Meadowlands rail status, parking lot capacity, and gate lines before leaving.", icon: <Navigation size={18} className="text-blue-400" /> },
+  { num: "02", title: "Navigate Accessible", desc: "Get steps avoiding stairs, escalator status, and lift coordinates in real time.", icon: <Activity size={18} className="text-pitch-green-400" /> },
+  { num: "03", title: "Ask Anything", desc: "Where is the nearest water refiller? What time is the next train? The assistant responds instantly.", icon: <Users size={18} className="text-floodlight-200" /> },
+];
+
 export function Landing() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -89,11 +140,7 @@ export function Landing() {
 
         {/* Stats Strip */}
         <div className="relative mt-12 grid w-full max-w-4xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md shadow-2xl z-10">
-          {[
-            { value: "82,500", label: "Monitored Seats", icon: <Users size={18} className="text-pitch-green-400" /> },
-            { value: "< 30s", label: "Gemini Sync Speed", icon: <Clock size={18} className="text-emerald-400" /> },
-            { value: "6 Languages", label: "PA Translation", icon: <Volume2 size={18} className="text-blue-400" /> },
-          ].map((stat) => (
+          {STATS.map((stat) => (
             <div key={stat.label} className="bg-pitch-surface/20 px-6 py-6 text-center transition-all hover:bg-white/[0.03] flex flex-col items-center justify-center">
               <div className="mb-2 flex items-center justify-center p-2 rounded-full bg-white/[0.02] border border-white/[0.06]">
                 {stat.icon}
@@ -201,44 +248,7 @@ export function Landing() {
 
         {/* Modular Grid Link Cards */}
         <div className="mt-8 grid gap-6 md:grid-cols-4">
-          {[
-            {
-              title: "Smart Wayfinding",
-              desc: "Step-by-step navigation avoiding escalators or stairs for custom accessibility routing.",
-              borderClass: "hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.08)]",
-              iconColor: "text-blue-400",
-              bgColor: "bg-blue-500/5",
-              icon: <Navigation size={20} />,
-              link: "/wayfinding"
-            },
-            {
-              title: "Concessions Monitor",
-              desc: "AI concessions wait times calculated based on live stand volumes and heatmaps.",
-              borderClass: "hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)]",
-              iconColor: "text-emerald-400",
-              bgColor: "bg-emerald-500/5",
-              icon: <Clock size={20} />,
-              link: "/chat"
-            },
-            {
-              title: "Emergency PA",
-              desc: "Emergency broadcast module translating messages instantly into 6 world languages.",
-              borderClass: "hover:border-rose-500/30 hover:shadow-[0_0_30px_rgba(244,63,94,0.08)]",
-              iconColor: "text-rose-400",
-              bgColor: "bg-rose-500/5",
-              icon: <Volume2 size={20} />,
-              link: "/pa"
-            },
-            {
-              title: "Match Analytics",
-              desc: "Post-match crowd speed diagnostics, gate throughput stats, and transit reviews.",
-              borderClass: "hover:border-purple-500/30 hover:shadow-[0_0_30px_rgba(168,85,247,0.08)]",
-              iconColor: "text-purple-400",
-              bgColor: "bg-purple-500/5",
-              icon: <BarChart3 size={20} />,
-              link: "/analytics"
-            },
-          ].map((f) => (
+          {FEATURE_LINKS.map((f) => (
             <Link
               key={f.title}
               to={user ? f.link : "/login"}
@@ -267,11 +277,7 @@ export function Landing() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
-            {[
-              { num: "01", title: "Arrive Smart", desc: "Check Meadowlands rail status, parking lot capacity, and gate lines before leaving.", icon: <Navigation size={18} className="text-blue-400" /> },
-              { num: "02", title: "Navigate Accessible", desc: "Get steps avoiding stairs, escalator status, and lift coordinates in real time.", icon: <Activity size={18} className="text-pitch-green-400" /> },
-              { num: "03", title: "Ask Anything", desc: "Where is the nearest water refiller? What time is the next train? The assistant responds instantly.", icon: <Users size={18} className="text-floodlight-200" /> },
-            ].map((step) => (
+            {HOW_STEPS.map((step) => (
               <div key={step.num} className="group relative p-8 rounded-3xl border border-white/[0.04] bg-pitch-surface/10 hover:border-pitch-green-500/20 hover:bg-pitch-surface/15 transition-all duration-300">
                 <div className="absolute top-8 right-8 flex items-center justify-center h-10 w-10 rounded-xl bg-white/[0.02] border border-white/[0.05] group-hover:scale-105 transition-transform duration-300">
                   {step.icon}
@@ -308,7 +314,7 @@ export function Landing() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as "venue" | "crowd" | "incident" | "transit")}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   activeTab === tab.id
                     ? "bg-pitch-green-500 text-white shadow-lg shadow-pitch-green-500/20"

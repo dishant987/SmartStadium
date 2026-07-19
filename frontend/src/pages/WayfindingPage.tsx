@@ -7,15 +7,8 @@ import { Spinner } from "@/components/ui/Spinner";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiClient } from "@/services/apiClient";
 import { Navbar } from "@/components/navigation/Navbar";
+import { mdComponents } from "@/components/ui/markdownComponents";
 import type { WayfindingRoute } from "@/services/wayfinding";
-
-const mdComponents = {
-  p: ({ children }: any) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-  strong: ({ children }: any) => <strong className="font-semibold text-text-primary">{children}</strong>,
-  ul: ({ children }: any) => <ul className="list-disc pl-4 space-y-1 mb-2">{children}</ul>,
-  ol: ({ children }: any) => <ol className="list-decimal pl-4 space-y-1 mb-2">{children}</ol>,
-  li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
-};
 
 const ZONES = [
   { id: "z1", name: "Main Stand (100 Level)" },
