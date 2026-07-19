@@ -36,8 +36,8 @@ describe("recommendations", () => {
 
 describe("incidents", () => {
   it("fetchIncidents calls /ops/incidents", async () => {
-    const { fetchIncidents, reportIncident } = await import("@/services/incidents");
-    const res = await fetchIncidents();
+    const { fetchIncidents } = await import("@/services/incidents");
+    await fetchIncidents();
     expect(apiClient).toHaveBeenCalledWith("/ops/incidents");
   });
 
