@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     mistral_api_key: str = ""
     cors_origins: str = "http://localhost:5173,http://localhost:4173"
     jwt_secret: str = ""
+    openrouter_api_key: str = ""
     cloudinary_cloud_name: str = ""
     cloudinary_api_key: str = ""
     cloudinary_api_secret: str = ""

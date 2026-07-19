@@ -51,6 +51,17 @@ async def _check_llm() -> int:
         available += 1  # ponytail: skip live probe, key presence is sufficient
     if settings.mistral_api_key:
         available += 1
+    if settings.openrouter_api_key:
+        try:
+            async with httpx.AsyncClient(timeout=5) as c:
+                r = await c.get(
+                    "https://openrouter.ai/api/v1/models",
+                    headers={"Authorization": f"Bearer {settings.openrouter_api_key}"},
+                )
+                if r.status_code < 500:
+                    available += 1
+        except Exception as e:
+            logger.warning("OpenRouter API check failed: {}", e)
     return available
 
 

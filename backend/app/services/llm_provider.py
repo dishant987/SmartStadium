@@ -25,6 +25,11 @@ try:
 except ImportError:
     ChatMistralAI = None
 
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError:
+    ChatOpenAI = None
+
 
 def _build_providers() -> list[BaseChatModel]:
     providers: list[BaseChatModel] = []
@@ -34,6 +39,14 @@ def _build_providers() -> list[BaseChatModel]:
         providers.append(ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=settings.gemini_api_key, temperature=0.3))
     if settings.mistral_api_key and ChatMistralAI:
         providers.append(ChatMistralAI(model="mistral-large-latest", api_key=settings.mistral_api_key, temperature=0.3))
+    if settings.openrouter_api_key and ChatOpenAI:
+        providers.append(ChatOpenAI(
+            model="qwen/qwen3-coder:free",
+            api_key=settings.openrouter_api_key,
+            base_url="https://openrouter.ai/api/v1",
+            temperature=0.2,
+    max_retries=2,
+        ))
     if not providers:
         providers.append(MockChatModel())
     return providers
