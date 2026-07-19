@@ -9,7 +9,6 @@ from collections import deque
 from pathlib import Path
 from datetime import datetime, timezone
 
-from app.config import settings
 from app.schemas.pa_schema import (
     PAAnnouncementRequest, PAAnnouncementResponse, PAAnnouncement,
     PALogResponse, PALogEntry,
@@ -183,6 +182,6 @@ class PAService:
                 message=a["message"], gate=a["gate"], timestamp=a["timestamp"],
                 broadcast=a["broadcast"], languages=a["languages"],
             )
-            for a in reversed(self.announcements[-50:])
+            for a in list(self.announcements)[-50:]
         ]
         return PALogResponse(announcements=entries, total=len(self.announcements))

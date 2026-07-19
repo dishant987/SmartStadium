@@ -1,5 +1,9 @@
+import os
+import secrets
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config import settings
@@ -22,6 +26,10 @@ from app.controllers.accessibility_controller import router as accessibility_rou
 from app.middleware.error_handler import register_error_handlers
 from app.middleware.logging_middleware import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.csrf import CSRFProtectMiddleware
+
+
+csp_nonce = secrets.token_hex(16)
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -31,7 +39,16 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
+        response.headers["Content-Security-Policy"] = (
+            f"default-src 'self'; "
+            f"script-src 'self' 'unsafe-eval' 'nonce-{csp_nonce}'; "
+            f"style-src 'self' 'unsafe-inline'; "
+            f"img-src 'self' data: blob:; "
+            f"font-src 'self'; "
+            f"connect-src 'self' https://*.vercel.app wss:; "
+            f"media-src 'self'; "
+            f"frame-ancestors 'none'"
+        )
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         return response
@@ -55,9 +72,12 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
 )
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(RateLimitMiddleware, max_requests=30, window_seconds=60)
+if os.environ.get("DISABLE_CSRF") != "1":
+    app.add_middleware(CSRFProtectMiddleware)
 
 register_error_handlers(app)
 

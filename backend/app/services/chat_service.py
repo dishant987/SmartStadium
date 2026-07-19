@@ -13,6 +13,7 @@ from app.schemas.chat_schema import (
     MessageResponse,
 )
 from app.services.langgraph_agent import LangGraphAgent
+from app.utils.sanitize import sanitize_prompt, contains_injection
 
 
 class ChatService:
@@ -33,6 +34,9 @@ class ChatService:
         session = self.db.get(ChatSession, req.session_id)
         if not session or session.user_session_id != user_id:
             raise ValueError("Session not found")
+        req.message = sanitize_prompt(req.message)
+        if contains_injection(req.message):
+            req.message = "[Content moderated]"
 
         db_messages = (
             self.db.execute(
@@ -81,6 +85,9 @@ class ChatService:
         if not session or session.user_session_id != user_id:
             yield "Session not found"
             return
+        req.message = sanitize_prompt(req.message)
+        if contains_injection(req.message):
+            req.message = "[Content moderated]"
 
         db_messages = (
             self.db.execute(

@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, Depends, Response, Request
 from sqlalchemy.orm import Session
 
@@ -7,8 +9,6 @@ from app.services.auth_service import AuthService
 from app.config import settings
 
 router = APIRouter()
-
-import os
 
 COOKIE_ACCESS = "spectrastadium_token"
 COOKIE_REFRESH = "spectrastadium_refresh"

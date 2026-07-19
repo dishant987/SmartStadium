@@ -48,10 +48,6 @@ def test_error_handlers_integration():
     def trigger_app_with_cause():
         raise CauseAppException("App error with cause", original=ValueError("Internal cause"))
 
-    @app.get("/generic-error")
-    def trigger_generic():
-        raise Exception("Critical DB crash")
-
     client = TestClient(app)
 
     # 1. Test HTTP Exception
@@ -87,8 +83,20 @@ def test_error_handlers_integration():
     assert r.json()["success"] is False
     assert r.json()["error"]["code"] == "cause_code"
 
-    # 6. Test Generic Exception
-    r = client.get("/generic-error")
+def test_generic_exception_handler():
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from app.middleware.error_handler import register_error_handlers
+
+    app = FastAPI()
+    register_error_handlers(app)
+
+    @app.get("/crash")
+    def crash():
+        raise RuntimeError("Critical DB crash")
+
+    client = TestClient(app, raise_server_exceptions=False)
+    r = client.get("/crash")
     assert r.status_code == 500
     assert r.json()["success"] is False
     assert r.json()["error"]["code"] == "internal_error"

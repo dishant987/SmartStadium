@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -56,6 +57,17 @@ describe("Pages", () => {
     const { Landing } = await import("@/pages/Landing");
     wrap(<Landing />);
     expect(screen.getByText(/FIFA World Cup 2026/i)).toBeInTheDocument();
+  });
+
+  it("Landing switches tabs on click", async () => {
+    const { Landing } = await import("@/pages/Landing");
+    wrap(<Landing />);
+    await userEvent.click(screen.getByText("Crowd Flows"));
+    expect(screen.getByText("Crowd Flows")).toBeInTheDocument();
+    await userEvent.click(screen.getByText("Incident Center"));
+    expect(screen.getByText("Incident Center")).toBeInTheDocument();
+    await userEvent.click(screen.getByText("Transit Hub"));
+    expect(screen.getByText("Transit Hub")).toBeInTheDocument();
   });
 
   it("LoginPage renders login form when no user", async () => {
