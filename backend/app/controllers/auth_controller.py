@@ -8,10 +8,14 @@ from app.config import settings
 
 router = APIRouter()
 
+import os
+
 COOKIE_ACCESS = "stadiumsense_token"
 COOKIE_REFRESH = "stadiumsense_refresh"
 
-_is_secure = "localhost" not in settings.cors_origins and "127.0.0.1" not in settings.cors_origins
+_is_prod = os.environ.get("RENDER") == "true" or "vercel.app" in settings.cors_origins
+_samesite = "none" if _is_prod else "lax"
+_secure = True if _is_prod else False
 
 
 def _set_auth_cookies(response: Response, access: str, refresh: str):
@@ -19,8 +23,8 @@ def _set_auth_cookies(response: Response, access: str, refresh: str):
         key=COOKIE_ACCESS,
         value=access,
         httponly=True,
-        secure=_is_secure,
-        samesite="lax",
+        secure=_secure,
+        samesite=_samesite,
         max_age=3600,
         path="/",
     )
@@ -28,16 +32,28 @@ def _set_auth_cookies(response: Response, access: str, refresh: str):
         key=COOKIE_REFRESH,
         value=refresh,
         httponly=True,
-        secure=_is_secure,
-        samesite="lax",
+        secure=_secure,
+        samesite=_samesite,
         max_age=86400 * 7,
         path="/api/auth",
     )
 
 
 def _clear_auth_cookies(response: Response):
-    response.delete_cookie(COOKIE_ACCESS, path="/")
-    response.delete_cookie(COOKIE_REFRESH, path="/api/auth")
+    response.delete_cookie(
+        COOKIE_ACCESS,
+        path="/",
+        secure=_secure,
+        httponly=True,
+        samesite=_samesite,
+    )
+    response.delete_cookie(
+        COOKIE_REFRESH,
+        path="/api/auth",
+        secure=_secure,
+        httponly=True,
+        samesite=_samesite,
+    )
 
 
 @router.post("/register")
