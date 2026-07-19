@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Response, Request, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.auth_schema import RegisterRequest, LoginRequest
+from app.schemas.auth_schema import RegisterRequest, LoginRequest, AuthResponse
 from app.services.auth_service import AuthService
 from app.config import settings
 
@@ -57,21 +57,21 @@ def _clear_auth_cookies(response: Response) -> None:
 
 
 @router.post("/register")
-def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> dict:
+def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> AuthResponse:
     result = AuthService(db).register(body)
     _set_auth_cookies(response, result.access_token, result.refresh_token)
     return result
 
 
 @router.post("/login")
-def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> dict:
+def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> AuthResponse:
     result = AuthService(db).login(body)
     _set_auth_cookies(response, result.access_token, result.refresh_token)
     return result
 
 
 @router.post("/refresh")
-def refresh(request: Request, response: Response, db: Session = Depends(get_db)) -> dict:
+def refresh(request: Request, response: Response, db: Session = Depends(get_db)) -> AuthResponse:
     refresh_token = request.cookies.get(COOKIE_REFRESH)
     if not refresh_token:
         raise HTTPException(status_code=401, detail="No refresh token")
