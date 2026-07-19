@@ -4,10 +4,8 @@ Generates dynamic crowd density, transit status, and wait-time data
 that changes over time. Used by the WebSocket real-time endpoint."""
 import math
 import random
-import asyncio
 from datetime import datetime, timezone
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
 
 
 ZONES = [

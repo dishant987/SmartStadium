@@ -1,4 +1,4 @@
-class AppException(Exception):
+class AppException(Exception):  # noqa: N818
     status_code = 500
     code = "internal_error"
     message = "Something went wrong — please try again."

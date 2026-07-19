@@ -20,7 +20,7 @@ from app.utils.logger import logger
 try:
     from gtts import gTTS
 except ImportError:
-    gTTS = None  # ponytail: optional TTS dep
+    gTTS = None  # noqa: N816  # ponytail: optional TTS dep
 
 try:
     import cloudinary

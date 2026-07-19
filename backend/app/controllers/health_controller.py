@@ -40,7 +40,7 @@ async def _check_llm() -> int:
         try:
             async with httpx.AsyncClient(timeout=5) as c:
                 r = await c.get(
-                    "https://api.groq.com/openai/v1/models",
+                    "https://api.groq.com/v1/models",
                     headers={"Authorization": f"Bearer {settings.groq_api_key}"},
                 )
                 if r.status_code < 500:

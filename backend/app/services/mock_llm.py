@@ -4,7 +4,7 @@ import asyncio
 from typing import Any, AsyncIterator, Iterator, List
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, AIMessageChunk
+from langchain_core.messages import AIMessage, BaseMessage, AIMessageChunk
 from langchain_core.outputs import ChatGeneration, ChatResult, ChatGenerationChunk
 
 

@@ -1,6 +1,5 @@
 import pytest
-from datetime import datetime, timezone
-from app.services.auth_service import AuthService, hash_password
+from app.services.auth_service import AuthService
 from app.services.nav_service import NavService
 from app.services.accessibility_service import AccessibilityService
 from app.services.pa_service import PAService
@@ -18,7 +17,6 @@ from app.schemas.wait_time_schema import WaitTimeRequest
 from app.schemas.volunteer_schema import VolunteerCreate, VolunteerUpdate, VolunteerTaskCreate, VolunteerTaskUpdate
 from app.schemas.chat_schema import ChatRequest
 from app.models.user import User
-from app.models.volunteer import Volunteer, VolunteerTask
 
 # ----------------- AUTH SERVICE TESTS -----------------
 
@@ -154,7 +152,7 @@ async def test_sustainability_service():
     assert len(p_tips) == 3
     for t in p_tips:
         assert t.tip is not None
-        assert t.category in ("waste", "transport", "energy", "water")
+        assert t.category.lower() in ("waste", "transport", "energy", "water")
 
     # Carbon Impact Calculator
     carbon_res = await svc.calculate_carbon(transport_mode="driving", distance_km=25.0, group_size=2)

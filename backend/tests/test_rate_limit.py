@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
 from app.middleware.rate_limit import RateLimitMiddleware

@@ -172,7 +172,7 @@ def seed():
         if count > 0:
             print("Collection already has data. Skipping seed.")
             return
-    except Exception as e:
+    except Exception:
         print(f"Collection '{COLLECTION}' not found. Creating...")
         collection = client.create_collection(COLLECTION)
 

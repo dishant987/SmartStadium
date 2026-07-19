@@ -10,7 +10,7 @@ from app.schemas.accessibility_schema import (
     AccessibilityRouteResponse,
 )
 from app.schemas.wayfinding_schema import WayfindingRequest
-from app.services.nav_service import NavService, ZONE_GRAPH, ZONES, WAYFINDING_DETAILS
+from app.services.nav_service import NavService, ZONE_GRAPH, WAYFINDING_DETAILS
 from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
 

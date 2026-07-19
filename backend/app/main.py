@@ -34,7 +34,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
         return response
 
-app = FastAPI(title="StadiumSense — FIFA World Cup 2026", version="1.0.0")
+app = FastAPI(
+    title="StadiumSense — FIFA World Cup 2026",
+    description="AI-powered stadium operations platform for FIFA World Cup 2026 at MetLife Stadium. "
+    "Provides navigation, crowd management, accessibility, transit, sustainability, "
+    "PA broadcasting, real-time analytics, volunteer coordination, and AI chat.",
+    version="1.0.0",
+    contact={"name": "StadiumSense Team", "url": "https://github.com/anomalyco/fifa"},
+)
 
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(

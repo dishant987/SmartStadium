@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI, Request
 from app.middleware.logging_middleware import LoggingMiddleware

@@ -2,13 +2,13 @@
 
 Provides a stateful graph with tools for RAG, wayfinding, transit,
 crowd density, and wait times. Falls back gracefully when services fail."""
-from typing import Annotated, AsyncGenerator, Literal
+from typing import Annotated, AsyncGenerator
 from typing_extensions import TypedDict
 
-from langgraph.graph import StateGraph, END
+from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.tools import tool
 
 from app.services.langchain_rag import LangChainRAGService
@@ -73,7 +73,7 @@ async def get_transit_status() -> str:
     svc = TransportService()
     status = await svc.get_status()
     lines = status.lines
-    parts = [f"{l.name}: {l.status} (next: {l.next_departure or 'N/A'})" for l in lines]
+    parts = [f"{line.name}: {line.status} (next: {line.next_departure or 'N/A'})" for line in lines]
     return "\n".join(parts)
 
 

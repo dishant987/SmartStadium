@@ -1,5 +1,7 @@
 """Quick verification script for RAG, realtime, and volunteer endpoints."""
-import asyncio, json, sys, uuid
+import asyncio
+import sys
+import uuid
 sys.path.insert(0, ".")
 from app.services.langchain_rag import LangChainRAGService
 from app.services.realtime_service import RealtimeSimulator, OpsLangGraphAgent
@@ -23,7 +25,8 @@ async def test_rag():
     for q, k in queries:
         docs = await rag.retrieve(q, top_k=k)
         status = "PASS" if docs else "FAIL"
-        if not docs: all_ok = False
+        if not docs:
+            all_ok = False
         print(f"  [{status}] '{q}' -> {len(docs)} docs")
         for d in docs:
             print(f"         {d[:100]}")
@@ -78,7 +81,7 @@ async def test_volunteer():
         # Update status
         v2 = svc.update_volunteer(v.id, VolunteerUpdate(status="on_shift"))
         assert v2 and v2.status == "on_shift"
-        print(f"  PASS update_volunteer status -> on_shift")
+        print("  PASS update_volunteer status -> on_shift")
 
         # Dashboard
         dash = svc.dashboard()
@@ -101,7 +104,7 @@ async def test_volunteer():
         await svc.assign_tasks_from_analysis(analysis_tasks)
         tasks = svc.list_tasks()
         print(f"  PASS task assignment (total tasks now: {len(tasks)})")
-        print(f"  Volunteer overall: ALL PASS")
+        print("  Volunteer overall: ALL PASS")
         return True
     except Exception as e:
         print(f"  FAIL: {e}")
@@ -125,7 +128,8 @@ async def test_sustainability():
     tips = await svc.get_personalized_tips("z1", "halftime")
     ok2 = len(tips) >= 2
     print(f"  PASS personalized tips: {len(tips)} tips")
-    for t in tips[:2]: print(f"       [{t.category}] {t.tip[:60]}")
+    for t in tips[:2]:
+        print(f"       [{t.category}] {t.tip[:60]}")
 
     carbon = await svc.calculate_carbon("driving", 15, 2)
     ok3 = carbon.co2_kg > 0 and bool(carbon.greener_option)

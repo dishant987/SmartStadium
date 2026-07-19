@@ -1,5 +1,3 @@
-import pytest
-
 # ----------------- HEALTH & STATIC ENDPOINTS -----------------
 
 def test_health_check(client):

@@ -5,7 +5,7 @@ Tries Groq → Gemini → Mistral, falls back to mock when no keys configured.""
 from dataclasses import dataclass, field
 from typing import AsyncGenerator
 
-from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
+from langchain_core.messages import HumanMessage, BaseMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from app.config import settings

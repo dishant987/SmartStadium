@@ -1,5 +1,4 @@
 """Tests for the auth middleware (401/403 paths)."""
-import pytest
 
 
 def _error_message(resp):

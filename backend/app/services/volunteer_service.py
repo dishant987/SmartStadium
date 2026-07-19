@@ -7,14 +7,13 @@ from dataclasses import dataclass
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from app.models.volunteer import Volunteer, VolunteerTask, VolunteerRole, VolunteerStatus, VolunteerTaskStatus
+from app.models.volunteer import Volunteer, VolunteerTask, VolunteerStatus, VolunteerTaskStatus
 from app.schemas.volunteer_schema import (
     VolunteerCreate, VolunteerResponse, VolunteerUpdate,
     VolunteerTaskCreate, VolunteerTaskResponse, VolunteerTaskUpdate,
     VolunteerDashboardResponse,
 )
-from app.services.langgraph_agent import LangGraphAgent
-from app.utils.logger import logger
+
 
 
 @dataclass

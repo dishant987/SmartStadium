@@ -2,14 +2,12 @@
 
 Uses ChromaDB vector store with sentence-transformers embeddings.
 Gracefully falls back to empty context when Chroma is unavailable."""
-import os
 from pathlib import Path
 from dataclasses import dataclass
 
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
-from app.config import settings
 from app.utils.logger import logger
 
 CHROMA_PERSIST_DIR = str(Path(__file__).resolve().parent.parent.parent / ".chroma_stadium")
