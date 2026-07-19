@@ -2,6 +2,8 @@
 
 Uses ChromaDB vector store with sentence-transformers embeddings.
 Gracefully falls back to empty context when Chroma is unavailable."""
+import asyncio
+from typing import Any
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -16,7 +18,7 @@ COLLECTION_NAME = "stadium_knowledge"
 class LangChainRAGService:
     _vector_store = None
 
-    def _get_embeddings(self):
+    def _get_embeddings(self) -> Any:
         if settings.gemini_api_key:
             try:
                 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -36,7 +38,7 @@ class LangChainRAGService:
                 return [0.0] * 768
         return MockEmbeddings()
 
-    def _get_vector_store(self):
+    def _get_vector_store(self) -> Any:
         if LangChainRAGService._vector_store is not None:
             return LangChainRAGService._vector_store
         from langchain_chroma import Chroma
@@ -65,7 +67,7 @@ class LangChainRAGService:
     async def retrieve(self, query: str, top_k: int = 4) -> list[str]:
         try:
             store = self._get_vector_store()
-            docs = store.similarity_search(query, k=top_k)
+            docs = await asyncio.to_thread(store.similarity_search, query, k=top_k)
             results = [d.page_content for d in docs]
             logger.info("RAG retrieved {n} docs for: {q}", n=len(results), q=query[:60])
             return results
@@ -73,7 +75,7 @@ class LangChainRAGService:
             logger.warning("RAG retrieval failed: {err}", err=str(e))
             return []
 
-    def add_documents(self, texts: list[str], metadatas: list[dict] | None = None):
+    def add_documents(self, texts: list[str], metadatas: list[dict] | None = None) -> None:
         store = self._get_vector_store()
         store.add_texts(texts, metadatas=metadatas)
         logger.info("Added {n} documents to RAG store", n=len(texts))

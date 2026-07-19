@@ -169,7 +169,7 @@ export const Navbar = memo(function Navbar() {
             }}
             className="flex items-center gap-2 group"
           >
-            <svg className="h-5 w-5 text-pitch-green-400 animate-[spin_12s_linear_infinite] group-hover:animate-[spin_3s_linear_infinite] transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg aria-hidden="true" className="h-5 w-5 text-pitch-green-400 animate-[spin_12s_linear_infinite] group-hover:animate-[spin_3s_linear_infinite] transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="12" cy="12" r="10" stroke="currentColor" fill="none" />
               <polygon points="12,9 14.5,11 13.5,14 10.5,14 9.5,11" fill="currentColor" stroke="currentColor" strokeWidth="1" />
               <line x1="12" y1="9" x2="12" y2="2" stroke="currentColor" />
@@ -232,6 +232,7 @@ export const Navbar = memo(function Navbar() {
           <div className="relative group py-2">
             <button
               aria-haspopup="true"
+              aria-expanded={false}
               onFocus={() => {}}
               className={`text-xs uppercase tracking-wider font-semibold transition-colors group-hover:text-white group-focus-within:text-white flex items-center gap-1 outline-none ${TOOLS.some(t => location.pathname.startsWith(t.path)) ? "text-pitch-green-400" : "text-text-secondary"
                 }`}
@@ -279,6 +280,7 @@ export const Navbar = memo(function Navbar() {
             <div className="relative flex items-center group py-2">
               <button
                 aria-haspopup="true"
+                aria-expanded={false}
                 onFocus={() => {}}
                 className="flex items-center gap-2 text-xs font-semibold text-text-primary group-hover:text-white group-focus-within:text-white transition-all outline-none"
               >

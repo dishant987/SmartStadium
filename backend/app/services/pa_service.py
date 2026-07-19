@@ -92,7 +92,7 @@ LANG_TTS_CODES = {"en": "en", "es": "es", "fr": "fr", "de": "de", "ar": "ar", "z
 class PAService:
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls) -> "PAService":
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.llm = LLMProvider()
@@ -155,7 +155,7 @@ class PAService:
 
         return PAAnnouncementResponse(announcement=announcement, tts_urls=tts_urls)
 
-    async def get_tts_audio(self, ann_id: str, lang: str):
+    async def get_tts_audio(self, ann_id: str, lang: str) -> Path | None:
         """Serve the TTS audio file for an announcement in a given language."""
         if not ann_id.replace("-", "").replace("_", "").isalnum():
             return None

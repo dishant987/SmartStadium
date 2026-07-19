@@ -15,7 +15,7 @@ ops_agent = OpsLangGraphAgent()
 connected: set[WebSocket] = set()
 
 
-async def broadcast(payload: dict, exclude: WebSocket | None = None):
+async def broadcast(payload: dict, exclude: WebSocket | None = None) -> None:
     dead: list[WebSocket] = []
     msg = json.dumps(payload, default=str)
     for ws in connected:
@@ -30,7 +30,7 @@ async def broadcast(payload: dict, exclude: WebSocket | None = None):
         connected.discard(ws)
 
 
-async def _broadcast_loop(interval: float = 2.0):
+async def _broadcast_loop(interval: float = 2.0) -> None:
     """Push state updates to all connected clients every `interval` seconds."""
     while True:
         await asyncio.sleep(interval)
@@ -44,7 +44,7 @@ _broadcast_task: asyncio.Task | None = None
 
 
 @router.websocket("/ws/realtime")
-async def realtime_ws(websocket: WebSocket):
+async def realtime_ws(websocket: WebSocket) -> None:
     global _broadcast_task
     await websocket.accept()
     connected.add(websocket)

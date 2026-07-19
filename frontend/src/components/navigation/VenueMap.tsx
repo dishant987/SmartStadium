@@ -63,15 +63,15 @@ export function VenueMap({ onSelectZone, selectedZone, accessibleMode }: Props) 
       </svg>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-0.5 block font-ui text-data text-text-muted">From</label>
-          <select value={from} onChange={(e) => setFrom(e.target.value)} className="w-full rounded-data border border-border bg-pitch-night px-2 py-1 font-ui text-data text-text-primary outline-none focus:border-floodlight-200/50">
+          <label htmlFor="venue-from" className="mb-0.5 block font-ui text-data text-text-muted">From</label>
+          <select id="venue-from" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full rounded-data border border-border bg-pitch-night px-2 py-1 font-ui text-data text-text-primary outline-none focus:border-floodlight-200/50">
             <option value="">Select…</option>
             {ZONES.map((z) => <option key={z.id} value={z.id}>{z.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="mb-0.5 block font-ui text-data text-text-muted">To</label>
-          <select value={to} onChange={(e) => setTo(e.target.value)} className="w-full rounded-data border border-border bg-pitch-night px-2 py-1 font-ui text-data text-text-primary outline-none focus:border-floodlight-200/50">
+          <label htmlFor="venue-to" className="mb-0.5 block font-ui text-data text-text-muted">To</label>
+          <select id="venue-to" value={to} onChange={(e) => setTo(e.target.value)} className="w-full rounded-data border border-border bg-pitch-night px-2 py-1 font-ui text-data text-text-primary outline-none focus:border-floodlight-200/50">
             <option value="">Select…</option>
             {ZONES.map((z) => <option key={z.id} value={z.id}>{z.label}</option>)}
           </select>

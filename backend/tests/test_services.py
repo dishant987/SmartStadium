@@ -136,7 +136,7 @@ async def test_pa_service():
 
     # Get TTS Audio path
     path = await svc.get_tts_audio(res.announcement.id, "en")
-    assert path is not None or path is None # Can be None if TTS failed, but we cover both branches
+    assert path is not None
 
     # Get Log
     log = await svc.get_log()

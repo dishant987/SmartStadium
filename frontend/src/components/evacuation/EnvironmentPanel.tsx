@@ -49,6 +49,7 @@ export function EnvironmentPanel({
             <button
               key={c.id}
               onClick={() => setCameraPreset(c.id)}
+              aria-pressed={cameraPreset === c.id}
               className={`rounded-data py-1.5 text-data-sm font-medium transition-all border ${cameraPreset === c.id
                   ? "border-pitch-green-500 bg-pitch-green-500/20 text-white shadow-sm font-semibold"
                   : "border-white/[0.04] bg-white/[0.02] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]"
@@ -77,6 +78,7 @@ export function EnvironmentPanel({
               <button
                 key={item.id}
                 onClick={() => setLightingMode(item.id)}
+                aria-pressed={lightingMode === item.id}
                 className={`flex flex-col items-center gap-1 rounded-data py-2 text-data-xs font-medium transition-all border ${active
                     ? item.activeClass
                     : "border-white/[0.04] bg-white/[0.02] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]"
@@ -99,6 +101,7 @@ export function EnvironmentPanel({
           </div>
           <button
             onClick={() => toggleWeather("rain")}
+            aria-pressed={weather === "rain"}
             className={`flex w-full items-center justify-center gap-2 rounded-data py-2 text-data-sm font-medium transition-all border ${weather === "rain"
                 ? "border-blue-500/50 bg-blue-500/20 text-blue-400 font-semibold"
                 : "border-white/[0.04] bg-white/[0.02] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]"
@@ -116,6 +119,7 @@ export function EnvironmentPanel({
           </div>
           <button
             onClick={() => setHeatmapEnabled(!heatmapEnabled)}
+            aria-pressed={heatmapEnabled}
             className={`flex w-full items-center justify-center gap-2 rounded-data py-2 text-data-sm font-medium transition-all border ${heatmapEnabled
                 ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400 font-semibold"
                 : "border-white/[0.04] bg-white/[0.02] text-text-secondary hover:text-text-primary hover:bg-white/[0.05]"

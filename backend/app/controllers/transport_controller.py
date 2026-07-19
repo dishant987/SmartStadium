@@ -7,5 +7,5 @@ router = APIRouter()
 
 
 @router.get("/status", response_model=TransportStatusResponse)
-async def transport_status(service: TransportService = Depends()):
+async def transport_status(service: TransportService = Depends()) -> TransportStatusResponse:
     return await service.get_status()

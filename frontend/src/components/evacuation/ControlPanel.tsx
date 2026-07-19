@@ -31,6 +31,7 @@ export function ControlPanel({ running, mode, onStart, onStop, onReset, onSetMod
       <div className="flex gap-2">
         <button
           onClick={() => onSetMode(mode === "fire" ? null : "fire")}
+          aria-pressed={mode === "fire"}
           className={`flex flex-1 items-center justify-center gap-2 rounded-fan border px-3 py-2 text-body font-medium transition-colors ${
             mode === "fire"
               ? "border-alert-red bg-alert-red/20 text-alert-red"
@@ -41,6 +42,7 @@ export function ControlPanel({ running, mode, onStart, onStop, onReset, onSetMod
         </button>
         <button
           onClick={() => onSetMode(mode === "obstacle" ? null : "obstacle")}
+          aria-pressed={mode === "obstacle"}
           className={`flex flex-1 items-center justify-center gap-2 rounded-fan border px-3 py-2 text-body font-medium transition-colors ${
             mode === "obstacle"
               ? "border-alert-orange bg-alert-orange/20 text-alert-orange"

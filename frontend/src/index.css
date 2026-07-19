@@ -214,6 +214,15 @@
     animation: pressureWave 0.35s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
   }
 
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    display: flex;
+    animation: marquee 25s linear infinite;
+  }
+
   /* Accessibility Large Text Utility */
   .accessibility-large-text {
     font-size: 1.125rem;

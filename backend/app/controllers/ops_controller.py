@@ -9,20 +9,20 @@ router = APIRouter()
 
 
 @router.get("/incidents")
-async def get_incidents(service: OpsService = Depends()):
+async def get_incidents(service: OpsService = Depends()) -> list[dict]:
     return await service.list_incidents()
 
 
 @router.post("/incidents", response_model=IncidentReportResponse)
-async def report_incident(body: IncidentReportRequest, service: OpsService = Depends(), _user: UserResponse = Depends(get_current_user)):
+async def report_incident(body: IncidentReportRequest, service: OpsService = Depends(), _user: UserResponse = Depends(get_current_user)) -> IncidentReportResponse:
     return await service.report_incident(body)
 
 
 @router.get("/crowd-density")
-async def crowd_density(service: OpsService = Depends()):
+async def crowd_density(service: OpsService = Depends()) -> list:
     return await service.get_crowd_density()
 
 
 @router.get("/recommendations")
-async def recommendations(service: OpsService = Depends()):
+async def recommendations(service: OpsService = Depends()) -> list:
     return await service.get_recommendations()

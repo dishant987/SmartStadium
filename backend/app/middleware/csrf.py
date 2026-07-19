@@ -1,18 +1,18 @@
 import secrets
 from fastapi import Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 SKIP_PATHS = ("/api/auth/", "/api/health", "/ws/")
 
 
 class CSRFProtectMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, cookie_name: str = "csrf_token", header_name: str = "X-CSRF-Token"):
+    def __init__(self, app, cookie_name: str = "csrf_token", header_name: str = "X-CSRF-Token") -> None:
         super().__init__(app)
         self.cookie_name = cookie_name
         self.header_name = header_name
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next) -> Response:
         if any(request.url.path.startswith(p) for p in SKIP_PATHS):
             return await call_next(request)
 

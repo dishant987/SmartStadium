@@ -18,7 +18,7 @@ _samesite = "none" if _is_prod else "lax"
 _secure = True if _is_prod else False
 
 
-def _set_auth_cookies(response: Response, access: str, refresh: str):
+def _set_auth_cookies(response: Response, access: str, refresh: str) -> None:
     response.set_cookie(
         key=COOKIE_ACCESS,
         value=access,
@@ -39,7 +39,7 @@ def _set_auth_cookies(response: Response, access: str, refresh: str):
     )
 
 
-def _clear_auth_cookies(response: Response):
+def _clear_auth_cookies(response: Response) -> None:
     response.delete_cookie(
         COOKIE_ACCESS,
         path="/",
@@ -57,21 +57,21 @@ def _clear_auth_cookies(response: Response):
 
 
 @router.post("/register")
-def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)):
+def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> dict:
     result = AuthService(db).register(body)
     _set_auth_cookies(response, result.access_token, result.refresh_token)
     return result
 
 
 @router.post("/login")
-def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)):
+def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> dict:
     result = AuthService(db).login(body)
     _set_auth_cookies(response, result.access_token, result.refresh_token)
     return result
 
 
 @router.post("/refresh")
-def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
+def refresh(request: Request, response: Response, db: Session = Depends(get_db)) -> dict:
     refresh_token = request.cookies.get(COOKIE_REFRESH)
     if not refresh_token:
         raise HTTPException(status_code=401, detail="No refresh token")
@@ -81,6 +81,6 @@ def refresh(request: Request, response: Response, db: Session = Depends(get_db))
 
 
 @router.post("/logout")
-def logout(response: Response):
+def logout(response: Response) -> dict:
     _clear_auth_cookies(response)
     return {"success": True}

@@ -1,10 +1,11 @@
+from collections.abc import AsyncGenerator
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 import json
 
 from app.db.session import get_db
-from app.schemas.chat_schema import ChatRequest, RenameRequest
+from app.schemas.chat_schema import ChatRequest, RenameRequest, ChatResponse, SessionResponse
 from app.services.chat_service import ChatService
 from app.schemas.auth_schema import UserResponse
 from app.middleware.auth import get_current_user
@@ -17,7 +18,7 @@ async def chat(
     body: ChatRequest,
     user: UserResponse = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
+) -> ChatResponse:
     return ChatService(db).respond(user.id, body)
 
 
@@ -26,8 +27,8 @@ async def chat_stream(
     body: ChatRequest,
     user: UserResponse = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
-    async def event_stream():
+) -> StreamingResponse:
+    async def event_stream() -> AsyncGenerator[str, None]:
         async for token in ChatService(db).stream(user.id, body):
             data_str = json.dumps({"token": token})
             yield f"data: {data_str}\n\n"
@@ -39,14 +40,14 @@ async def chat_stream(
 @router.get("/sessions")
 async def list_sessions(
     user: UserResponse = Depends(get_current_user), db: Session = Depends(get_db)
-):
+) -> list:
     return ChatService(db).list_sessions(user.id)
 
 
 @router.post("/sessions")
 async def create_session(
     user: UserResponse = Depends(get_current_user), db: Session = Depends(get_db)
-):
+) -> SessionResponse:
     return ChatService(db).create_session(user.id)
 
 
@@ -55,7 +56,7 @@ async def get_messages(
     session_id: str,
     user: UserResponse = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
+) -> list:
     return ChatService(db).get_messages(user.id, session_id)
 
 
@@ -65,7 +66,7 @@ async def rename_session(
     body: RenameRequest,
     user: UserResponse = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
+) -> SessionResponse | None:
     return ChatService(db).rename_session(user.id, session_id, body.title)
 
 
@@ -74,5 +75,5 @@ async def delete_session(
     session_id: str,
     user: UserResponse = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
+) -> dict:
     return ChatService(db).delete_session(user.id, session_id)

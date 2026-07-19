@@ -1,7 +1,8 @@
+from collections.abc import AsyncGenerator
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select, desc
+from sqlalchemy import Select, select, desc
 from sqlalchemy.orm import Session
 
 from app.models.chat_session import ChatSession
@@ -17,11 +18,11 @@ from app.utils.sanitize import sanitize_prompt, contains_injection
 
 
 class ChatService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
         self.agent = LangGraphAgent()
 
-    def _user_sessions_q(self, user_id: str):
+    def _user_sessions_q(self, user_id: str) -> Select:
         return (
             select(ChatSession)
             .where(
@@ -81,7 +82,7 @@ class ChatService:
             reply=reply, session_id=req.session_id, language="en", sources=[]
         )
 
-    async def stream(self, user_id: str, req: ChatRequest):
+    async def stream(self, user_id: str, req: ChatRequest) -> AsyncGenerator[str, None]:
         session = self.db.get(ChatSession, req.session_id)
         if not session or session.user_session_id != user_id:
             yield "Session not found"

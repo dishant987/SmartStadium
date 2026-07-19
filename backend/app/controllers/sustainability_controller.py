@@ -11,12 +11,12 @@ router = APIRouter()
 
 
 @router.get("/tip", response_model=SustainabilityTipResponse)
-async def tip(context: str = Query("", description="Context for AI-generated tip"), service: SustainabilityService = Depends()):
+async def tip(context: str = Query("", description="Context for AI-generated tip"), service: SustainabilityService = Depends()) -> SustainabilityTipResponse:
     return await service.get_tip(context)
 
 
 @router.get("/stations", response_model=StationResponse)
-async def stations(service: SustainabilityService = Depends()):
+async def stations(service: SustainabilityService = Depends()) -> StationResponse:
     return await service.get_stations()
 
 
@@ -26,10 +26,10 @@ async def personalized_tips(
     match_status: str = Query("", description="Current match status"),
     service: SustainabilityService = Depends(),
     user: UserResponse = Depends(get_current_user),
-):
+) -> list[PersonalizedTipResponse]:
     return await service.get_personalized_tips(zone, match_status)
 
 
 @router.post("/carbon-impact", response_model=CarbonImpactResponse)
-async def carbon_impact(body: CarbonImpactRequest, service: SustainabilityService = Depends(), user: UserResponse = Depends(get_current_user)):
+async def carbon_impact(body: CarbonImpactRequest, service: SustainabilityService = Depends(), user: UserResponse = Depends(get_current_user)) -> CarbonImpactResponse:
     return await service.calculate_carbon(body.transport_mode, body.distance_km, body.group_size)

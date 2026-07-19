@@ -10,17 +10,17 @@ router = APIRouter()
 
 
 @router.post("/announce", response_model=PAAnnouncementResponse)
-async def announce(body: PAAnnouncementRequest, service: PAService = Depends(), _user: UserResponse = Depends(get_current_user)):
+async def announce(body: PAAnnouncementRequest, service: PAService = Depends(), _user: UserResponse = Depends(get_current_user)) -> PAAnnouncementResponse:
     return await service.create_announcement(body)
 
 
 @router.get("/log", response_model=PALogResponse)
-async def pa_log(service: PAService = Depends(), _user: UserResponse = Depends(get_current_user)):
+async def pa_log(service: PAService = Depends(), _user: UserResponse = Depends(get_current_user)) -> PALogResponse:
     return await service.get_log()
 
 
 @router.get("/tts/{ann_id}/{lang}")
-async def tts_audio(ann_id: str, lang: str, service: PAService = Depends()):
+async def tts_audio(ann_id: str, lang: str, service: PAService = Depends()) -> FileResponse:
     filepath = await service.get_tts_audio(ann_id, lang)
     if not filepath:
         raise HTTPException(404, "Audio not found")

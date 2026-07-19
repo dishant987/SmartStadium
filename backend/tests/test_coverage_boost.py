@@ -258,7 +258,7 @@ class TestCrowdAgent:
         agent = CrowdAgent(5.0, 5.0)
         agent.step(flow, grid, [agent])
         # Agent should try to nudge away from fire
-        assert not agent.evacuated or True  # nudge may or may not succeed
+        assert not agent.evacuated
 
     def test_agent_separation(self):
         grid = self._make_grid()
@@ -267,8 +267,9 @@ class TestCrowdAgent:
         a2 = CrowdAgent(5.1, 5.0)  # Very close
         agents = [a1, a2]
         a1.step(flow, grid, agents)
-        # Separation should push them apart slightly
-        assert True  # No crash
+        dist_before = ((5.0 - 5.1)**2 + (5.0 - 5.0)**2) ** 0.5
+        dist_after = ((a1.x - 5.1)**2 + (a1.y - 5.0)**2) ** 0.5
+        assert dist_after >= dist_before
 
     def test_agent_to_dict(self):
         agent = CrowdAgent(3.456, 7.891)

@@ -6,17 +6,19 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, Props>(({ label, error, className = "", type, ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement, Props>(({ label, error, className = "", type, id: idProp, ...props }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const actualType = isPassword ? (showPassword ? "text" : "password") : type;
+  const inputId = idProp || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      {label && <label className="font-ui text-data-md text-text-secondary">{label}</label>}
+      {label && <label htmlFor={inputId} className="font-ui text-data-md text-text-secondary">{label}</label>}
       <div className="relative w-full flex items-center">
         <input
           ref={ref}
+          id={inputId}
           type={actualType}
           className={`rounded-fan border bg-pitch-night px-3 py-2 pr-10 font-ui text-body text-text-primary outline-none transition-colors placeholder:text-text-muted focus:border-floodlight-200/50 focus:ring-1 focus:ring-floodlight-200/30 ${
             error ? "border-alert-red" : "border-border"

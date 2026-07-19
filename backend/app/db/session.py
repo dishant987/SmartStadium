@@ -1,3 +1,6 @@
+from collections.abc import Generator
+from typing import Any
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -13,7 +16,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine)
 
 
-def get_db():
+def get_db() -> Generator[Any, None, None]:
     db = SessionLocal()
     try:
         yield db

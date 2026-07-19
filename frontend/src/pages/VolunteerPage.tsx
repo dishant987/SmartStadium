@@ -53,12 +53,12 @@ export function VolunteerPage() {
   const handleStatusChange = useCallback(async (id: string, status: string) => {
     await updateVolunteerStatus(id, { status });
     load();
-  }, []);
+  }, [load]);
 
   const handleTaskStatus = useCallback(async (id: string, status: string) => {
     await updateTask(id, { status });
     load();
-  }, []);
+  }, [load]);
 
   return (
     <div className="min-h-screen bg-pitch-night text-text-primary font-ui">
@@ -125,6 +125,8 @@ export function VolunteerPage() {
               onClick={() => setActiveTab(tab)}
               role="tab"
               aria-selected={activeTab === tab}
+              aria-controls={`panel-${tab}`}
+              id={`tab-${tab}`}
               className={`px-4 py-2 rounded-fan text-data font-semibold transition-all capitalize ${
                 activeTab === tab ? "bg-pitch-green-500/20 text-pitch-green-400" : "text-text-secondary hover:text-text-primary"
               }`}
@@ -175,9 +177,13 @@ export function VolunteerPage() {
         ) : !dashboard ? (
           <div className="text-center py-20 text-text-muted" role="alert">Failed to load data</div>
         ) : activeTab === "volunteers" ? (
-          <VolunteerListView volunteers={dashboard.volunteers} onStatusChange={handleStatusChange} />
+          <div role="tabpanel" id="panel-volunteers" aria-labelledby="tab-volunteers">
+            <VolunteerListView volunteers={dashboard.volunteers} onStatusChange={handleStatusChange} />
+          </div>
         ) : (
-          <TaskListView tasks={dashboard.tasks} onStatusChange={handleTaskStatus} />
+          <div role="tabpanel" id="panel-tasks" aria-labelledby="tab-tasks">
+            <TaskListView tasks={dashboard.tasks} onStatusChange={handleTaskStatus} />
+          </div>
         )}
       </div>
       <Footer />
@@ -190,7 +196,7 @@ function VolunteerListView({ volunteers, onStatusChange }: { volunteers: Volunte
     return (
       <Card className="text-center py-16">
         <Users size={40} className="mx-auto text-text-muted mb-4" />
-        <h3 className="font-display text-lg font-bold">No volunteers yet</h3>
+        <h2 className="font-display text-lg font-bold">No volunteers yet</h2>
         <p className="text-text-muted text-body mt-1">Register the first volunteer to get started.</p>
       </Card>
     );
@@ -238,7 +244,7 @@ function TaskListView({ tasks, onStatusChange }: { tasks: VolunteerTask[]; onSta
     return (
       <Card className="text-center py-16">
         <ClipboardList size={40} className="mx-auto text-text-muted mb-4" />
-        <h3 className="font-display text-lg font-bold">No tasks assigned</h3>
+        <h2 className="font-display text-lg font-bold">No tasks assigned</h2>
         <p className="text-text-muted text-body mt-1">AI-generated tasks will appear here during match day.</p>
       </Card>
     );

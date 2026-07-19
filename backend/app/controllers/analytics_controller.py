@@ -9,5 +9,5 @@ router = APIRouter()
 
 
 @router.get("/post-match", response_model=PostMatchAnalyticsResponse)
-async def post_match_analytics(service: AnalyticsService = Depends(), _user: UserResponse = Depends(get_current_user)):
+async def post_match_analytics(service: AnalyticsService = Depends(), _user: UserResponse = Depends(get_current_user)) -> PostMatchAnalyticsResponse:
     return await service.get_post_match_analytics()

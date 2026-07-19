@@ -3,6 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.schemas.auth_schema import UserResponse
 from app.services.auth_service import decode_token, AuthService
 from app.utils.logger import logger
 
@@ -13,7 +14,7 @@ def get_current_user(
     creds: HTTPAuthorizationCredentials | None = Depends(_security),
     request: Request = None,
     db: Session = Depends(get_db),
-):
+) -> UserResponse:
     token = None
     if creds is not None:
         token = creds.credentials

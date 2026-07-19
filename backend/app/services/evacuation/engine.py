@@ -32,10 +32,10 @@ class SimulationEngine:
     fire_spread_chance: float = 0.03
     llm: LLMProvider = field(default_factory=LLMProvider)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self._init_sim()
 
-    def _init_sim(self):
+    def _init_sim(self) -> None:
         self.grid, self.exits = create_stadium_layout(self.width, self.height)
         self.flow = compute_flow_field(self.grid, self.exits)
         self.agents = self._spawn_agents()
@@ -64,20 +64,20 @@ class SimulationEngine:
             ResponderAgent(id=i, sector=s, llm=self.llm) for i, s in enumerate(sectors)
         ]
 
-    def inject_fire(self, row: int, col: int):
+    def inject_fire(self, row: int, col: int) -> None:
         if 0 <= row < self.height and 0 <= col < self.width:
             if self.grid[row, col] not in (Cell.WALL, Cell.EXIT):
                 self.grid[row, col] = Cell.FIRE
                 self.flow = compute_flow_field(self.grid, self.exits)
                 logger.info("Fire injected at ({row}, {col})", row=row, col=col)
 
-    def inject_obstacle(self, row: int, col: int):
+    def inject_obstacle(self, row: int, col: int) -> None:
         if 0 <= row < self.height and 0 <= col < self.width:
             if self.grid[row, col] not in (Cell.WALL, Cell.EXIT, Cell.FIRE):
                 self.grid[row, col] = Cell.OBSTACLE
                 self.flow = compute_flow_field(self.grid, self.exits)
 
-    def _spread_fire(self):
+    def _spread_fire(self) -> None:
         fires = list(zip(*np.where(self.grid == Cell.FIRE)))
         for fr, fc in fires:
             for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -89,7 +89,7 @@ class SimulationEngine:
                     ):
                         self.grid[nr, nc] = Cell.FIRE
 
-    def _apply_responder_decision(self, decision: dict):
+    def _apply_responder_decision(self, decision: dict) -> None:
         action = decision.get("action", "hold")
         target = decision.get("target", [0, 0])
         if not isinstance(target, list) or len(target) < 2:
@@ -119,7 +119,7 @@ class SimulationEngine:
                     self.exits.append((tr, tc))
                     self.flow = compute_flow_field(self.grid, self.exits)
 
-    async def run(self, broadcast_fn):
+    async def run(self, broadcast_fn) -> None:
         self.running = True
         logger.info("Simulation started with {n} agents", n=self.num_agents)
 
@@ -201,5 +201,5 @@ class SimulationEngine:
             "running": self.running,
         }
 
-    def reset(self):
+    def reset(self) -> None:
         self._init_sim()

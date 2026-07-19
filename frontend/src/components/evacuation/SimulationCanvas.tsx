@@ -1,6 +1,7 @@
-import { useRef, useMemo, useCallback, useEffect } from "react";
+import React, { useRef, useMemo, useCallback, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
 
 const S = 0.5;
@@ -1180,7 +1181,7 @@ const PRESETS: Record<string, { position: [number, number, number]; target: [num
   northgate: { position: [20, 7, -2], target: [20, 0, 15] },
 };
 
-function CameraController({ preset, controlsRef }: { preset: string; controlsRef: React.RefObject<any> }) {
+function CameraController({ preset, controlsRef }: { preset: string; controlsRef: React.RefObject<OrbitControlsImpl | null> }) {
   const { camera } = useThree();
 
   useEffect(() => {
@@ -1332,18 +1333,23 @@ function GateSafetyHeatmap({ agents }: { agents: Agent[] }) {
     { name: "Gate D", pos: [fw - 0.5, 0.02, fh / 2] },
   ];
 
+  const gateCounts = useMemo(() => {
+    return gates.map(g => {
+      return agents.filter(a => {
+        if (a.evacuated) return false;
+        const ax = a.x * S;
+        const az = a.y * S;
+        const dx = ax - g.pos[0];
+        const dz = az - g.pos[2];
+        return Math.sqrt(dx * dx + dz * dz) < 4.0;
+      }).length;
+    });
+  }, [agents, fw, fh]);
+
   return (
     <group>
       {gates.map((g, idx) => {
-        // Calculate congestion: number of active agents within 4 units of this gate
-        const count = agents.filter(a => {
-          if (a.evacuated) return false;
-          const ax = a.x * S;
-          const az = a.y * S;
-          const dx = ax - g.pos[0];
-          const dz = az - g.pos[2];
-          return Math.sqrt(dx * dx + dz * dz) < 4.0;
-        }).length;
+        const count = gateCounts[idx];
 
         let color = "#10b981"; // Safe (Green)
         if (count > 25) {
@@ -1372,7 +1378,7 @@ function GateSafetyHeatmap({ agents }: { agents: Agent[] }) {
 }
 
 /* ═══════ MAIN ═══════ */
-export function SimulationCanvas({
+const SimulationCanvas = React.memo(function SimulationCanvasInner({
   state,
   mode,
   onCellClick,
@@ -1381,7 +1387,7 @@ export function SimulationCanvas({
   weather,
   heatmapEnabled,
 }: Props) {
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   return (
     <div className="relative h-full w-full rounded-fan border border-border overflow-hidden bg-[#0a0f1d]" role="img" aria-label="3D stadium evacuation simulation canvas">
@@ -1449,4 +1455,6 @@ export function SimulationCanvas({
       )}
     </div>
   );
-}
+});
+
+export { SimulationCanvas };

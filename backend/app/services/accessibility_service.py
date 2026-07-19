@@ -30,7 +30,7 @@ RAMP_ACCESS = {
 }
 
 class AccessibilityService:
-    def __init__(self):
+    def __init__(self) -> None:
         self.llm = LLMProvider()
         self.nav = NavService()
         self._conditions: dict = {
@@ -39,7 +39,7 @@ class AccessibilityService:
             "crowded_accessible_paths": [],
         }
 
-    def _simulate_conditions(self):
+    def _simulate_conditions(self) -> None:
         now_ts = datetime.now(timezone.utc).timestamp()
         seed = int(now_ts / 30)
         rng = random.Random(seed)

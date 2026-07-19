@@ -15,7 +15,7 @@ from app.services.llm_provider import LLMProvider
 class OpsService:
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls) -> "OpsService":
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.llm = LLMProvider()

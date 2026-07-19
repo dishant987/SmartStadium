@@ -66,7 +66,7 @@ async def _check_llm() -> int:
 
 
 @router.get("")
-async def health():
+async def health() -> dict:
     checks = {
         "database": await _check_db(),
         "chroma": await _check_chroma(),

@@ -99,11 +99,11 @@ tools = [stadium_knowledge, get_wayfinding, get_transit_status, get_crowd_densit
 
 
 class LangGraphAgent:
-    def __init__(self):
+    def __init__(self) -> None:
         self.llm = LLMProvider()
         self._build_graph()
 
-    def _build_graph(self):
+    def _build_graph(self) -> None:
         llm_with_tools = None
         for provider in self.llm._providers:
             try:
@@ -118,7 +118,7 @@ class LangGraphAgent:
 
         graph_builder = StateGraph(AgentState)
 
-        def chatbot(state: AgentState):
+        def chatbot(state: AgentState) -> dict:
             msgs = [SystemMessage(content=SYSTEM_PROMPT)] + state["messages"]
             return {"messages": [llm_with_tools.invoke(msgs)]}
 

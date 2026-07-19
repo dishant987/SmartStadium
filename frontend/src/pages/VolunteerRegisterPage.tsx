@@ -57,15 +57,15 @@ export function VolunteerRegisterPage() {
         <form onSubmit={handleSubmit}>
           <Card className="p-6 space-y-6">
             <div>
-              <label className="block text-data font-semibold text-text-primary mb-1.5">Full Name *</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+              <label htmlFor="vol-name" className="block text-data font-semibold text-text-primary mb-1.5">Full Name *</label>
+              <input id="vol-name" type="text" value={name} onChange={(e) => setName(e.target.value)}
                 className="w-full rounded-data border border-white/[0.1] bg-white/[0.03] px-3.5 py-2.5 text-body text-text-primary placeholder-text-muted outline-none focus:border-pitch-green-500/50 transition-colors"
                 placeholder="e.g. Alex Johnson" required />
             </div>
 
             <div>
-              <label className="block text-data font-semibold text-text-primary mb-1.5">Role</label>
-              <div className="grid gap-2">
+              <span id="vol-role-label" className="block text-data font-semibold text-text-primary mb-1.5">Role</span>
+              <div className="grid gap-2" role="radiogroup" aria-labelledby="vol-role-label">
                 {ROLES.map((r) => (
                   <label key={r.value}
                     className={`flex items-start gap-3 p-3 rounded-data border cursor-pointer transition-all ${
@@ -75,7 +75,7 @@ export function VolunteerRegisterPage() {
                     }`}
                     onClick={() => setRole(r.value)}
                   >
-                    <input type="radio" name="role" value={r.value} checked={role === r.value} onChange={() => setRole(r.value)} className="mt-1 accent-pitch-green-400" />
+                    <input type="radio" name="role" id={`vol-role-${r.value}`} value={r.value} checked={role === r.value} onChange={() => setRole(r.value)} className="mt-1 accent-pitch-green-400" />
                     <div>
                       <div className="text-body font-semibold text-text-primary">{r.label}</div>
                       <div className="text-data text-text-muted">{r.desc}</div>
@@ -86,8 +86,8 @@ export function VolunteerRegisterPage() {
             </div>
 
             <div>
-              <label className="block text-data font-semibold text-text-primary mb-1.5">Assigned Zone (optional)</label>
-              <select value={zone} onChange={(e) => setZone(e.target.value)}
+              <label htmlFor="vol-zone" className="block text-data font-semibold text-text-primary mb-1.5">Assigned Zone (optional)</label>
+              <select id="vol-zone" value={zone} onChange={(e) => setZone(e.target.value)}
                 className="w-full rounded-data border border-white/[0.1] bg-white/[0.03] px-3.5 py-2.5 text-body text-text-primary outline-none focus:border-pitch-green-500/50 transition-colors">
                 <option value="">Auto-assign</option>
                 <option value="z1">Main Stand</option>
@@ -99,15 +99,15 @@ export function VolunteerRegisterPage() {
             </div>
 
             <div>
-              <label className="block text-data font-semibold text-text-primary mb-1.5">Languages (comma-separated)</label>
-              <input type="text" value={languages} onChange={(e) => setLanguages(e.target.value)}
+              <label htmlFor="vol-languages" className="block text-data font-semibold text-text-primary mb-1.5">Languages (comma-separated)</label>
+              <input id="vol-languages" type="text" value={languages} onChange={(e) => setLanguages(e.target.value)}
                 className="w-full rounded-data border border-white/[0.1] bg-white/[0.03] px-3.5 py-2.5 text-body text-text-primary placeholder-text-muted outline-none focus:border-pitch-green-500/50 transition-colors"
                 placeholder="en, es, fr" />
             </div>
 
             <div>
-              <label className="block text-data font-semibold text-text-primary mb-1.5">Phone (optional)</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+              <label htmlFor="vol-phone" className="block text-data font-semibold text-text-primary mb-1.5">Phone (optional)</label>
+              <input id="vol-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
                 className="w-full rounded-data border border-white/[0.1] bg-white/[0.03] px-3.5 py-2.5 text-body text-text-primary placeholder-text-muted outline-none focus:border-pitch-green-500/50 transition-colors"
                 placeholder="+1 (555) 123-4567" />
             </div>

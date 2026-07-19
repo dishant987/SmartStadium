@@ -34,7 +34,7 @@ EQUIVALENTS = {
 
 
 class SustainabilityService:
-    def __init__(self):
+    def __init__(self) -> None:
         self.llm = LLMProvider()
 
     async def get_tip(self, context: str = "") -> SustainabilityTipResponse:

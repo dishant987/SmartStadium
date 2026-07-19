@@ -30,9 +30,9 @@ def _error_response(
     )
 
 
-def register_error_handlers(app: FastAPI):
+def register_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(StarletteHTTPException)
-    async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
         rid = _request_id(request)
         logger.warning(
             "HTTP {status} {detail}",
@@ -45,7 +45,7 @@ def register_error_handlers(app: FastAPI):
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(
         request: Request, exc: RequestValidationError
-    ):
+    ) -> JSONResponse:
         rid = _request_id(request)
         logger.warning(
             "Validation error: {errors}", errors=exc.errors(), request_id=rid
@@ -58,13 +58,13 @@ def register_error_handlers(app: FastAPI):
         )
 
     @app.exception_handler(ValueError)
-    async def value_error_handler(request: Request, exc: ValueError):
+    async def value_error_handler(request: Request, exc: ValueError) -> JSONResponse:
         rid = _request_id(request)
         logger.warning("ValueError: {msg}", msg=str(exc), request_id=rid)
         return _error_response(400, "bad_request", str(exc), rid)
 
     @app.exception_handler(AppException)
-    async def app_exception_handler(request: Request, exc: AppException):
+    async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
         rid = _request_id(request)
         logger.error("{code}: {msg}", code=exc.code, msg=exc.message, request_id=rid)
         if exc.original:
@@ -72,7 +72,7 @@ def register_error_handlers(app: FastAPI):
         return _error_response(exc.status_code, exc.code, exc.message, rid)
 
     @app.exception_handler(Exception)
-    async def global_exception_handler(request: Request, exc: Exception):
+    async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         rid = _request_id(request)
         logger.error("Unhandled exception: {exc}", exc=exc, request_id=rid)
         for line in traceback.format_exception(type(exc), exc, exc.__traceback__):

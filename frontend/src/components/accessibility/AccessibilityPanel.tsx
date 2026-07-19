@@ -84,10 +84,10 @@ export function AccessibilityPanel({ accessibleMode, onToggle, largeText, onTogg
       </div>
 
       <div className="mb-3 flex gap-2">
-        <Button size="sm" variant={accessibleMode ? "primary" : "secondary"} onClick={onToggle}>
+        <Button size="sm" variant={accessibleMode ? "primary" : "secondary"} onClick={onToggle} aria-pressed={accessibleMode}>
           <Accessibility size={14} /> Routes
         </Button>
-        <Button size="sm" variant={largeText ? "primary" : "secondary"} onClick={onToggleText}>
+        <Button size="sm" variant={largeText ? "primary" : "secondary"} onClick={onToggleText} aria-pressed={largeText}>
           <Type size={14} /> Text
         </Button>
         <Button size="sm" variant="secondary" onClick={loadElevatorStatus}>

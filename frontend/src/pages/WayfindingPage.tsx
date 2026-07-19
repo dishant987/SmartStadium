@@ -78,9 +78,10 @@ export function WayfindingPage() {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Start Position</label>
-                  <select 
-                    value={from} 
+                  <label htmlFor="wayfinding-from" className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Start Position</label>
+                  <select
+                    id="wayfinding-from"
+                    value={from}
                     onChange={(e) => setFrom(e.target.value)} 
                     className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2 text-body text-text-primary outline-none focus:border-blue-500/50 transition-colors"
                   >
@@ -89,9 +90,10 @@ export function WayfindingPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Destination</label>
-                  <select 
-                    value={to} 
+                  <label htmlFor="wayfinding-to" className="mb-1 block text-data font-semibold text-text-muted uppercase tracking-wider">Destination</label>
+                  <select
+                    id="wayfinding-to"
+                    value={to}
                     onChange={(e) => setTo(e.target.value)} 
                     className="w-full rounded-data border border-white/[0.08] bg-pitch-night/80 px-3 py-2 text-body text-text-primary outline-none focus:border-blue-500/50 transition-colors"
                   >
@@ -182,7 +184,7 @@ export function WayfindingPage() {
             {!route && !loading && (
               <div className="glass-card p-10 rounded-fan border border-white/[0.08] text-center shadow-data">
                 <Navigation size={44} className="mx-auto mb-4 text-text-muted/30" />
-                <h4 className="font-display text-body-lg font-semibold text-text-primary">No Route Selected</h4>
+                <h3 className="font-display text-body-lg font-semibold text-text-primary">No Route Selected</h3>
                 <p className="mt-2 text-body text-text-secondary max-w-md mx-auto leading-relaxed">
                   Choose starting and ending stadium zones in the search panel. Smart route maps include stair-free access, elevator paths, and ramps.
                 </p>

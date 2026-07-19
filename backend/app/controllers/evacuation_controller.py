@@ -12,7 +12,7 @@ engine = SimulationEngine()
 connected_clients: set[WebSocket] = set()
 
 
-async def broadcast(state: dict):
+async def broadcast(state: dict) -> None:
     dead: list[WebSocket] = []
     payload = json.dumps(state, default=str)
     for ws in connected_clients:
@@ -26,7 +26,7 @@ async def broadcast(state: dict):
 
 
 @router.websocket("/ws/evacuation")
-async def evacuation_ws(websocket: WebSocket):
+async def evacuation_ws(websocket: WebSocket) -> None:
     await websocket.accept()
     connected_clients.add(websocket)
     logger.info("Client connected. Total: {n}", n=len(connected_clients))

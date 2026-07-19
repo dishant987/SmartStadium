@@ -19,12 +19,12 @@ def _svc(db: Session = Depends(get_db)) -> VolunteerService:
 
 
 @router.get("/volunteers", response_model=list[VolunteerResponse])
-def list_volunteers(role: str | None = None, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def list_volunteers(role: str | None = None, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> list[VolunteerResponse]:
     return svc.list_volunteers(role)
 
 
 @router.get("/volunteers/{volunteer_id}", response_model=VolunteerResponse)
-def get_volunteer(volunteer_id: str, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def get_volunteer(volunteer_id: str, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> VolunteerResponse:
     v = svc.get_volunteer(volunteer_id)
     if not v:
         raise HTTPException(404, "Volunteer not found")
@@ -32,12 +32,12 @@ def get_volunteer(volunteer_id: str, svc: VolunteerService = Depends(_svc), user
 
 
 @router.post("/volunteers", response_model=VolunteerResponse)
-def create_volunteer(body: VolunteerCreate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def create_volunteer(body: VolunteerCreate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> VolunteerResponse:
     return svc.create_volunteer(user.id, body)
 
 
 @router.patch("/volunteers/{volunteer_id}", response_model=VolunteerResponse)
-def update_volunteer(volunteer_id: str, body: VolunteerUpdate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def update_volunteer(volunteer_id: str, body: VolunteerUpdate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> VolunteerResponse:
     v = svc.update_volunteer(volunteer_id, body)
     if not v:
         raise HTTPException(404, "Volunteer not found")
@@ -45,17 +45,17 @@ def update_volunteer(volunteer_id: str, body: VolunteerUpdate, svc: VolunteerSer
 
 
 @router.get("/tasks", response_model=list[VolunteerTaskResponse])
-def list_tasks(status: str | None = None, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def list_tasks(status: str | None = None, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> list[VolunteerTaskResponse]:
     return svc.list_tasks(status)
 
 
 @router.post("/tasks", response_model=VolunteerTaskResponse)
-def create_task(body: VolunteerTaskCreate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def create_task(body: VolunteerTaskCreate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> VolunteerTaskResponse:
     return svc.create_task(body)
 
 
 @router.patch("/tasks/{task_id}", response_model=VolunteerTaskResponse)
-def update_task(task_id: str, body: VolunteerTaskUpdate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def update_task(task_id: str, body: VolunteerTaskUpdate, svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> VolunteerTaskResponse:
     t = svc.update_task(task_id, body)
     if not t:
         raise HTTPException(404, "Task not found")
@@ -63,5 +63,5 @@ def update_task(task_id: str, body: VolunteerTaskUpdate, svc: VolunteerService =
 
 
 @router.get("/dashboard", response_model=VolunteerDashboardResponse)
-def dashboard(svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)):
+def dashboard(svc: VolunteerService = Depends(_svc), user: UserResponse = Depends(get_current_user)) -> VolunteerDashboardResponse:
     return svc.dashboard()

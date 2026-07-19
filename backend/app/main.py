@@ -3,7 +3,7 @@ import secrets
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -31,11 +31,9 @@ from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.csrf import CSRFProtectMiddleware
 
 
-csp_nonce = secrets.token_hex(16)
-
-
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
+    async def dispatch(self, request, call_next) -> Response:
+        csp_nonce = secrets.token_hex(16)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
@@ -57,7 +55,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 
 @asynccontextmanager
-async def lifespan(application: FastAPI):
+async def lifespan(application: FastAPI) -> None:
     Base.metadata.create_all(bind=engine)
     yield
 

@@ -11,7 +11,7 @@ from app.services.llm_provider import LLMProvider
 
 
 class AnalyticsService:
-    def __init__(self):
+    def __init__(self) -> None:
         self.llm = LLMProvider()
 
     async def get_post_match_analytics(self) -> PostMatchAnalyticsResponse:

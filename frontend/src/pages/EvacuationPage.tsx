@@ -100,7 +100,7 @@ export function EvacuationPage() {
               <p className="text-data text-text-muted">Dynamic hazard injection & Gemini responder rerouting</p>
             </div>
 
-            <div className="flex items-center gap-2 rounded-full bg-white/[0.02] border border-white/[0.05] px-3.5 py-1 text-data font-medium">
+            <div className="flex items-center gap-2 rounded-full bg-white/[0.02] border border-white/[0.05] px-3.5 py-1 text-data font-medium" aria-live="polite">
               <span className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-pitch-green-500 animate-pulse" : "bg-rose-500"}`} />
               <span className="text-text-secondary">{connected ? "Engine Streaming" : "Disconnected"}</span>
             </div>
@@ -119,7 +119,7 @@ export function EvacuationPage() {
           </div>
 
           {simState?.complete && (
-            <div className="mt-3.5 rounded-fan border border-pitch-green-500/20 bg-pitch-green-500/5 px-4 py-3 text-center text-body-lg font-medium text-pitch-green-400">
+            <div className="mt-3.5 rounded-fan border border-pitch-green-500/20 bg-pitch-green-500/5 px-4 py-3 text-center text-body-lg font-medium text-pitch-green-400" aria-live="polite">
               {simState.message || "Evacuation complete!"}
             </div>
           )}
