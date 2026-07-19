@@ -1,3 +1,8 @@
+"""Global error handlers that map exceptions to consistent JSON responses.
+
+Every response uses the shape: {"success": false, "error": {"code": ..., "message": ..., "request_id": ...}}.
+This keeps the API contract uniform for the frontend error-handling middleware."""
+
 import traceback
 
 from fastapi import FastAPI, Request
@@ -7,11 +12,6 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.utils.exceptions import AppException
 from app.utils.logger import logger
-
-"""Global error handlers that map exceptions to consistent JSON responses.
-
-Every response uses the shape: {"success": false, "error": {"code": ..., "message": ..., "request_id": ...}}.
-This keeps the API contract uniform for the frontend error-handling middleware."""
 
 
 def _request_id(request: Request) -> str:

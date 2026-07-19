@@ -6,6 +6,9 @@ import os
 from pathlib import Path
 from dataclasses import dataclass
 
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+
 from app.config import settings
 from app.utils.logger import logger
 
@@ -18,7 +21,6 @@ class LangChainRAGService:
     _vector_store = None
 
     def _get_embeddings(self):
-        from langchain_huggingface import HuggingFaceEmbeddings
         return HuggingFaceEmbeddings(
             model_name="all-MiniLM-L6-v2",
             model_kwargs={"device": "cpu"},
@@ -28,7 +30,6 @@ class LangChainRAGService:
     def _get_vector_store(self):
         if LangChainRAGService._vector_store is not None:
             return LangChainRAGService._vector_store
-        from langchain_chroma import Chroma
         embeddings = self._get_embeddings()
         store = Chroma(
             collection_name=COLLECTION_NAME,

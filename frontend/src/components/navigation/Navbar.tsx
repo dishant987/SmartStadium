@@ -217,7 +217,6 @@ export function Navbar() {
           <div className="relative group py-2">
             <button
               aria-haspopup="true"
-              aria-expanded="false"
               onFocus={() => {}}
               className={`text-xs uppercase tracking-wider font-semibold transition-colors group-hover:text-white group-focus-within:text-white flex items-center gap-1 outline-none ${tools.some(t => location.pathname.startsWith(t.path)) ? "text-pitch-green-400" : "text-text-secondary"
                 }`}
@@ -265,7 +264,6 @@ export function Navbar() {
             <div className="relative flex items-center group py-2">
               <button
                 aria-haspopup="true"
-                aria-expanded="false"
                 onFocus={() => {}}
                 className="flex items-center gap-2 text-xs font-semibold text-text-primary group-hover:text-white group-focus-within:text-white transition-all outline-none"
               >

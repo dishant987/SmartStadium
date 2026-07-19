@@ -87,7 +87,7 @@ def main() -> None:
     try:
         collection = client.get_collection(COLLECTION_NAME)
         print(f"Collection '{COLLECTION_NAME}' exists, using it.")
-    except Exception:
+    except Exception as e:
         collection = client.create_collection(COLLECTION_NAME)
         print(f"Created collection '{COLLECTION_NAME}'.")
 

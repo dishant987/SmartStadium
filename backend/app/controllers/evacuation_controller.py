@@ -18,7 +18,8 @@ async def broadcast(state: dict):
     for ws in connected_clients:
         try:
             await ws.send_text(payload)
-        except Exception:
+        except Exception as e:
+            logger.warning("Evacuation WS send failed: {}", e)
             dead.append(ws)
     for ws in dead:
         connected_clients.discard(ws)

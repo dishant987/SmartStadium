@@ -8,6 +8,7 @@ from app.schemas.ops_schema import (
     TransportLineResponse,
     RecommendationResponse,
 )
+from app.utils.logger import logger
 from app.services.llm_provider import LLMProvider
 
 
@@ -58,7 +59,8 @@ class OpsService:
         prompt = "List 3 real-time operational recommendations for a FIFA match day based on typical crowd patterns. Return as a short numbered list."
         try:
             tip = await self.llm.complete(prompt)
-        except Exception:
+        except Exception as e:
+            logger.warning("Ops recommendation LLM call failed: {}", e)
             tip = "Monitor Main Stand and Fan Zone congestion — consider staggering entry times."
         return [
             RecommendationResponse(

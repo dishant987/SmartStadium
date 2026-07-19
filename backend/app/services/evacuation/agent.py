@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 from app.services.evacuation.pathfinding import Cell
 
@@ -74,8 +76,6 @@ class CrowdAgent:
             self._nudge(grid, h, w)
 
     def _nudge(self, grid: np.ndarray, h: int, w: int):
-        import random
-
         for _ in range(4):
             dx = random.uniform(-0.5, 0.5)
             dy = random.uniform(-0.5, 0.5)

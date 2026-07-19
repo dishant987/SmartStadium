@@ -23,7 +23,8 @@ async def broadcast(payload: dict, exclude: WebSocket | None = None):
             continue
         try:
             await ws.send_text(msg)
-        except Exception:
+        except Exception as e:
+            logger.warning("Realtime WS send failed: {}", e)
             dead.append(ws)
     for ws in dead:
         connected.discard(ws)

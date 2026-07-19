@@ -1,5 +1,6 @@
 """Mock chat model for demo when no API keys are configured."""
 
+import asyncio
 from typing import Any, AsyncIterator, Iterator, List
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -25,7 +26,6 @@ class MockChatModel(BaseChatModel):
             yield ChatGenerationChunk(message=AIMessageChunk(content=token))
 
     async def _astream(self, messages: List[BaseMessage], stop: List[str] | None = None, run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> AsyncIterator[ChatGenerationChunk]:
-        import asyncio
         for token in self._mock_stream():
             yield ChatGenerationChunk(message=AIMessageChunk(content=token))
             await asyncio.sleep(0.03)

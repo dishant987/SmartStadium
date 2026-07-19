@@ -9,31 +9,32 @@ from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from app.config import settings
+from app.services.mock_llm import MockChatModel
 from app.utils.logger import logger
+
+try:
+    from langchain_groq import ChatGroq
+except ImportError:
+    ChatGroq = None  # ponytail: optional provider
+try:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+except ImportError:
+    ChatGoogleGenerativeAI = None
+try:
+    from langchain_mistralai import ChatMistralAI
+except ImportError:
+    ChatMistralAI = None
 
 
 def _build_providers() -> list[BaseChatModel]:
     providers: list[BaseChatModel] = []
-    if settings.groq_api_key:
-        try:
-            from langchain_groq import ChatGroq
-            providers.append(ChatGroq(model="llama-3.3-70b-versatile", api_key=settings.groq_api_key, temperature=0.3))
-        except ImportError:
-            logger.warning("langchain-groq not installed, skipping")
-    if settings.gemini_api_key:
-        try:
-            from langchain_google_genai import ChatGoogleGenerativeAI
-            providers.append(ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=settings.gemini_api_key, temperature=0.3))
-        except ImportError:
-            logger.warning("langchain-google-genai not installed, skipping")
-    if settings.mistral_api_key:
-        try:
-            from langchain_mistralai import ChatMistralAI
-            providers.append(ChatMistralAI(model="mistral-large-latest", api_key=settings.mistral_api_key, temperature=0.3))
-        except ImportError:
-            logger.warning("langchain-mistralai not installed, skipping")
+    if settings.groq_api_key and ChatGroq:
+        providers.append(ChatGroq(model="llama-3.3-70b-versatile", api_key=settings.groq_api_key, temperature=0.3))
+    if settings.gemini_api_key and ChatGoogleGenerativeAI:
+        providers.append(ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=settings.gemini_api_key, temperature=0.3))
+    if settings.mistral_api_key and ChatMistralAI:
+        providers.append(ChatMistralAI(model="mistral-large-latest", api_key=settings.mistral_api_key, temperature=0.3))
     if not providers:
-        from app.services.mock_llm import MockChatModel
         providers.append(MockChatModel())
     return providers
 

@@ -3,6 +3,7 @@
 Provides AI-generated personalized eco-tips, carbon impact analysis,
 and real-time sustainability recommendations using LangChain + LangGraph."""
 import random
+import json
 from datetime import datetime, timezone
 
 from app.schemas.sustainability_schema import (
@@ -61,7 +62,6 @@ class SustainabilityService:
         )
         try:
             response = await self.llm.complete(prompt)
-            import json
             start = response.find("[")
             end = response.rfind("]") + 1
             if start != -1 and end != 0:
@@ -114,7 +114,8 @@ class SustainabilityService:
         try:
             tip = await self.llm.complete(tip_prompt)
             tip = tip.strip().strip('"\'')
-        except Exception:
+        except Exception as e:
+            logger.warning("Sustainability tip LLM call failed: {}", e)
             tip = f"Taking {transport_mode} to the match? {equivalent} — consider carpooling or transit to cut emissions."
 
         return CarbonImpactResponse(

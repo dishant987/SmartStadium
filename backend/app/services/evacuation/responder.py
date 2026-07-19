@@ -58,7 +58,8 @@ Respond ONLY with valid JSON:
             start = raw.index("{")
             end = raw.rindex("}") + 1
             return json.loads(raw[start:end])
-        except Exception:
+        except Exception as e:
+            logger.warning("Evacuation responder parse failed: {}", e)
             return {"action": "hold", "reasoning": "parse fallback", "target": [0, 0]}
 
     def _fallback(self, snap: dict) -> dict:

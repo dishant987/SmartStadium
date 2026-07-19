@@ -15,7 +15,9 @@ from app.schemas.auth_schema import (
     UserResponse,
 )
 
-SECRET_KEY = settings.jwt_secret or "fallback-dev-only"
+if not settings.jwt_secret:
+    raise RuntimeError("JWT_SECRET must be configured in .env")
+SECRET_KEY = settings.jwt_secret
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_HOURS = 72
 

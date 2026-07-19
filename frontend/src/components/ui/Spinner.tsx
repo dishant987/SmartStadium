@@ -8,7 +8,7 @@ const sizeMap = { sm: "h-3.5 w-3.5", md: "h-5 w-5", lg: "h-7 w-7" };
 export function Spinner({ size = "md", className = "" }: Props) {
   const hasTextColor = className.includes("text-");
   return (
-    <svg 
+    <svg aria-hidden="true"
       className={`animate-spin ${sizeMap[size]} ${hasTextColor ? "" : "text-floodlight-200"} ${className}`} 
       xmlns="http://www.w3.org/2000/svg" 
       fill="none" 

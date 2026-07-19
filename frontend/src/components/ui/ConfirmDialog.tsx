@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 
 interface Props {
   open: boolean;
@@ -10,12 +10,29 @@ interface Props {
 }
 
 export function ConfirmDialog({ open, onClose, onConfirm, title, message, confirmLabel = "Delete" }: Props) {
-  const handleKey = useCallback((e: KeyboardEvent) => { if (e.key === "Escape") onClose(); }, [onClose]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  const handleKey = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") { onClose(); return; }
+    if (e.key === "Tab" && dialogRef.current) {
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }, [onClose]);
 
   useEffect(() => {
     if (open) {
       document.addEventListener("keydown", handleKey);
       document.body.style.overflow = "hidden";
+      requestAnimationFrame(() => {
+        dialogRef.current?.querySelector<HTMLElement>('button')?.focus();
+      });
     }
     return () => {
       document.removeEventListener("keydown", handleKey);
@@ -28,6 +45,7 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, message, confir
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-pitch-night/80 backdrop-blur-sm" onClick={onClose}>
       <div
+        ref={dialogRef}
         className="w-full max-w-sm rounded-fan border border-border bg-pitch-surface p-6 shadow-modal"
         onClick={(e) => e.stopPropagation()}
         role="dialog"

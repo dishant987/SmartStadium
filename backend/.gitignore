@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Database / Local config
+.env
+*.db
+.chroma_stadium/
+
+# Logs and cache
+logs/
+.pytest_cache/
+.ruff_cache/
+
+# Local TTS audio output
+tts_output/

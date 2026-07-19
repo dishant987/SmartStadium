@@ -1,3 +1,4 @@
+from app.utils.logger import logger
 
 from app.schemas.analytics_schema import (
     PostMatchAnalyticsResponse,
@@ -141,7 +142,8 @@ class AnalyticsService:
                     "Deploy crowd density sensors at Gate B choke points",
                 ],
             )
-        except Exception:
+        except Exception as e:
+            logger.warning("Analytics narrative generation failed: {}", e)
             narrative = AnalyticsNarrative(
                 executive_summary="The FIFA World Cup 2026 match at MetLife Stadium drew a peak crowd of 72,000 at minute 34, with strong attendance throughout the 90-minute match.",
                 crowd_analysis="Crowd density peaked at 72,000 spectators during the first half. Gate B experienced the highest density at 94% capacity at minute 45, triggering overflow protocols. Post-match evacuation began promptly at full time.",

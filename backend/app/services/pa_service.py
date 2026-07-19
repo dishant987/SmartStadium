@@ -4,7 +4,9 @@ Generates actual audio files via gTTS for each translation language.
 Serves audio through the /api/pa/tts/{ann_id}/{lang} endpoint."""
 import uuid
 import os
+import asyncio
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 from app.config import settings
@@ -14,6 +16,17 @@ from app.schemas.pa_schema import (
 )
 from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
+
+try:
+    from gtts import gTTS
+except ImportError:
+    gTTS = None  # ponytail: optional TTS dep
+
+try:
+    import cloudinary
+    import cloudinary.uploader
+except ImportError:
+    cloudinary = None  # ponytail: optional cloudinary dep
 
 TTS_DIR = Path(__file__).resolve().parent.parent.parent / "tts_output"
 
@@ -84,18 +97,19 @@ LANG_TTS_CODES = {"en": "en", "es": "es", "fr": "fr", "de": "de", "ar": "ar", "z
 
 
 class PAService:
-    _announcements: list = []
-
     def __init__(self):
         self.llm = LLMProvider()
+        self._announcements: list = []
 
     @property
     def announcements(self) -> list:
-        return PAService._announcements
+        return self._announcements
 
     async def _generate_tts(self, text: str, lang: str, filename: str) -> bool:
+        if gTTS is None:
+            logger.warning("gTTS not installed, skipping TTS")
+            return False
         try:
-            from gtts import gTTS
             os.makedirs(TTS_DIR, exist_ok=True)
             lang_code = LANG_TTS_CODES.get(lang, "en")
             tts = gTTS(text=text, lang=lang_code, slow=False)
@@ -109,9 +123,10 @@ class PAService:
 
     async def _upload_to_cloudinary(self, filepath: Path, filename: str) -> str | None:
         try:
-            import cloudinary
-            import cloudinary.uploader
-            
+            if cloudinary is None:
+                logger.info("cloudinary not installed, using local file serving")
+                return None
+
             if not (settings.cloudinary_cloud_name and settings.cloudinary_api_key and settings.cloudinary_api_secret):
                 if settings.cloudinary_url:
                     pass
@@ -129,9 +144,6 @@ class PAService:
             
             public_id = Path(filename).stem
             logger.info("Uploading {f} to Cloudinary...", f=filename)
-            
-            import asyncio
-            from concurrent.futures import ThreadPoolExecutor
             
             def do_upload():
                 return cloudinary.uploader.upload(
@@ -189,18 +201,22 @@ class PAService:
             status="broadcast" if req.broadcast else "draft",
         )
 
-        self.announcements.append({
+        self._announcements.append({
             "id": ann_id, "type": req.type, "severity": req.severity,
             "message": req.message, "gate": req.gate, "timestamp": now,
             "broadcast": req.broadcast, "languages": req.languages,
         })
-        if len(self.announcements) > 500:
+        if len(self._announcements) > 500:
             self.announcements.pop(0)
 
         return PAAnnouncementResponse(announcement=announcement, tts_urls=tts_urls)
 
     async def get_tts_audio(self, ann_id: str, lang: str):
         """Serve the TTS audio file for an announcement in a given language."""
+        if not ann_id.replace("-", "").replace("_", "").isalnum():
+            return None
+        if not lang.replace("-", "").isalnum():
+            return None
         filepath = TTS_DIR / f"{ann_id}_{lang}.mp3"
         if filepath.exists():
             return filepath

@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
 
+from app.middleware.auth import get_current_user
 from app.schemas.ops_schema import IncidentReportRequest, IncidentReportResponse
+from app.services.auth_service import UserResponse
 from app.services.ops_service import OpsService
 
 router = APIRouter()
@@ -12,7 +14,7 @@ async def get_incidents(service: OpsService = Depends()):
 
 
 @router.post("/incidents", response_model=IncidentReportResponse)
-async def report_incident(body: IncidentReportRequest, service: OpsService = Depends()):
+async def report_incident(body: IncidentReportRequest, service: OpsService = Depends(), _user: UserResponse = Depends(get_current_user)):
     return await service.report_incident(body)
 
 

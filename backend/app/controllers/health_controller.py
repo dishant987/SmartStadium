@@ -1,4 +1,6 @@
+import httpx
 from fastapi import APIRouter
+from sqlalchemy import create_engine, text
 
 import app.db.chroma_client
 from app.config import settings
@@ -11,13 +13,12 @@ async def _check_db() -> bool:
     if not settings.neon_database_url:
         return False
     try:
-        from sqlalchemy import create_engine, text
-
         engine = create_engine(settings.neon_database_url, pool_pre_ping=True)
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         return True
-    except Exception:
+    except Exception as e:
+        logger.warning("Database check failed: {}", e)
         return False
 
 
@@ -28,7 +29,8 @@ async def _check_chroma() -> bool:
         client = app.db.chroma_client.get_chroma_client()
         client.heartbeat()
         return True
-    except Exception:
+    except Exception as e:
+        logger.warning("Chroma heartbeat failed: {}", e)
         return False
 
 
@@ -36,8 +38,6 @@ async def _check_llm() -> int:
     available = 0
     if settings.groq_api_key:
         try:
-            import httpx
-
             async with httpx.AsyncClient(timeout=5) as c:
                 r = await c.get(
                     "https://api.groq.com/openai/v1/models",
@@ -45,8 +45,8 @@ async def _check_llm() -> int:
                 )
                 if r.status_code < 500:
                     available += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Groq API check failed: {}", e)
     if settings.gemini_api_key:
         available += 1  # ponytail: skip live probe, key presence is sufficient
     if settings.mistral_api_key:

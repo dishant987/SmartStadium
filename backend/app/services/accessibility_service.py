@@ -29,47 +29,43 @@ RAMP_ACCESS = {
     "z5": {"ramp": "Fan Zone Walk-in", "status": "open"},
 }
 
-_conditions: dict = {
-    "elevator_outages": [],
-    "ramp_closures": [],
-    "crowded_accessible_paths": [],
-}
-
-
-def _simulate_conditions():
-    """Simulate changing accessibility conditions."""
-    now_ts = datetime.now(timezone.utc).timestamp()
-    seed = int(now_ts / 30)
-    rng = random.Random(seed)
-
-    _conditions["elevator_outages"] = []
-    for e in ELEVATORS:
-        if rng.random() < 0.15:
-            _conditions["elevator_outages"].append(e["id"])
-            e["status"] = "out_of_service"
-        else:
-            e["status"] = "operational"
-
-    _conditions["ramp_closures"] = []
-    for z_id, ramp in RAMP_ACCESS.items():
-        if rng.random() < 0.08:
-            _conditions["ramp_closures"].append(z_id)
-            ramp["status"] = "closed"
-        else:
-            ramp["status"] = "open"
-
-    _conditions["crowded_accessible_paths"] = [
-        z_id for z_id in ZONE_GRAPH if rng.random() < 0.2
-    ]
-
-
 class AccessibilityService:
     def __init__(self):
         self.llm = LLMProvider()
         self.nav = NavService()
+        self._conditions: dict = {
+            "elevator_outages": [],
+            "ramp_closures": [],
+            "crowded_accessible_paths": [],
+        }
+
+    def _simulate_conditions(self):
+        now_ts = datetime.now(timezone.utc).timestamp()
+        seed = int(now_ts / 30)
+        rng = random.Random(seed)
+
+        self._conditions["elevator_outages"] = []
+        for e in ELEVATORS:
+            if rng.random() < 0.15:
+                self._conditions["elevator_outages"].append(e["id"])
+                e["status"] = "out_of_service"
+            else:
+                e["status"] = "operational"
+
+        self._conditions["ramp_closures"] = []
+        for z_id, ramp in RAMP_ACCESS.items():
+            if rng.random() < 0.08:
+                self._conditions["ramp_closures"].append(z_id)
+                ramp["status"] = "closed"
+            else:
+                ramp["status"] = "open"
+
+        self._conditions["crowded_accessible_paths"] = [
+            z_id for z_id in ZONE_GRAPH if rng.random() < 0.2
+        ]
 
     async def get_status(self) -> list[AccessibilityStatus]:
-        _simulate_conditions()
+        self._simulate_conditions()
         return [
             AccessibilityStatus(elevator_id=e["id"], elevator_name=e["name"], status=e["status"],
                                 note="Out of service — use alternative elevator or ramp" if e["status"] == "out_of_service" else "Operational")
@@ -77,7 +73,7 @@ class AccessibilityService:
         ]
 
     async def get_ai_route(self, req: AccessibilityRouteRequest) -> AccessibilityRouteResponse:
-        _simulate_conditions()
+        self._simulate_conditions()
         route_req = WayfindingRequest(from_zone=req.from_zone, to_zone=req.to_zone, accessible=True, wheelchair=req.wheelchair)
         base_route = await self.nav.get_wayfinding_route(route_req)
 
@@ -100,7 +96,7 @@ class AccessibilityService:
                     alt = RAMP_ACCESS.get(req.from_zone, {}).get("ramp", "use alternative route")
                     warning = f"Use {alt} instead"
                     warnings.append(f"Elevator outage: {matched[0]['name']}")
-            if req.avoid_crowds and req.from_zone in _conditions["crowded_accessible_paths"]:
+            if req.avoid_crowds and req.from_zone in self._conditions["crowded_accessible_paths"]:
                 if not note:
                     note = "Path may be crowded — allow extra time"
                     warning = "High crowd density on this accessible route"
@@ -125,7 +121,8 @@ class AccessibilityService:
         )
         try:
             ai_summary = (await self.llm.complete(ai_prompt)).strip().strip('"\'')
-        except Exception:
+        except Exception as e:
+            logger.warning("Accessibility AI summary failed: {}", e)
             ai_summary = f"Accessible route from {from_name} to {to_name}. Total distance {base_route.total_distance_m}m."
 
         if not warnings:

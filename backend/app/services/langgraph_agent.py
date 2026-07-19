@@ -12,6 +12,12 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Base
 from langchain_core.tools import tool
 
 from app.services.langchain_rag import LangChainRAGService
+from app.services.nav_service import NavService
+from app.services.transport_service import TransportService
+from app.services.ops_service import OpsService
+from app.services.wait_time_service import WaitTimeService
+from app.schemas.wayfinding_schema import WayfindingRequest
+from app.schemas.wait_time_schema import WaitTimeRequest
 from app.services.llm_provider import LLMProvider
 from app.utils.logger import logger
 
@@ -44,8 +50,6 @@ async def stadium_knowledge(query: str) -> str:
 @tool
 async def get_wayfinding(from_zone: str, to_zone: str, accessible: bool = False) -> str:
     """Get walking directions between stadium zones. Zones: z1(Main Stand), z2(East Stand), z3(West Stand), z4(South Plaza), z5(Fan Zone). Set accessible=True for wheelchair routes."""
-    from app.services.nav_service import NavService
-    from app.schemas.wayfinding_schema import WayfindingRequest
     nav = NavService()
     try:
         req = WayfindingRequest(from_zone=from_zone, to_zone=to_zone, accessible=accessible, wheelchair=accessible)
@@ -66,7 +70,6 @@ async def get_wayfinding(from_zone: str, to_zone: str, accessible: bool = False)
 @tool
 async def get_transit_status() -> str:
     """Get current NJ Transit, shuttle, and bus status to/from MetLife Stadium."""
-    from app.services.transport_service import TransportService
     svc = TransportService()
     status = await svc.get_status()
     lines = status.lines
@@ -77,7 +80,6 @@ async def get_transit_status() -> str:
 @tool
 async def get_crowd_density() -> str:
     """Get current crowd density in each stadium zone."""
-    from app.services.ops_service import OpsService
     svc = OpsService()
     zones = await svc.get_crowd_density()
     return "\n".join(f"{z.name}: {z.density*100:.0f}% full ({z.capacity:,} capacity)" for z in zones)
@@ -86,8 +88,6 @@ async def get_crowd_density() -> str:
 @tool
 async def get_wait_times(zone: str = "all") -> str:
     """Get current wait times for concessions, restrooms, and merchandise. Zone: z1-z5 or 'all'."""
-    from app.services.wait_time_service import WaitTimeService
-    from app.schemas.wait_time_schema import WaitTimeRequest
     svc = WaitTimeService()
     req = WaitTimeRequest(zone=zone, match_minute=30, match_status="in_progress")
     result = await svc.get_wait_times(req)
@@ -109,7 +109,8 @@ class LangGraphAgent:
             try:
                 llm_with_tools = provider.bind_tools(tools)
                 break
-            except Exception:
+            except Exception as e:
+                logger.warning("Provider bind_tools failed: {}", e)
                 continue
         if llm_with_tools is None:
             self._graph = None

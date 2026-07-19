@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -826,8 +826,20 @@ export function InteractiveFootball() {
   const onMouseDownRight = (e: React.MouseEvent) => { e.preventDefault(); handleStart("right", e.clientX, e.clientY); };
   const onTouchStartRight = (e: React.TouchEvent) => { if (e.touches.length > 0) handleStart("right", e.touches[0].clientX, e.touches[0].clientY); };
 
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+    const speed = 8;
+    const ball = physicsRef.current.right;
+    switch (e.key) {
+      case "ArrowUp": ball.vy = -speed; e.preventDefault(); break;
+      case "ArrowDown": ball.vy = speed; e.preventDefault(); break;
+      case "ArrowLeft": ball.vx = -speed; e.preventDefault(); break;
+      case "ArrowRight": ball.vx = speed; e.preventDefault(); break;
+      case " ": ball.vx = -ball.vx * 2; ball.vy = -ball.vy * 2; e.preventDefault(); break;
+    }
+  }, []);
+
   return (
-    <>
+    <div tabIndex={0} onKeyDown={onKeyDown} className="outline-none" role="application" aria-label="Interactive football game. Use arrow keys to move the ball.">
       {/* Collision Pressure Ring Layer */}
       <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
         <style dangerouslySetInnerHTML={{
@@ -921,6 +933,6 @@ export function InteractiveFootball() {
           </Canvas>
         </div>
       </div>
-    </>
+    </div>
   );
 }

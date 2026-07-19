@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.schemas.accessibility_schema import AccessibilityStatus, AccessibilityRouteRequest, AccessibilityRouteResponse
 from app.services.accessibility_service import AccessibilityService
-from app.services.auth_service import UserResponse
-from app.middleware.auth import get_current_user
 
 router = APIRouter()
 
