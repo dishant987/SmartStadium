@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: fifa-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash scripts/startup.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12
+      - key: PORT
+        value: 8000
