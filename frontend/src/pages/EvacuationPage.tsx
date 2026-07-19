@@ -44,8 +44,9 @@ export function EvacuationPage() {
   }, [simState?.running, simState?.complete]);
 
   useEffect(() => {
-    const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const ws = new WebSocket(`${proto}//localhost:8000/ws/evacuation`);
+    const defaultWs = `${window.location.protocol === "https:" ? "wss:" : "ws:"}//localhost:8000`;
+    const wsBase = import.meta.env.VITE_WS_BASE_URL || defaultWs;
+    const ws = new WebSocket(`${wsBase}/ws/evacuation`);
     wsRef.current = ws;
 
     ws.onopen = () => setConnected(true);
