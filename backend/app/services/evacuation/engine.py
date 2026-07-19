@@ -177,10 +177,8 @@ class SimulationEngine:
         }
 
     def get_state(self, decisions: list | None = None) -> dict:
-        active = [a.to_dict() for a in self.agents if not a.evacuated]
-        # limit to 500 for websocket payload
-        if len(active) > 500:
-            active = active[:500]
+        active_agents = [a for a in self.agents if not a.evacuated]
+        active = [a.to_dict() for a in active_agents[:500]]
 
         fires = list(zip(*np.where(self.grid == Cell.FIRE)))
         obstacles = list(zip(*np.where(self.grid == Cell.OBSTACLE)))
@@ -191,7 +189,7 @@ class SimulationEngine:
             "width": self.width,
             "height": self.height,
             "agents": active,
-            "agent_count": len([a for a in self.agents if not a.evacuated]),
+            "agent_count": len(active_agents),
             "total_agents": self.num_agents,
             "evacuated": self.evacuated_count,
             "fires": [(int(r), int(c)) for r, c in fires],

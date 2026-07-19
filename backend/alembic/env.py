@@ -16,6 +16,11 @@ if config.config_file_name is not None:
 database_url = settings.neon_database_url
 config.set_main_option("sqlalchemy.url", database_url)
 
+def include_object(obj, name, type_, reflected, compare_to):
+    if type_ == "table" and name in ("venues", "events", "incidents"):
+        return False
+    return True
+
 target_metadata = Base.metadata
 
 
@@ -24,6 +29,7 @@ def run_migrations_offline() -> None:
     context.configure(
         url=url,
         target_metadata=target_metadata,
+        include_object=include_object,
         literal_binds=False,
         dialect_opts={"paramstyle": "named"},
     )

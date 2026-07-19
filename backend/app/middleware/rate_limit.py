@@ -21,6 +21,9 @@ class RateLimitMiddleware:
             now = time.time()
             window_start = now - self.window_seconds
             self.requests[ip] = [t for t in self.requests[ip] if t > window_start]
+            if not self.requests[ip]:
+                del self.requests[ip]
+                self.requests[ip]  # avoid recursion — defaultdict will recreate
             if len(self.requests[ip]) >= self.max_requests:
                 response = JSONResponse(
                     status_code=429,
