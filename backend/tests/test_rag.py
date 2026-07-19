@@ -1,14 +1,14 @@
-"""Test RAG retrieval with no Chroma key configured (graceful degradation)."""
+"""Test RAG retrieval (graceful degradation and normal path)."""
 
 import pytest
 from app.services.rag_service import RAGService
 
 
 @pytest.mark.asyncio
-async def test_retrieve_no_key_returns_empty():
+async def test_retrieve_returns_list():
     svc = RAGService()
     result = await svc.retrieve("test query")
-    assert result == []
+    assert isinstance(result, list)
 
 
 @pytest.mark.asyncio

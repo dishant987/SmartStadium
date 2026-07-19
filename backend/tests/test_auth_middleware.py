@@ -2,10 +2,15 @@
 import pytest
 
 
+def _error_message(resp):
+    body = resp.json()
+    return body.get("error", {}).get("message", "").lower()
+
+
 def test_no_token_returns_401(client):
     resp = client.get("/api/pa/log")
     assert resp.status_code == 401
-    assert "sign in" in resp.json()["detail"].lower()
+    assert "sign in" in _error_message(resp)
 
 
 def test_invalid_token_returns_401(client):

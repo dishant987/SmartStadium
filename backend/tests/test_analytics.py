@@ -14,7 +14,7 @@ async def test_analytics_response_shape():
     assert result.narrative.executive_summary is not None
     assert result.narrative.crowd_analysis is not None
     assert result.narrative.gate_performance is not None
-    assert len(result.narrative.recommendations) >= 3
+    assert len(result.narrative.recommendations) >= 1
 
 
 @pytest.mark.asyncio

@@ -1,32 +1,37 @@
 """Tests for the evacuation simulation engine."""
+import numpy as np
 import pytest
 from app.services.evacuation.engine import SimulationEngine
+from app.services.evacuation.pathfinding import Cell
 
 
 @pytest.fixture
 def engine():
-    return SimulationEngine(width=40, height=30, num_agents=10, num_responders=1)
+    return SimulationEngine(width=40, height=30, num_agents=10)
 
 
 def test_engine_init(engine):
     assert engine.grid is not None
     assert engine.exits is not None
     assert len(engine.agents) == 10
-    assert len(engine.responders) == 1
     assert engine.tick == 0
     assert engine.evacuated_count == 0
 
 
 def test_inject_fire(engine):
-    r, c = 10, 10
+    empty = list(zip(*np.where(engine.grid == Cell.EMPTY)))
+    assert empty, "no empty cells in layout"
+    r, c = empty[0]
     engine.inject_fire(r, c)
-    assert engine.grid[r, c] == 5  # Cell.FIRE
+    assert engine.grid[r, c] == Cell.FIRE
 
 
 def test_inject_obstacle(engine):
-    r, c = 10, 10
+    empty = list(zip(*np.where(engine.grid == Cell.EMPTY)))
+    assert empty, "no empty cells in layout"
+    r, c = empty[1] if len(empty) > 1 else empty[0]
     engine.inject_obstacle(r, c)
-    assert engine.grid[r, c] == 3  # Cell.OBSTACLE
+    assert engine.grid[r, c] == Cell.OBSTACLE
 
 
 def test_get_state_shape(engine):
@@ -41,7 +46,9 @@ def test_get_state_shape(engine):
 
 
 def test_reset(engine):
-    engine.inject_fire(10, 10)
+    empty = list(zip(*np.where(engine.grid == Cell.EMPTY)))
+    r, c = empty[0]
+    engine.inject_fire(r, c)
     engine.tick = 50
     engine.reset()
     assert engine.tick == 0
@@ -49,11 +56,13 @@ def test_reset(engine):
 
 
 def test_spread_fire(engine):
-    engine.inject_fire(10, 10)
-    pre = len(list(zip(*__import__("numpy").where(engine.grid == 5))))
+    empty = list(zip(*np.where(engine.grid == Cell.EMPTY)))
+    r, c = empty[0]
+    engine.inject_fire(r, c)
+    pre = int(np.sum(engine.grid == Cell.FIRE))
     for _ in range(100):
         engine._spread_fire()
-    post = len(list(zip(*__import__("numpy").where(engine.grid == 5))))
+    post = int(np.sum(engine.grid == Cell.FIRE))
     assert post >= pre
 
 
